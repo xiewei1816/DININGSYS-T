@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.DgGoodsConsignMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgGoodsConsign" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <!-- 客户信息 -->
+    <result column="client_name" property="clientName" jdbcType="VARCHAR" />
+    <result column="client_phone" property="clientPhone" jdbcType="VARCHAR" />
+    <result column="client_seat" property="clientSeat" jdbcType="VARCHAR" />
+    <!-- 物品信息 -->
+    <result column="goods_type" property="goodsType" jdbcType="INTEGER" />
+    <result column="goods_code" property="goodsCode" jdbcType="VARCHAR" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_number" property="goodsNumber" jdbcType="INTEGER" />
+    <result column="goods_specification" property="goodsSpecification" jdbcType="VARCHAR" />
+    <result column="goods_color" property="goodsColor" jdbcType="VARCHAR" />
+    <result column="goods_expiration_date" property="goodsExpirationDate" jdbcType="TIMESTAMP" />
+    <result column="goods_explain" property="goodsExplain" jdbcType="VARCHAR" />
+    <!-- 寄存信息 -->
+    <result column="gc_flag" property="gcFlag" jdbcType="VARCHAR" />
+    <result column="gc_pos" property="gcPos" jdbcType="VARCHAR" />
+    <result column="gc_operator" property="gcOperator" jdbcType="VARCHAR" />
+    <result column="gc_start_time" property="gcStartTime" jdbcType="TIMESTAMP" />
+    <result column="gc_end_time" property="gcEndTime" jdbcType="TIMESTAMP" />
+    <result column="gc_address" property="gcAddress" jdbcType="VARCHAR" />
+    <!-- 取走信息 -->
+    <result column="qz_time" property="qzTime" jdbcType="TIMESTAMP" />
+    <result column="qz_pos" property="qzPos" jdbcType="VARCHAR" />
+    <result column="qz_operator" property="qzOperator" jdbcType="VARCHAR" />
+    <!-- 处理方式 -->
+    <result column="cl_way" property="clWay" jdbcType="VARCHAR" />
+    <result column="cl_pos" property="clPos" jdbcType="VARCHAR" />
+    <result column="cl_operator" property="clOperator" jdbcType="VARCHAR" />
+    <result column="cl_explain" property="clExplain" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="selectCols" >
+    a.id,a.client_name,a.client_phone,b.name as clientSeat,
+    c.gt_name as goodsType,a.goods_code,a.goods_name,a.goods_number,a.goods_specification,a.goods_color,a.goods_expiration_date,a.goods_explain,
+    a.gc_flag,d.name as gcPos,a.gc_operator,DATE_FORMAT(a.gc_start_time, '%Y-%m-%d %T') as gcStartTime,DATE_FORMAT(a.gc_end_time, '%Y-%m-%d %T') as gcEndTime,a.gc_address,
+    a.qz_time,a.qz_pos,a.qz_operator,
+    a.cl_way,a.cl_pos,a.cl_operator,a.cl_explain
+  </sql>
+
+ <insert id="insertGoodsConsign" parameterType="DgGoodsConsign">
+  	insert into dg_goods_consign(
+		client_name,client_phone,client_seat,
+		goods_type,goods_code,goods_name,goods_number,goods_specification,goods_color,goods_expiration_date,goods_explain,
+		gc_flag,gc_pos,gc_operator,gc_start_time,gc_end_time,gc_address,
+		qz_time,qz_pos,qz_operator,
+		cl_way,cl_pos,cl_operator,cl_explain
+  	) values (
+  		#{clientName},#{clientPhone},#{clientSeat},
+  		#{goodsType},#{goodsCode},#{goodsName},#{goodsNumber},#{goodsSpecification},#{goodsColor},#{goodsExpirationDate},#{goodsExplain},
+  		#{gcFlag},#{gcPos},#{gcOperator},#{gcStartTime},#{gcEndTime},#{gcAddress},
+  		#{qzTime},#{qzPos},#{qzOperator},
+  		#{clWay},#{clPos},#{clOperator},#{clExplain}
+  	)
+  </insert>
+  
+  <update id="updateGoodsConsign" parameterType="DgGoodsConsign">
+  	update dg_goods_consign set 
+		client_name=#{clientName},client_phone=#{clientPhone},client_seat=#{clientSeat},
+  		goods_type=#{goodsType},goods_code=#{goodsCode},goods_name=#{goodsName},goods_number=#{goodsNumber},goods_specification=#{goodsSpecification},
+  		goods_color=#{goodsColor},goods_expiration_date=#{goodsExpirationDate},goods_explain=#{goodsExplain},
+  		gc_flag=#{gcFlag},gc_pos=#{gcPos},gc_operator=#{gcOperator},gc_start_time=#{gcStartTime},gc_end_time=#{gcEndTime},gc_address=#{gcAddress},
+  		qz_time=#{qzTime},qz_pos=#{qzPos},qz_operator=#{qzOperator},
+  		cl_way=#{clWay},cl_pos=#{clPos},cl_operator=#{clOperator},cl_explain=#{clExplain}
+	where id = #{id}
+  </update>
+  
+  <update id="addGoodsConsignByQz" parameterType="DgGoodsConsign">
+  	update dg_goods_consign set 
+  		gc_flag=#{gcFlag},qz_time=#{qzTime},qz_pos=#{qzPos},qz_operator=#{qzOperator}
+	where id = #{id}
+  </update>
+  
+  <select id="selectGoodsConsign" parameterType="map" resultType="DgGoodsConsign">
+		select 
+		<include refid="selectCols"></include>
+			from dg_goods_consign a
+			left join dg_consumer_seat b on b.id = a.client_seat
+			left join dg_goods_type c on c.id = a.goods_type
+			left join dg_pos d on d.id = a.gc_pos
+			left join dg_consumption_area e on FIND_IN_SET(e.id , d.consumer_areas)
+		<where>
+			<if test="id != null and id != ''">
+	         and a.id = #{id}
+	        </if>
+	        <if test="gcFlag != null and gcFlag != ''">
+	         and a.gc_flag = #{gcFlag}
+	        </if>
+	        <if test="jcStartTime != null and jcStartTime != '' and jcEndTime != null and jcEndTime != ''">
+	          and a.gc_start_time between #{jcStartTime} and #{jcEndTime}
+	        </if>
+	        <if test="goodsName != null and goodsName != ''">
+	         and a.goods_name like '%${goodsName}%'
+	        </if>
+	        <if test="goodsColor != null and goodsColor != ''">
+	         and a.goods_color like '%${goodsColor}%'
+	        </if>
+	        <if test="gcPos != null and gcPos != ''">
+	         and a.gc_pos = #{gcPos}
+	        </if>
+	        <if test="clientName != null and clientName != ''">
+	         and a.client_name like '%${clientName}%'
+	        </if>
+	        <if test="clientSeat != null and clientSeat != ''">
+	         and a.client_seat = #{clientSeat}
+	        </if>
+	        <if test="expArea != null and expArea != ''">
+	         and e.id = #{expArea}
+	        </if>
+	        <if test="qzStartTime != null and qzStartTime != '' and qzEndTime != null and qzEndTime != ''">
+	          and a.qz_time between #{qzStartTime} and #{qzEndTime}
+	        </if>
+	        <if test="aboveDays != null and aboveDays != ''">
+	         and date_sub(a.gc_end_time,interval - ${aboveDays} day) &lt; NOW()
+	        </if>
+	        <if test="goodsExpirationDate != null and goodsExpirationDate != ''">
+	         and a.goods_expiration_date &lt; NOW()
+	        </if>
+	        <if test="gcEndTime != null and gcEndTime != ''">
+	         and a.gc_end_time &lt; NOW()
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and a.is_del = #{isDel}
+	        </if>
+     	</where>
+	    group by a.id
+	</select>
+	
+  <update id="deleteTrash" parameterType="DgGoodsConsign">
+	update dg_goods_consign set is_del = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+	
+  <update id="replyDgc" parameterType="DgGoodsConsign">
+	update dg_goods_consign set is_del = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}
+	 </foreach> 
+	</update>
+	
+  <delete id="delete" parameterType="DgGoodsConsign">
+	delete from dg_goods_consign where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	
+	
+	<!-- 物品寄存种类 增、删、改、查 -->
+	<insert id="insertGoodsType" parameterType="map">
+		insert into dg_goods_type(gt_name,is_remind) values (#{gtName},#{isRemind})
+	</insert>
+	<delete id="deleteGoodsType" parameterType="map">
+		delete from dg_goods_type where id = #{id}
+	</delete>
+	<update id="updateGoodsType" parameterType="map">
+		update dg_goods_type set gt_name = #{gtName},is_remind = #{isRemind} where id = #{id}
+	</update>
+	<select id="selectGoodsType" resultType="map">
+		select * from dg_goods_type
+	</select>
+</mapper>

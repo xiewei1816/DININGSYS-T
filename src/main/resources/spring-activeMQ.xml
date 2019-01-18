@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amq="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <amq:connectionFactory id="onlineConnectionFac"
+                           brokerURL="failover:(${mq.onlineMessageAD})" userName="admin" password="yqsh!@#"/>
+
+    <amq:connectionFactory id="shopDataSenderConnectionFac"
+                           brokerURL="${mq.cateringAD}" userName="admin" password="yqsh!@#"/>
+
+    <bean id="onlineConnectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="onlineConnectionFac" />
+        <property name="sessionCacheSize" value="100" />
+        <property name="reconnectOnException" value="true"/>
+    </bean>
+
+    <bean id="shopDataSenderConnectionFactory"
+          class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="shopDataSenderConnectionFac" />
+        <property name="sessionCacheSize" value="100" />
+        <property name="reconnectOnException" value="true"/>
+    </bean>
+
+    <bean id="onlineDataReceive" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg>
+            <value>${mq.selfShopKey}</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="onlineConnectionFac" />
+        <property name="defaultDestination" ref="onlineDataReceive" />
+        <property name="receiveTimeout" value="10000" />
+        <property name="pubSubDomain" value="false" />
+    </bean>
+
+    <bean id="onlneDataSend" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="shopDataSenderConnectionFactory" />
+        <property name="defaultDestination" ref="onlineDataReceive" />
+        <property name="receiveTimeout" value="10000" />
+        <property name="pubSubDomain" value="false" />
+    </bean>
+
+    <!--<bean id="queueListenerContainer"-->
+          <!--class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
+        <!--<property name="connectionFactory" ref="onlineConnectionFactory" />-->
+        <!--<property name="destination" ref="onlineDataReceive" />-->
+        <!--<property name="messageListener" ref="onineMSGListener" />-->
+        <!--<property name="recoveryInterval" value="30000" />-->
+    <!--</bean>-->
+
+
+   <bean id="onlieDataSenderListener"
+    class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+    <property name="connectionFactory" ref="shopDataSenderConnectionFactory" />
+    <property name="destination" ref="onlineDataReceive" />
+    <property name="messageListener" ref="onlineDataSenderListener" />
+    <property name="recoveryInterval" value="30000" />
+</bean>
+
+</beans>

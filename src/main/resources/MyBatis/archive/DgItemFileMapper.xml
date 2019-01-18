@@ -1,0 +1,1273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgItemFileMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgItemFile" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="VARCHAR" />
+    <result column="zjf" property="zjf" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="ppdl_id" property="ppdlId" jdbcType="INTEGER" />
+    <result column="ppxl_id" property="ppxlId" jdbcType="INTEGER" />
+    <result column="xxlx_id" property="xxlxId" jdbcType="INTEGER" />
+    <result column="pxld" property="pxld" jdbcType="INTEGER" />
+    <result column="jbiao" property="jbiao" jdbcType="INTEGER" />
+    <result column="dyfz" property="dyfz" jdbcType="INTEGER" />
+    <result column="yybf" property="yybf" jdbcType="INTEGER" />
+    <result column="zxddsl" property="zxddsl" jdbcType="DOUBLE" />
+    <result column="standard_price" property="standardPrice" jdbcType="DOUBLE" />
+    <result column="cost_price" property="costPrice" jdbcType="DOUBLE" />
+    <result column="ywmc" property="ywmc" jdbcType="VARCHAR" />
+    <result column="qtmc" property="qtmc" jdbcType="VARCHAR" />
+    <result column="gg" property="gg" jdbcType="VARCHAR" />
+    <result column="sptm" property="sptm" jdbcType="VARCHAR" />
+    <result column="sm" property="sm" jdbcType="VARCHAR" />
+    <result column="bzzzsc" property="bzzzsc" jdbcType="INTEGER" />
+    <result column="cs" property="cs" jdbcType="INTEGER" />
+    <result column="tssjd_one" property="tssjdOne" jdbcType="INTEGER" />
+    <result column="tssjd_two" property="tssjdTwo" jdbcType="INTEGER" />
+    <result column="is_tc" property="isTc" jdbcType="INTEGER" />
+    <result column="tcywhpxxl" property="tcywhpxxl" jdbcType="INTEGER" />
+    <result column="gjjefssl" property="gjjefssl" jdbcType="INTEGER" />
+    <result column="jsqtsxgsl" property="jsqtsxgsl" jdbcType="INTEGER" />
+    <result column="cyzdxf" property="cyzdxf" jdbcType="INTEGER" />
+    <result column="rfid_card" property="rfidCard" jdbcType="VARCHAR" />
+    <result column="lspx" property="lspx" jdbcType="INTEGER" />
+    <result column="yxdz" property="yxdz" jdbcType="INTEGER" />
+    <result column="zyzfids" property="zyzfids" jdbcType="VARCHAR" />
+    <result column="ggzyzfids" property="ggzyzfids" jdbcType="VARCHAR" />
+    <result column="pxdt" property="pxdt" jdbcType="VARCHAR" />
+    <result column="pxxt" property="pxxt" jdbcType="VARCHAR" />
+    <result column="yyxgids" property="yyxgids" jdbcType="VARCHAR" />
+    <result column="pxxtsm" property="pxxtsm" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="itemFileId" property="itemFileId" jdbcType="INTEGER" />
+    <result column="cs_name" property="csName" jdbcType="VARCHAR" />
+    <result column="pxdt_file" property="pxdtFile" jdbcType="VARCHAR" />
+    <result column="pxxt_file" property="pxxtFile" jdbcType="VARCHAR" />
+    <result column="yxe" property="yxe" jdbcType="INTEGER" />
+    <!-- 新增字段，用于逻辑删除表示字段 -->
+    <result column="delFlag" property="delFlag" jdbcType="INTEGER" />
+    <result column="bnum" property="bNum" jdbcType="VARCHAR" />
+    <result column="snum" property="sNum" jdbcType="VARCHAR" />
+    <result column="bname" property="bName" jdbcType="VARCHAR" />
+    <result column="cname" property="cName" jdbcType="VARCHAR" />
+    <result column="pxxt_file_ol" property="pxxtFileOl" jdbcType="VARCHAR" />
+    <result column="pxdt_file_ol" property="pxdtFileOl" jdbcType="VARCHAR" />
+    <result column="sfwm" property="sfwm" jdbcType="INTEGER" />
+    <result column="show_ct" property="showCt" jdbcType="INTEGER" />
+    <result column="color_gate" property="colorGate" jdbcType="VARCHAR" />
+    <result column="color_item_id" property="colorItemId" jdbcType="VARCHAR" />
+    <result column="color_item_num" property="colorItemNum" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, num, zjf, name, unit, ppdl_id, ppxl_id, xxlx_id, pxld, jbiao, dyfz, yybf, zxddsl,
+    standard_price, cost_price, ywmc, qtmc, gg, sptm, sm, bzzzsc, cs, tssjd_one, tssjd_two,
+    is_tc, tcywhpxxl, gjjefssl, jsqtsxgsl, cyzdxf, rfid_card, lspx, yxdz, zyzfids, ggzyzfids,
+    pxdt, pxxt, yyxgids, pxxtsm, create_time, update_time,yxe,sfwm,show_ct,color_gate
+  </sql>
+  
+  <sql id="cook_Column_List" >
+  	a.id as id,
+  	a.num as num,
+  	a.name as name,
+  	a.cs as cs,
+  	b.emp_name as cs_name
+  </sql> 
+  
+  <sql id="color_Column_List" >
+  	a.id as id,
+  	a.num as num,
+  	a.name as name,
+  	a.cs as cs,
+  	b.id as color_item_id,
+  	b.num as color_item_num
+  </sql> 
+  
+  <sql id="table_Column_List" >
+  	a.id as id,
+  	a.num as num,
+  	a.name as name,
+  	a.standard_price as standard_price,
+  	a.sptm as sptm,
+  	b.num as bnum,
+  	b.name as bname,
+  	c.num as snum,
+  	c.name as cname
+  </sql> 
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from dg_item_file
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getDgItemFileByNumber" resultMap="BaseResultMap" parameterType="string" >
+    select
+    <include refid="Base_Column_List" />
+    from dg_item_file
+    where num = #{number} and delFlag = '0'
+  </select>
+  
+  <select id="getDgItemFileByName" resultMap="BaseResultMap" parameterType="string" >
+    select
+    <include refid="Base_Column_List" />
+    from dg_item_file
+    where name = #{name} and delFlag = '0'
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_file
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFile" >
+    insert into dg_item_file (id, num, zjf,
+    name, unit, ppdl_id,
+    ppxl_id, xxlx_id, pxld,
+    jbiao, dyfz, yybf,
+    zxddsl, standard_price, cost_price,
+    ywmc, qtmc, gg, sptm,
+    sm, bzzzsc, cs, tssjd_one,
+    tssjd_two, is_tc, tcywhpxxl,
+    gjjefssl, jsqtsxgsl, cyzdxf,
+    rfid_card, lspx, yxdz,
+    zyzfids, ggzyzfids, pxdt,
+    pxxt, yyxgids, pxxtsm,
+    create_time, update_time ,yxe,sfwm,show_ct,color_gate
+    )
+    values (#{id,jdbcType=INTEGER}, #{num,jdbcType=VARCHAR}, #{zjf,jdbcType=VARCHAR},
+    #{name,jdbcType=VARCHAR}, #{unit,jdbcType=VARCHAR}, #{ppdlId,jdbcType=INTEGER},
+    #{ppxlId,jdbcType=INTEGER}, #{xxlxId,jdbcType=INTEGER}, #{pxld,jdbcType=INTEGER},
+    '0', #{dyfz,jdbcType=INTEGER}, #{yybf,jdbcType=INTEGER},
+    #{zxddsl,jdbcType=DOUBLE}, #{standardPrice,jdbcType=DOUBLE}, #{costPrice,jdbcType=DOUBLE},
+    #{ywmc,jdbcType=VARCHAR}, #{qtmc,jdbcType=VARCHAR}, #{gg,jdbcType=VARCHAR}, #{sptm,jdbcType=VARCHAR},
+    #{sm,jdbcType=VARCHAR}, #{bzzzsc,jdbcType=INTEGER}, #{cs,jdbcType=INTEGER}, #{tssjdOne,jdbcType=INTEGER},
+    #{tssjdTwo,jdbcType=INTEGER}, #{isTc,jdbcType=INTEGER}, #{tcywhpxxl,jdbcType=INTEGER},
+    #{gjjefssl,jdbcType=INTEGER}, #{jsqtsxgsl,jdbcType=INTEGER}, #{cyzdxf,jdbcType=INTEGER},
+    #{rfidCard,jdbcType=VARCHAR}, #{lspx,jdbcType=INTEGER}, #{yxdz,jdbcType=INTEGER},
+    #{zyzfids,jdbcType=VARCHAR}, #{ggzyzfids,jdbcType=VARCHAR}, #{pxdt,jdbcType=VARCHAR},
+    #{pxxt,jdbcType=VARCHAR}, #{yyxgids,jdbcType=VARCHAR}, #{pxxtsm,jdbcType=VARCHAR},
+    #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{yxe,jdbcType=INTEGER},
+    #{sfwm,jdbcType=INTEGER},#{showCt,jdbcType=INTEGER},#{colorGate,jdbcType=INTEGER}
+    )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFile" >
+    insert into dg_item_file
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="zjf != null and zjf != ''" >
+        zjf,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="ppdlId != null" >
+        ppdl_id,
+      </if>
+      <if test="ppxlId != null" >
+        ppxl_id,
+      </if>
+      <if test="xxlxId != null" >
+        xxlx_id,
+      </if>
+      <if test="pxld != null" >
+        pxld,
+      </if>
+      <if test="jbiao != null" >
+          jbiao,
+      </if>
+      <if test="dyfz != null" >
+        dyfz,
+      </if>
+        yybf,
+      <if test="zxddsl != null" >
+        zxddsl,
+      </if>
+      <if test="standardPrice != null" >
+        standard_price,
+      </if>
+      <if test="costPrice != null" >
+        cost_price,
+      </if>
+      <if test="ywmc != null" >
+        ywmc,
+      </if>
+      <if test="qtmc != null" >
+        qtmc,
+      </if>
+      <if test="gg != null" >
+        gg,
+      </if>
+      <if test="sptm != null" >
+        sptm,
+      </if>
+      <if test="sm != null" >
+        sm,
+      </if>
+      <if test="bzzzsc != null" >
+        bzzzsc,
+      </if>
+      <if test="cs != null" >
+        cs,
+      </if>
+      <if test="tssjdOne != null" >
+        tssjd_one,
+      </if>
+      <if test="tssjdTwo != null" >
+        tssjd_two,
+      </if>
+      is_tc,
+      <if test="tcywhpxxl != null" >
+        tcywhpxxl,
+      </if>
+        gjjefssl,
+        jsqtsxgsl,
+        cyzdxf,
+      <if test="rfidCard != null" >
+        rfid_card,
+      </if>
+        lspx,
+        yxdz,
+      <if test="zyzfids != null" >
+        zyzfids,
+      </if>
+      <if test="ggzyzfids != null" >
+        ggzyzfids,
+      </if>
+      <if test="pxdt != null" >
+        pxdt,
+      </if>
+      <if test="pxxt != null" >
+        pxxt,
+      </if>
+      <if test="yyxgids != null" >
+        yyxgids,
+      </if>
+      <if test="pxxtsm != null" >
+        pxxtsm,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="yxe != null" >
+        yxe,
+      </if>
+      <if test="delFlag != null" >
+          delFlag,
+      </if>
+      <if test="showCt != null" >
+        show_ct,
+      </if>
+      <if test="colorGate != null" >
+        color_gate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="zjf != null and zjf != ''" >
+        #{zjf,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="ppdlId != null" >
+        #{ppdlId,jdbcType=INTEGER},
+      </if>
+      <if test="ppxlId != null" >
+        #{ppxlId,jdbcType=INTEGER},
+      </if>
+      <if test="xxlxId != null" >
+        #{xxlxId,jdbcType=INTEGER},
+      </if>
+      <if test="pxld != null" >
+        #{pxld,jdbcType=INTEGER},
+      </if>
+      <if test="jbiao != null" >
+        #{jbiao,jdbcType=INTEGER},
+      </if>
+      <if test="dyfz != null" >
+        #{dyfz,jdbcType=INTEGER},
+      </if>
+      #{yybf,jdbcType=INTEGER},
+      <if test="zxddsl != null" >
+        #{zxddsl,jdbcType=DOUBLE},
+      </if>
+      <if test="standardPrice != null" >
+        #{standardPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="costPrice != null" >
+        #{costPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="ywmc != null" >
+        #{ywmc,jdbcType=VARCHAR},
+      </if>
+      <if test="qtmc != null" >
+        #{qtmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gg != null" >
+        #{gg,jdbcType=VARCHAR},
+      </if>
+      <if test="sptm != null" >
+        #{sptm,jdbcType=VARCHAR},
+      </if>
+      <if test="sm != null" >
+        #{sm,jdbcType=VARCHAR},
+      </if>
+      <if test="bzzzsc != null" >
+        #{bzzzsc,jdbcType=INTEGER},
+      </if>
+      <if test="cs != null" >
+        #{cs,jdbcType=INTEGER},
+      </if>
+      <if test="tssjdOne != null" >
+        #{tssjdOne,jdbcType=INTEGER},
+      </if>
+      <if test="tssjdTwo != null" >
+        #{tssjdTwo,jdbcType=INTEGER},
+      </if>
+        #{isTc,jdbcType=INTEGER},
+      <if test="tcywhpxxl != null" >
+        #{tcywhpxxl,jdbcType=INTEGER},
+      </if>
+        #{gjjefssl,jdbcType=INTEGER},
+        #{jsqtsxgsl,jdbcType=INTEGER},
+        #{cyzdxf,jdbcType=INTEGER},
+      <if test="rfidCard != null" >
+        #{rfidCard,jdbcType=VARCHAR},
+      </if>
+        #{lspx,jdbcType=INTEGER},
+        #{yxdz,jdbcType=INTEGER},
+      <if test="zyzfids != null" >
+        #{zyzfids,jdbcType=VARCHAR},
+      </if>
+      <if test="ggzyzfids != null" >
+        #{ggzyzfids,jdbcType=VARCHAR},
+      </if>
+      <if test="pxdt != null" >
+        #{pxdt,jdbcType=VARCHAR},
+      </if>
+      <if test="pxxt != null" >
+        #{pxxt,jdbcType=VARCHAR},
+      </if>
+      <if test="yyxgids != null" >
+        #{yyxgids,jdbcType=VARCHAR},
+      </if>
+      <if test="pxxtsm != null" >
+        #{pxxtsm,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yxe != null" >
+        #{yxe,jdbcType=INTEGER},
+      </if>
+      0,
+      <if test="showCt != null" >
+        #{showCt},
+      </if>
+      <if test="colorGate != null" >
+        #{colorGate},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFile" >
+    update dg_item_file
+    <set >
+      <if test="num != null" >
+        num = #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="zjf != null" >
+        zjf = #{zjf,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="ppdlId != null" >
+        ppdl_id = #{ppdlId,jdbcType=INTEGER},
+      </if>
+      <if test="ppxlId != null" >
+        ppxl_id = #{ppxlId,jdbcType=INTEGER},
+      </if>
+      <if test="xxlxId != null" >
+        xxlx_id = #{xxlxId,jdbcType=INTEGER},
+      </if>
+      <if test="pxld != null" >
+        pxld = #{pxld,jdbcType=INTEGER},
+      </if>
+      <if test="jbiao != null" >
+        jbiao = #{jbiao,jdbcType=INTEGER},
+      </if>
+      <if test="dyfz != null" >
+        dyfz = #{dyfz,jdbcType=INTEGER},
+      </if>
+       yybf = #{yybf,jdbcType=INTEGER},
+      <if test="zxddsl != null" >
+        zxddsl = #{zxddsl,jdbcType=DOUBLE},
+      </if>
+      <if test="standardPrice != null" >
+        standard_price = #{standardPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="costPrice != null" >
+        cost_price = #{costPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="ywmc != null" >
+        ywmc = #{ywmc,jdbcType=VARCHAR},
+      </if>
+      <if test="qtmc != null" >
+        qtmc = #{qtmc,jdbcType=VARCHAR},
+      </if>
+      <if test="gg != null" >
+        gg = #{gg,jdbcType=VARCHAR},
+      </if>
+      <if test="sptm != null" >
+        sptm = #{sptm,jdbcType=VARCHAR},
+      </if>
+      <if test="sm != null" >
+        sm = #{sm,jdbcType=VARCHAR},
+      </if>
+      <if test="bzzzsc != null" >
+        bzzzsc = #{bzzzsc,jdbcType=INTEGER},
+      </if>
+      <if test="cs != null" >
+        cs = #{cs,jdbcType=INTEGER},
+      </if>
+      <if test="tssjdOne != null" >
+        tssjd_one = #{tssjdOne,jdbcType=INTEGER},
+      </if>
+      <if test="tssjdTwo != null" >
+        tssjd_two = #{tssjdTwo,jdbcType=INTEGER},
+      </if>
+      is_tc = #{isTc,jdbcType=INTEGER},
+      <if test="tcywhpxxl != null" >
+        tcywhpxxl = #{tcywhpxxl,jdbcType=INTEGER},
+      </if>
+      gjjefssl = #{gjjefssl,jdbcType=INTEGER},
+      jsqtsxgsl = #{jsqtsxgsl,jdbcType=INTEGER},
+      cyzdxf = #{cyzdxf,jdbcType=INTEGER},
+      <if test="rfidCard != null" >
+        rfid_card = #{rfidCard,jdbcType=VARCHAR},
+      </if>
+      lspx = #{lspx,jdbcType=INTEGER},
+       yxdz = #{yxdz,jdbcType=INTEGER},
+      <if test="zyzfids != null" >
+        zyzfids = #{zyzfids,jdbcType=VARCHAR},
+      </if>
+      <if test="ggzyzfids != null" >
+        ggzyzfids = #{ggzyzfids,jdbcType=VARCHAR},
+      </if>
+      pxdt = #{pxdt,jdbcType=VARCHAR},
+      pxxt = #{pxxt,jdbcType=VARCHAR},
+      <if test="yyxgids != null" >
+        yyxgids = #{yyxgids,jdbcType=VARCHAR},
+      </if>
+      <if test="pxxtsm != null" >
+        pxxtsm = #{pxxtsm,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="yxe != null" >
+        yxe = #{yxe,jdbcType=INTEGER},
+      </if>
+        <if test="showCt != null" >
+          show_ct = #{showCt},
+      </if>
+      <if test="colorGate != null" >
+          color_gate = #{colorGate},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFile" >
+    update dg_item_file
+    set num = #{num,jdbcType=VARCHAR},
+      zjf = #{zjf,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      unit = #{unit,jdbcType=VARCHAR},
+      ppdl_id = #{ppdlId,jdbcType=INTEGER},
+      ppxl_id = #{ppxlId,jdbcType=INTEGER},
+      xxlx_id = #{xxlxId,jdbcType=INTEGER},
+      pxld = #{pxld,jdbcType=INTEGER},
+      jbiao = #{jbiao,jdbcType=INTEGER},
+      dyfz = #{dyfz,jdbcType=INTEGER},
+      yybf = #{yybf,jdbcType=INTEGER},
+      zxddsl = #{zxddsl,jdbcType=DOUBLE},
+      standard_price = #{standardPrice,jdbcType=DOUBLE},
+      cost_price = #{costPrice,jdbcType=DOUBLE},
+      ywmc = #{ywmc,jdbcType=VARCHAR},
+      qtmc = #{qtmc,jdbcType=VARCHAR},
+      gg = #{gg,jdbcType=VARCHAR},
+      sptm = #{sptm,jdbcType=VARCHAR},
+      sm = #{sm,jdbcType=VARCHAR},
+      bzzzsc = #{bzzzsc,jdbcType=INTEGER},
+      cs = #{cs,jdbcType=INTEGER},
+      tssjd_one = #{tssjdOne,jdbcType=INTEGER},
+      tssjd_two = #{tssjdTwo,jdbcType=INTEGER},
+      is_tc = #{isTc,jdbcType=INTEGER},
+      tcywhpxxl = #{tcywhpxxl,jdbcType=INTEGER},
+      gjjefssl = #{gjjefssl,jdbcType=INTEGER},
+      jsqtsxgsl = #{jsqtsxgsl,jdbcType=INTEGER},
+      cyzdxf = #{cyzdxf,jdbcType=INTEGER},
+      rfid_card = #{rfidCard,jdbcType=VARCHAR},
+      lspx = #{lspx,jdbcType=INTEGER},
+      yxdz = #{yxdz,jdbcType=INTEGER},
+      zyzfids = #{zyzfids,jdbcType=VARCHAR},
+      ggzyzfids = #{ggzyzfids,jdbcType=VARCHAR},
+      pxdt = #{pxdt,jdbcType=VARCHAR},
+      pxxt = #{pxxt,jdbcType=VARCHAR},
+      yyxgids = #{yyxgids,jdbcType=VARCHAR},
+      pxxtsm = #{pxxtsm,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      yxe = #{yxe,jdbcType=INTEGER},
+      show_ct = #{showCt,jdbcType=INTEGER},
+      color_gate = #{colorGate,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectDataByItemTypeId" parameterType="map" resultMap="BaseResultMap">
+	    select o.*,dift1.name as cname,dift2.name as bname from dg_item_file o
+	    	left join dg_item_file_rank difr ON difr.itemFileId = o.id
+            left join dg_item_file_type dift1 ON o.ppxl_id = dift1.id
+            left join dg_item_file_type dift2 ON o.ppdl_id = dift2.id
+	        where o.delFlag = 0
+	        and (difr.itemFileType = 1 or difr.itemFileType is null)
+	      <if test="id != null and id != 0">
+	        and o.ppxl_id in
+	        (select id from dg_item_file_type dt where dt.parent_id = #{id,jdbcType=INTEGER} or dt.id = #{id,jdbcType=INTEGER})
+	      </if>
+	    order by difr.rank asc
+  </select>
+
+  <select id="selectItemFileInTc" parameterType="map" resultMap="BaseResultMap">
+    select id as itemFileId,num,name,standard_price,unit,sm  from dg_item_file
+      where id != #{selectedTcId,jdbcType=INTEGER} and (is_tc != 1 or is_tc is null) and delFlag = '0'
+    <if test="id != 0">
+      and ppxl_id in
+      (select id from dg_item_file_type dt where dt.parent_id = #{id,jdbcType=INTEGER} or dt.id = #{id,jdbcType=INTEGER})
+    </if>
+    <if test="list != null">
+      and id not in
+      <foreach collection="list" close=")" item="notInIds" open="(" separator=",">
+        #{notInIds,jdbcType=INTEGER}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectItemFileInIds" parameterType="list" resultMap="BaseResultMap">
+    select id as itemFileId,num,name,standard_price,unit,sm from dg_item_file
+      where delFlag = '0'
+    <if test="list != null">
+      and id in
+      <foreach collection="list" separator="," open="(" close=")" item="id">
+        #{id,jdbcType=INTEGER}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="getItemFileYxInIds" parameterType="list" resultMap="BaseResultMap">
+    select id as itemFileId,num,name,unit,standard_price,sm from dg_item_file where delFlag = '0' and id in
+      <foreach collection="list" separator="," open="(" close=")" item="id">
+        #{id,jdbcType=INTEGER}
+      </foreach>
+  </select>
+
+  <select id="selectTcBaseInfo" parameterType="integer" resultType="DgItemFilePackage">
+    SELECT * from dg_item_file_package where item_file_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectTcBxInfo" parameterType="integer" resultType="map">
+    SELECT difpb.item_file_id as itemFileId,difpb.item_amount as count,difpb.item_price as standardPrice,difpb.item_amount_price as countXPrice,difpb.item_addPrice as pxjj,difpb.addPrice_num as sljj,dif.id,dif.name,dif.num from dg_item_file_package_bx difpb LEFT JOIN dg_item_file dif on difpb.item_file_id=dif.id where dif.delFlag = '0' and difpb.package_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectTcKxInfo" parameterType="integer" resultType="map">
+    SELECT difpk.item_file_id as itemFileId,difpk.item_amount as count,difpk.item_amount as count,difpk.item_addPrice as pxjj,difpk.addPrice_num as sljj,dif.name from dg_item_file_package_kx difpk LEFT JOIN dg_item_file dif on difpk.item_file_id=dif.id where dif.delFlag = '0' and difpk.package_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectTcSlxdInfo" parameterType="integer" resultType="map">
+    SELECT difps.item_file_type_id as itemFileId,difps.max_num as zdxdsl,dift.name,dift.num from dg_item_file_package_slxd difps LEFT JOIN dg_item_file_type dift on difps.item_file_type_id=dift.id where difps.package_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectTcThpxInfo" parameterType="integer" resultType="map">
+    SELECT difpt.bx_item_file_id as bxpxid,difpt.item_file_id as itemFileId,difpt.item_amout as count,difpt.item_replacePrice as thjj,difpt.addPrice_num as sljj,dif.name,dif.num from dg_item_file_package_th difpt LEFT JOIN dg_item_file dif on difpt.item_file_id=dif.id where dif.delFlag = '0' and  difpt.package_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectTcBaseInfoMap" parameterType="integer" resultType="map">
+    SELECT * from dg_item_file_package where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="deleteByIds" parameterType="list">
+    delete from dg_item_file
+    where id in
+    <foreach collection="list" separator="," open="(" item="id" close=")" >
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+
+  <select id="selectItemFileByTypeIdAndNotInIds" parameterType="map" resultMap="BaseResultMap">
+    select id as itemFileId,num,name,standard_price,unit,sm  from dg_item_file
+    <where>
+        delFlag = '0'
+      <if test="itemTypeId != 0">
+        and ppxl_id in
+        (select id from dg_item_file_type dt where dt.parent_id = #{itemTypeId,jdbcType=INTEGER} or dt.id = #{itemTypeId,jdbcType=INTEGER})
+      </if>
+      <if test="list != null">
+        and id not in
+        <foreach collection="list" close=")" item="notInIds" open="(" separator=",">
+          #{notInIds,jdbcType=INTEGER}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="getAllItemCooker"  resultMap="BaseResultMap" parameterType="java.util.Map">
+     select
+    <include refid="cook_Column_List" />
+    from dg_item_file a left  join sys_user b on a.cs = b.id
+    <where>
+        a.delFlag = '0'
+  	    <if test="name != null and name != ''">
+        		AND a.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND a.num  like CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' )
+        </if>
+         <if test="bId != null and bId != ''">
+        		AND a.ppdl_id  = #{bId,jdbcType=INTEGER}
+        </if>
+         <if test="sId != null and sId != ''">
+        		AND a.ppxl_id  = #{sId,jdbcType=INTEGER}
+        </if>
+     </where>
+     order by a.id desc 
+  </select>
+
+    <!-- 提供明细查询页码 -->
+    <select id="countItemFileSellDetailsListByPage" resultType="integer" parameterType="ItemFileSell">
+        select count(0) from (
+        select dosf.service_num, date_format(dosf.service_time,'%Y-%c-%d %h:%i:%s') as service_time ,dosf.service_type,dif.name,dif.unit,dif.num,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as pxdl,DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,docd.item_final_price,docd.item_file_number,docd.subtotal,dow.ow_num,
+        dif.is_tc,DG_FU_getPosName(dow.open_pos) as pos,DG_FU_getUserName(su.emp_code) as userName,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select id,clearing_time from dg_reception_clearing_water
+        <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+          select id,clearing_time from dg_reception_clearing_water_${suffix}
+        </foreach>
+        ) drcw
+        LEFT JOIN (select ow_num,open_pos,seat_id,clearing_water_id,id from dg_open_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,open_pos,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,ow_id,waiter_id,id from dg_ow_service_form
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,ow_id,waiter_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          ) dosf on dow.id = dosf.ow_id
+        LEFT JOIN sys_user su on dosf.waiter_id = su.id
+        LEFT JOIN (select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          ) docd on dosf.id = docd.ow_id
+        INNER JOIN dg_item_file dif on docd.item_file_id = dif.id
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+          <if test="itemFileType != null and itemFileType != ''">
+            and docd.is_tc = #{itemFileType,jdbcType=INTEGER}
+          </if>
+          <if test="bis != null and bis != ''">
+            and dow.open_bis = (select tbb.bis_name from t_b_bis tbb where id = #{bis,jdbcType=INTEGER})
+          </if>
+          <if test="itemFileName != null and itemFileName != ''">
+            and dif.name like concat('%',#{itemFileName},'%')
+          </if>
+          <if test="serviceType != null and serviceType != ''">
+            and dosf.service_type = #{serviceType,jdbcType=VARCHAR}
+          </if>
+        </where> ) tb
+    </select>
+    <!-- 提供明细分页查询 -->
+    <select id="selectItemFileSellDetailsListByPage" parameterType="ItemFileSell" resultType="ItemFileSell">
+    select * from (
+        select dosf.service_num, date_format(dosf.service_time,'%Y-%c-%d %h:%i:%s') as service_time ,dosf.service_type,dif.name,dif.unit,dif.num,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as pxdl,DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,docd.item_final_price,docd.item_file_number,docd.subtotal,dow.ow_num,
+        dif.is_tc,DG_FU_getPosName(dow.open_pos) as pos,DG_FU_getUserName(su.emp_code) as userName,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select id,clearing_time from dg_reception_clearing_water
+        <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+          select id,clearing_time from dg_reception_clearing_water_${suffix}
+        </foreach>
+        ) drcw
+        LEFT JOIN (select ow_num,open_pos,seat_id,clearing_water_id,id from dg_open_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,open_pos,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,ow_id,waiter_id,id from dg_ow_service_form
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,ow_id,waiter_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          ) dosf on dow.id = dosf.ow_id
+        LEFT JOIN sys_user su on dosf.waiter_id = su.id
+        LEFT JOIN (select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          ) docd on dosf.id = docd.ow_id
+        INNER JOIN dg_item_file dif on docd.item_file_id = dif.id
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+          <if test="itemFileType != null and itemFileType != ''">
+            and docd.is_tc = #{itemFileType,jdbcType=INTEGER}
+          </if>
+          <if test="bis != null and bis != ''">
+            and dow.open_bis = (select tbb.bis_name from t_b_bis tbb where id = #{bis,jdbcType=INTEGER})
+          </if>
+          <if test="itemFileName != null and itemFileName != ''">
+            and dif.name like concat('%',#{itemFileName},'%')
+          </if>
+          <if test="serviceType != null and serviceType != ''">
+            and dosf.service_type = #{serviceType,jdbcType=VARCHAR}
+          </if>
+        </where> ) tb
+        limit #{startRow},#{endRow}	
+    </select>
+    <!-- 提供明细导出查询 -->
+    <select id="selectItemFileSellDetails" parameterType="map" resultType="map">
+    	select * from (
+        select dosf.service_num, date_format(dosf.service_time,'%Y-%c-%d %h:%i:%s') as service_time ,dosf.service_type,dif.name,dif.unit,dif.num,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as pxdl,DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,docd.item_final_price,docd.item_file_number,docd.subtotal,dow.ow_num,
+        dif.is_tc,DG_FU_getPosName(dow.open_pos) as pos,DG_FU_getUserName(su.emp_code) as userName,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select id,clearing_time from dg_reception_clearing_water
+        <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+          select id,clearing_time from dg_reception_clearing_water_${suffix}
+        </foreach>
+        ) drcw
+        LEFT JOIN (select ow_num,open_pos,seat_id,clearing_water_id,id from dg_open_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,open_pos,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,ow_id,waiter_id,id from dg_ow_service_form
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,ow_id,waiter_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          ) dosf on dow.id = dosf.ow_id
+        LEFT JOIN sys_user su on dosf.waiter_id = su.id
+        LEFT JOIN (select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          ) docd on dosf.id = docd.ow_id
+        INNER JOIN dg_item_file dif on docd.item_file_id = dif.id
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+          <if test="itemFileType != null and itemFileType != ''">
+            and docd.is_tc = #{itemFileType,jdbcType=INTEGER}
+          </if>
+          <if test="bis != null and bis != ''">
+            and dow.open_bis = (select tbb.bis_name from t_b_bis tbb where id = #{bis,jdbcType=INTEGER})
+          </if>
+          <if test="itemFileName != null and itemFileName != ''">
+            and dif.name like concat('%',#{itemFileName},'%')
+          </if>
+          <if test="serviceType != null and serviceType != ''">
+            and dosf.service_type = #{serviceType,jdbcType=VARCHAR}
+          </if>
+        </where> ) tb
+    </select>
+	
+	<!-- 提供汇总查询页码 -->
+    <select id="countItemFileSellSummaryListByPage" resultType="integer" parameterType="ItemFileSell">
+    select count(0) from (
+        select A.item_final_price,A.num,A.name,A.unit,A.pxdl,A.pxxl,A.is_tc,sum(cast(A.subtotal as DECIMAL(18,2))) as subtotal,sum(cast(A.item_file_number as DECIMAL(18,2)))  as number from (
+        select dosf.service_num, date_format(dosf.service_time,'%Y-%c-%d %h:%i:%s') as service_time ,dosf.service_type,dif.name,dif.unit,dif.num,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as pxdl,DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,docd.item_final_price,docd.item_file_number,docd.subtotal,dow.ow_num,
+        dif.is_tc,DG_FU_getUserName(dosf.waiter_id) as userName,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select id,clearing_time from dg_reception_clearing_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select id,clearing_time from dg_reception_clearing_water_${suffix}
+          </foreach>
+          ) drcw
+        left join (select ow_num,seat_id,clearing_water_id,id from dg_open_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          ) dosf on dosf.ow_id = dow.id
+        left join (select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          ) docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+          <if test="itemFileType != null and itemFileType != ''">
+            and docd.is_tc = #{itemFileType,jdbcType=INTEGER}
+          </if>
+          <if test="bis != null and bis != ''">
+            and dow.open_bis = (select tbb.bis_name from t_b_bis tbb where id = #{bis,jdbcType=INTEGER})
+          </if>
+          <if test="itemFileName != null and itemFileName != ''">
+            and dif.name like concat('%',#{itemFileName},'%')
+          </if>
+          <if test="serviceType != null and serviceType != ''">
+            and dosf.service_type = #{serviceType,jdbcType=VARCHAR}
+          </if>
+        </where>
+        ) A
+        group by A.num,A.name,A.unit,A.pxdl,A.pxxl,A.is_tc,A.item_final_price HAVING A.num is not NULL
+     	) tb
+    </select>
+	<!-- 提供汇总分页查询 -->
+	<select id="selectItemFileSellSummaryListByPage" parameterType="ItemFileSell" resultType="ItemFileSell">
+	select * from (
+        select A.item_final_price,A.num,A.name,A.unit,A.pxdl,A.pxxl,A.is_tc,sum(cast(A.subtotal as DECIMAL(18,2))) as subtotal,sum(cast(A.item_file_number as DECIMAL(18,2)))  as number from (
+        select dosf.service_num, date_format(dosf.service_time,'%Y-%c-%d %h:%i:%s') as service_time ,dosf.service_type,dif.name,dif.unit,dif.num,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as pxdl,DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,docd.item_final_price,docd.item_file_number,docd.subtotal,dow.ow_num,
+        dif.is_tc,DG_FU_getUserName(dosf.waiter_id) as userName,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select id,clearing_time from dg_reception_clearing_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select id,clearing_time from dg_reception_clearing_water_${suffix}
+          </foreach>
+          ) drcw
+        left join (select ow_num,seat_id,clearing_water_id,id from dg_open_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          ) dosf on dosf.ow_id = dow.id
+        left join (select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          ) docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+          <if test="itemFileType != null and itemFileType != ''">
+            and docd.is_tc = #{itemFileType,jdbcType=INTEGER}
+          </if>
+          <if test="bis != null and bis != ''">
+            and dow.open_bis = (select tbb.bis_name from t_b_bis tbb where id = #{bis,jdbcType=INTEGER})
+          </if>
+          <if test="itemFileName != null and itemFileName != ''">
+            and dif.name like concat('%',#{itemFileName},'%')
+          </if>
+          <if test="serviceType != null and serviceType != ''">
+            and dosf.service_type = #{serviceType,jdbcType=VARCHAR}
+          </if>
+        </where>
+        ) A
+        group by A.num,A.name,A.unit,A.pxdl,A.pxxl,A.is_tc,A.item_final_price HAVING A.num is not NULL
+        ) tb
+        limit #{startRow},#{endRow}	
+    </select>
+    <!-- 提供日营业报表小类销售查询-->
+	<select id="selectItemFileSellOpenDaySummaryList" parameterType="Map" resultType="Map">
+	select * from (select 
+        DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,sum(cast(docd.item_file_number*docd.item_pay_money as DECIMAL(18,2))) as subtotal
+        from (select id,clearing_time from dg_reception_clearing_water
+         <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select id,clearing_time from dg_reception_clearing_water_${suffix}
+          </foreach>
+          </if>
+          ) drcw
+        left join (select ow_num,seat_id,clearing_water_id,id from dg_open_water
+         <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          </if>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form
+        <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          </if>
+          ) dosf on dosf.ow_id = dow.id
+        left join (select item_pay_money,item_file_number,ow_id,item_file_id from dg_ow_consumer_details
+        <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          </if>
+          ) docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id 
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+        </where>
+        group by dif.ppxl_id
+        ) tb
+    </select>
+	<!-- 提供汇总导出查询 -->
+    <select id="selectItemFileSellSummary" parameterType="map" resultType="java.util.Map">
+        select A.item_final_price,A.num,A.name,A.unit,A.pxdl,A.pxxl,A.is_tc,sum(cast(A.subtotal as DECIMAL(18,2))) as subtotal,sum(cast(A.item_file_number as DECIMAL(18,2)))  as number from (
+        select dosf.service_num, date_format(dosf.service_time,'%Y-%c-%d %h:%i:%s') as service_time ,dosf.service_type,dif.name,dif.unit,dif.num,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as pxdl,DG_FU_getItemSmallTypeName(dif.ppxl_id) as pxxl,docd.item_final_price,docd.item_file_number,docd.subtotal,dow.ow_num,
+        dif.is_tc,DG_FU_getUserName(dosf.waiter_id) as userName,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select id,clearing_time from dg_reception_clearing_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select id,clearing_time from dg_reception_clearing_water_${suffix}
+          </foreach>
+          ) drcw
+        left join (select ow_num,seat_id,clearing_water_id,id from dg_open_water
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          ) dosf on dosf.ow_id = dow.id
+        left join (select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,subtotal,ow_id,item_file_id from dg_ow_consumer_details_${suffix}
+          </foreach>
+          ) docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+          <if test="itemFileType != null and itemFileType != ''">
+            and docd.is_tc = #{itemFileType,jdbcType=INTEGER}
+          </if>
+          <if test="bis != null and bis != ''">
+            and dow.open_bis = (select tbb.bis_name from t_b_bis tbb where id = #{bis,jdbcType=INTEGER})
+          </if>
+          <if test="itemFileName != null and itemFileName != ''">
+            and dif.name like concat('%',#{itemFileName},'%')
+          </if>
+          <if test="serviceType != null and serviceType != ''">
+            and dosf.service_type = #{serviceType,jdbcType=VARCHAR}
+          </if>
+        </where>
+        ) A
+        group by A.num,A.name,A.unit,A.pxdl,A.pxxl,A.is_tc,A.item_final_price HAVING A.num is not NULL
+    </select>
+    
+    
+    <!-- 提供日营业报表品项退单合计查询-->
+	<select id="selectItemFileSellOpenDaybackSubotal" parameterType="Map" resultType="Map">
+	  select sum(cast(-docd.subtotal as DECIMAL(18,2))) as subtotal
+        from (select id,clearing_time from dg_reception_clearing_water
+         <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select id,clearing_time from dg_reception_clearing_water_${suffix}
+          </foreach>
+          </if>
+          ) drcw
+        left join (select ow_num,seat_id,clearing_water_id,id from dg_open_water
+         <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select ow_num,seat_id,clearing_water_id,id from dg_open_water_${suffix}
+          </foreach>
+          </if>
+          ) dow on drcw.id = dow.clearing_water_id
+        left join (select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form
+        <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select service_num,service_time,service_type,waiter_id,ow_id,id from dg_ow_service_form_${suffix}
+          </foreach>
+          </if>
+          ) dosf on dosf.ow_id = dow.id
+        left join (select item_pay_money,item_file_number,ow_id,item_file_id,subtotal from dg_ow_consumer_details where notes = '4'
+        <if test="tableSuffixList != null and tableSuffixList.size() >0">
+          <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+            select item_final_price,item_file_number,ow_id,item_file_id,subtotal from dg_ow_consumer_details_${suffix}  where notes = '4'
+          </foreach>
+          </if>
+          ) docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id 
+        <where>
+          dif.delFlag = '0'
+          <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+          </if>
+          <if test="endTime != null and endTime != ''">
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+          </if>
+        </where>
+    </select>
+    
+
+    <select id="selectAllCook" resultType="com.yqsh.diningsys.web.model.SysUser">
+        select * from sys_user where emp_duties = '008'
+    </select>
+
+    <select id="selectDefaultDiscount" parameterType="integer"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount">
+        select * from dg_item_type_discount where dg_id = #{ppxlId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 批量修改-->
+  <update id="updateCsList" parameterType="java.util.List">
+  	 <foreach close="" collection="list" index="index" item="item" open="" separator=";">
+		update dg_item_file
+	    <set>
+	      <if test="item.cs != null" >
+	        cs = #{item.cs,jdbcType=INTEGER},
+	      </if>
+	    </set>
+	    where id = #{item.id,jdbcType=INTEGER}
+	 </foreach>
+  </update>
+
+   <select id="getItemByTableOrg"  resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="table_Column_List" />
+    from dg_item_file a left join dg_item_file_type b on a.ppdl_id = b.id
+    left join dg_item_file_type c on a.ppxl_id = c.id 
+    where a.delFlag = '0' and (a.delFlag is null or a.delFlag not in(1))
+    	and (b.del_flag is null or b.del_flag not in(1))  
+    	and (c.del_flag is null or c.del_flag not in(1))  
+    	and a.show_ct = 1
+    <if test="num != null and num != ''" >
+	     and a.num = #{num,jdbcType=VARCHAR} 
+	</if>
+    order by a.id desc 
+  </select>
+  
+  <select id="selectByPrimaryKeyContainColor" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="color_Column_List" />
+    from dg_item_file a left join dg_item_file b on (a.color_gate = b.color_gate and b.show_ct = 1)
+    where a.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="searchItemFile" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    <if test="searchFlag == 1">
+      select dif.* from dg_item_file dif left join dg_item_file_type dift on dif.ppxl_id = dift.id
+      where dif.delFlag = '0'
+      <if test="searchText != null and searchText != ''">
+        and (dif.name like concat('%',#{searchText},'%')
+        or dif.num like concat('%',#{searchText},'%')
+        or dif.zjf like concat('%',#{searchText},'%'))
+      </if>
+      ORDER BY dif.ppdl_id, dif.ppxl_id, dif.num
+    </if>
+    <if test="searchFlag == 2 or searchFlag == 3">
+      select * from dg_item_file  where delFlag = '0'
+      <if test="typeId != null and typeId != 0">
+        and ppxl_id in
+        (select id from dg_item_file_type dt where dt.parent_id = #{typeId,jdbcType=INTEGER} or dt.id = #{typeId,jdbcType=INTEGER})
+      </if>
+      <if test="searchText != null and searchText != ''">
+        and (name like concat('%',#{searchText},'%')
+        or num like concat('%',#{searchText},'%')
+        or zjf like concat('%',#{searchText},'%'))
+      </if>
+      ORDER BY ppdl_id,ppxl_id,num
+    </if>
+  </select>
+
+  <select id="selectItemFileNotInIds" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select id,num,name,standard_price,unit,sm from dg_item_file dif where dif.delFlag = 0
+    <if test="list != null and list.size > 0">
+      and dif.id not IN
+      <foreach collection="list" close=")" item="item" open="(" separator=",">
+        #{item}
+      </foreach>
+    </if>
+    <if test="type == 1">
+        and dif.ppdl_id = #{parentId}
+    </if>
+    <if test="type == 2">
+        and dif.ppxl_id = #{parentId}
+    </if>
+  </select>
+
+  <select id="selectItemFileInIdsTicket" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select id,num,name,standard_price,unit,sm from dg_item_file dif where dif.delFlag = 0
+    <if test="list != null and list.size() > 0">
+      and dif.id IN
+      <foreach collection="list" close=")" item="item" open="(" separator=",">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+    <!-- 品项管理 start -->
+    <select id="getItemFileRankCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM dg_item_file_rank 
+        where itemFileType = 1
+    </select>
+    <select id="getItemFileRankList" resultType="DgItemFile" parameterType="java.lang.Integer">
+        SELECT o.*,difr.rank as rank
+        FROM dg_item_file o
+        LEFT JOIN dg_item_file_rank difr ON difr.itemFileId = o.id
+        LEFT JOIN dg_item_file_type dift ON dift.id = o.ppxl_id
+        WHERE o.delFlag = 0
+        AND (difr.itemFileType = 1 OR difr.itemFileType is null)
+        <if test="ppxlId != null">
+	        and dift.id = #{ppxlId,jdbcType=INTEGER}
+	    </if>
+        ORDER BY o.ppxl_id,difr.rank ASC
+    </select>
+    <select id="getItemFileNotRankList" resultType="DgItemFile">
+        select * from dg_item_file where id not in 
+        (select itemFileId from dg_item_file_rank where itemFileType = 1 ) 
+        and delFlag = 0
+    </select>
+    <select id="getItemFileLargeRankByPpxlId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+     	SELECT max(difr.rank) rank
+        FROM dg_item_file_rank difr
+        left JOIN  dg_item_file o
+		ON difr.itemFileId = o.id
+		where difr.itemFileType = 1
+		and o.ppxl_id = #{xlId,jdbcType=INTEGER}
+    </select>
+    <select id="getItemFileSmallRankByPpxlId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+     	SELECT min(difr.rank) rank
+        FROM dg_item_file_rank difr
+        left JOIN  dg_item_file o
+		ON difr.itemFileId = o.id
+		where difr.itemFileType = 1
+		and o.ppxl_id = #{xlId,jdbcType=INTEGER}
+    </select>
+    <update id="updateItemFileRankIncreaseByRank" parameterType="java.lang.Integer">
+        update dg_item_file_rank set rank = rank + 1 where rank <![CDATA[>]]> #{largeRank,jdbcType=INTEGER} and itemFileType = 1
+    </update>
+    <update id="updateItemFileRankIncreaseByRankAndPpxlId" parameterType="map">
+    	update dg_item_file_rank difr 
+		inner join dg_item_file dif
+		on difr.itemFileId = dif.id
+		set rank = rank + 1 
+		where rank <![CDATA[<]]> #{checkRank,jdbcType=INTEGER} 
+		and itemFileType = 1
+		and dif.ppxl_id = #{xlId,jdbcType=INTEGER}
+    </update>
+    <select id="getItemFileRankByItemFileId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT rank
+        FROM dg_item_file_rank 
+        WHERE itemFileId = #{itemFileId,jdbcType=INTEGER}
+    </select>
+    <!-- 初始化品项排序表 -->
+    <select id="selItemFileRank" parameterType="map" resultType="map">
+        SELECT * FROM dg_item_file_rank where itemFileId = #{id} and itemFileType = 1
+    </select>
+    <insert id="addItemFileRank" parameterType="map">
+        insert into dg_item_file_rank(
+        itemFileId,
+        itemFileType,
+        rank
+        ) values (
+        #{id},
+        1,
+        #{rank}
+        )
+    </insert>
+    
+    
+    <update id="updateItemFileRankMove" parameterType="map">
+        update dg_item_file_rank set rank = #{rank,jdbcType=INTEGER} where itemFileId = #{id,jdbcType=INTEGER} and itemFileType = 1
+    </update>
+    
+    
+    
+    
+    <!-- 品项排序 上移 -->
+    <update id="updateItemFileRankMoveUp" parameterType="java.lang.Integer">
+        update dg_item_file_rank set rank = rank-1 where itemFileId = #{id,jdbcType=INTEGER} and itemFileType = 1
+    </update>
+    <!-- 品项排序 下移 -->
+    <update id="updateItemFileRankMoveDown" parameterType="java.lang.Integer">
+        update dg_item_file_rank set rank = rank+1 where itemFileId = #{id,jdbcType=INTEGER} and itemFileType = 1
+    </update>
+    <!-- 品项排序 置顶-->
+    <select id="selectItemFileRankMoveTopper" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select id from dg_item_file_rank where rank <![CDATA[<]]> (select rank from dg_item_file_rank where itemFileId = #{id,jdbcType=INTEGER} and itemFileType = 1) and itemFileType = 1
+    </select>
+    <update id="updateItemFileRankMoveTopper" parameterType="java.util.List" >
+        update dg_item_file_rank set rank = rank+1 where id in
+        <foreach item="ids" index="index" collection="list" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+        and itemFileType = 1
+    </update>
+    <!-- 品项信息-排序移动 -->
+    <update id="updateItemFileRank" parameterType="map">
+        update dg_item_file_rank o set o.rank = #{rank} where o.itemFileId = #{id} and itemFileType = 1
+    </update>
+    <!-- 品项排序管理  end -->
+
+</mapper>

@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysUserMapper" >
+    <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysUser" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="state" property="state" jdbcType="VARCHAR" />
+        <result column="emp_code" property="empCode" jdbcType="VARCHAR" />
+        <result column="emp_organization" property="empOrganization" jdbcType="VARCHAR" />
+        <result column="emp_department" property="empDepartment" jdbcType="VARCHAR" />
+        <result column="emp_duties" property="empDuties" jdbcType="VARCHAR" />
+        <result column="emp_dob" property="empDob" jdbcType="TIMESTAMP" />
+        <result column="emp_cardno" property="empCardno" jdbcType="VARCHAR" />
+        <result column="emp_sex" property="empSex" jdbcType="VARCHAR" />
+        <result column="is_marry" property="isMarry" jdbcType="VARCHAR" />
+        <result column="emp_cardid" property="empCardid" jdbcType="VARCHAR" />
+        <result column="sqh_no1" property="sqhNo1" jdbcType="VARCHAR" />
+        <result column="sqh_no2" property="sqhNo2" jdbcType="VARCHAR" />
+        <result column="is_orguser_flag" property="isOrguserFlag" jdbcType="VARCHAR" />
+        <result column="is_manager_flag" property="isManagerFlag" jdbcType="VARCHAR" />
+        <result column="is_start_flag" property="isStartFlag" jdbcType="VARCHAR" />
+        <result column="natives" property="natives" jdbcType="VARCHAR" />
+        <result column="place" property="place" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="height" property="height" jdbcType="VARCHAR" />
+        <result column="nation" property="nation" jdbcType="VARCHAR" />
+        <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="photo" property="photo" jdbcType="VARCHAR" />
+        <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="emp_name" property="empName" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, password, state, emp_code, emp_name ,
+        emp_organization, emp_department,
+        emp_duties, emp_dob, emp_cardno, emp_sex, is_marry, emp_cardid, sqh_no1, sqh_no2, is_orguser_flag,
+        is_manager_flag, is_start_flag, natives, place, phone, email, height, nation, mobile,
+        address, photo, is_del, create_time
+    </sql>
+    <sql id="Base_Column_List2" >
+        o.id, o.password, o.state, o.emp_code, o.emp_name ,
+        a.dep_name AS "empDepartment",b.org_name AS "empOrganization",c.cName AS "empDuties",
+        o.emp_dob, o.emp_cardno, o.emp_sex, o.is_marry, o.emp_cardid, o.sqh_no1, o.sqh_no2, o.is_orguser_flag,
+        o.is_manager_flag, o.is_start_flag, o.natives, o.place, o.phone, o.email, o.height, c.cName AS nation, o.mobile,
+        o.address, o.photo, o.is_del, o.create_time
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from sys_user 
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from sys_user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <select id="getLastEmpCode" parameterType="SysUser" resultType="SysUser">
+		select * from sys_user where emp_code &lt;&gt; 'admin' order by emp_code desc limit 0,1
+	</select>  
+    <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysUser" >
+        insert into sys_user (id, password,
+        state, emp_code, emp_organization,
+        emp_department, emp_duties, emp_dob,
+        emp_cardno, emp_sex, is_marry,
+        emp_cardid, sqh_no1, sqh_no2,
+        is_orguser_flag, is_manager_flag, is_start_flag,
+        natives, place, phone,
+        email, height, nation,
+        mobile, address, photo,
+        is_del, create_time, emp_name
+        )
+        values (#{id,jdbcType=INTEGER}, '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',
+        #{state,jdbcType=VARCHAR}, #{empCode,jdbcType=VARCHAR}, #{empOrganization,jdbcType=INTEGER},
+        #{empDepartment,jdbcType=INTEGER}, #{empDuties,jdbcType=VARCHAR}, #{empDob,jdbcType=DATE},
+        #{empCardno,jdbcType=VARCHAR}, #{empSex,jdbcType=VARCHAR}, #{isMarry,jdbcType=VARCHAR},
+        #{empCardid,jdbcType=VARCHAR}, #{sqhNo1,jdbcType=VARCHAR}, #{sqhNo2,jdbcType=VARCHAR},
+        #{isOrguserFlag,jdbcType=VARCHAR}, #{isManagerFlag,jdbcType=VARCHAR}, #{isStartFlag,jdbcType=VARCHAR},
+        #{natives,jdbcType=VARCHAR}, #{place,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+        #{email,jdbcType=VARCHAR}, #{height,jdbcType=VARCHAR}, #{nation,jdbcType=VARCHAR},
+        #{mobile,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR},
+        #{isDel,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{empName,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.SysUser" >
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="password != null" >
+                password,
+            </if>
+            <if test="state != null" >
+                state,
+            </if>
+            <if test="empCode != null" >
+                emp_code,
+            </if>
+            <if test="empOrganization != null" >
+                emp_organization,
+            </if>
+            <if test="empDepartment != null" >
+                emp_department,
+            </if>
+            <if test="empDuties != null" >
+                emp_duties,
+            </if>
+            <if test="empDob != null" >
+                emp_dob,
+            </if>
+            <if test="empCardno != null" >
+                emp_cardno,
+            </if>
+            <if test="empSex != null" >
+                emp_sex,
+            </if>
+            <if test="isMarry != null" >
+                is_marry,
+            </if>
+            <if test="empCardid != null" >
+                emp_cardid,
+            </if>
+            <if test="sqhNo1 != null" >
+                sqh_no1,
+            </if>
+            <if test="sqhNo2 != null" >
+                sqh_no2,
+            </if>
+            <if test="isOrguserFlag != null" >
+                is_orguser_flag,
+            </if>
+            <if test="isManagerFlag != null" >
+                is_manager_flag,
+            </if>
+            <if test="isStartFlag != null" >
+                is_start_flag,
+            </if>
+            <if test="natives != null" >
+                natives,
+            </if>
+            <if test="place != null" >
+                place,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="email != null" >
+                email,
+            </if>
+            <if test="height != null" >
+                height,
+            </if>
+            <if test="nation != null" >
+                nation,
+            </if>
+            <if test="mobile != null" >
+                mobile,
+            </if>
+            <if test="address != null" >
+                address,
+            </if>
+            <if test="photo != null" >
+                photo,
+            </if>
+            <if test="isDel != null" >
+                is_del,
+            </if>
+            <if test="createTime != null" >
+                create_time,
+            </if>
+            <if test="empName != null" >
+                emp_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="password != null" >
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null" >
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="empCode != null" >
+                #{empCode,jdbcType=VARCHAR},
+            </if>
+            <if test="empOrganization != null" >
+                #{empOrganization,jdbcType=INTEGER},
+            </if>
+            <if test="empDepartment != null" >
+                #{empDepartment,jdbcType=INTEGER},
+            </if>
+            <if test="empDuties != null" >
+                #{empDuties,jdbcType=VARCHAR},
+            </if>
+            <if test="empDob != null" >
+                #{empDob,jdbcType=DATE},
+            </if>
+            <if test="empCardno != null" >
+                #{empCardno,jdbcType=VARCHAR},
+            </if>
+            <if test="empSex != null" >
+                #{empSex,jdbcType=VARCHAR},
+            </if>
+            <if test="isMarry != null" >
+                #{isMarry,jdbcType=VARCHAR},
+            </if>
+            <if test="empCardid != null" >
+                #{empCardid,jdbcType=VARCHAR},
+            </if>
+            <if test="sqhNo1 != null" >
+                #{sqhNo1,jdbcType=VARCHAR},
+            </if>
+            <if test="sqhNo2 != null" >
+                #{sqhNo2,jdbcType=VARCHAR},
+            </if>
+            <if test="isOrguserFlag != null" >
+                #{isOrguserFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="isManagerFlag != null" >
+                #{isManagerFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="isStartFlag != null" >
+                #{isStartFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="natives != null" >
+                #{natives,jdbcType=VARCHAR},
+            </if>
+            <if test="place != null" >
+                #{place,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null" >
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="height != null" >
+                #{height,jdbcType=VARCHAR},
+            </if>
+            <if test="nation != null" >
+                #{nation,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null" >
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="photo != null" >
+                #{photo,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null" >
+                #{isDel,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="empName != null" >
+                #{empName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysUser" >
+        update sys_user
+        <set >
+            <if test="password != null" >
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="empCode != null" >
+                emp_code = #{empCode,jdbcType=VARCHAR},
+            </if>
+            <if test="empOrganization != null" >
+                emp_organization = #{empOrganization,jdbcType=INTEGER},
+            </if>
+            <if test="empDepartment != null" >
+                emp_department = #{empDepartment,jdbcType=INTEGER},
+            </if>
+            <if test="empDuties != null" >
+                emp_duties = #{empDuties,jdbcType=VARCHAR},
+            </if>
+            <if test="empDob != null" >
+                emp_dob = #{empDob,jdbcType=DATE},
+            </if>
+            <if test="empCardno != null" >
+                emp_cardno = #{empCardno,jdbcType=VARCHAR},
+            </if>
+            <if test="empSex != null" >
+                emp_sex = #{empSex,jdbcType=VARCHAR},
+            </if>
+            <if test="isMarry != null" >
+                is_marry = #{isMarry,jdbcType=VARCHAR},
+            </if>
+            <if test="empCardid != null" >
+                emp_cardid = #{empCardid,jdbcType=VARCHAR},
+            </if>
+            <if test="sqhNo1 != null" >
+                sqh_no1 = #{sqhNo1,jdbcType=VARCHAR},
+            </if>
+            <if test="sqhNo2 != null" >
+                sqh_no2 = #{sqhNo2,jdbcType=VARCHAR},
+            </if>
+            <if test="isOrguserFlag != null" >
+                is_orguser_flag = #{isOrguserFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="isManagerFlag != null" >
+                is_manager_flag = #{isManagerFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="isStartFlag != null" >
+                is_start_flag = #{isStartFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="natives != null" >
+                natives = #{natives,jdbcType=VARCHAR},
+            </if>
+            <if test="place != null" >
+                place = #{place,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null" >
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="height != null" >
+                height = #{height,jdbcType=VARCHAR},
+            </if>
+            <if test="nation != null" >
+                nation = #{nation,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null" >
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null" >
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="photo != null" >
+                photo = #{photo,jdbcType=VARCHAR},
+            </if>
+            <if test="isDel != null" >
+                is_del = #{isDel,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null" >
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="empName != null" >
+                emp_name = #{empName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysUser" >
+        update sys_user
+        password = #{password,jdbcType=VARCHAR},
+        state = #{state,jdbcType=VARCHAR},
+        emp_code = #{empCode,jdbcType=VARCHAR},
+        emp_organization = #{empOrganization,jdbcType=INTEGER},
+        emp_department = #{empDepartment,jdbcType=INTEGER},
+        emp_duties = #{empDuties,jdbcType=VARCHAR},
+        emp_dob = #{empDob,jdbcType=DATE},
+        emp_cardno = #{empCardno,jdbcType=VARCHAR},
+        emp_sex = #{empSex,jdbcType=VARCHAR},
+        is_marry = #{isMarry,jdbcType=VARCHAR},
+        emp_cardid = #{empCardid,jdbcType=VARCHAR},
+        sqh_no1 = #{sqhNo1,jdbcType=VARCHAR},
+        sqh_no2 = #{sqhNo2,jdbcType=VARCHAR},
+        is_orguser_flag = #{isOrguserFlag,jdbcType=VARCHAR},
+        is_manager_flag = #{isManagerFlag,jdbcType=VARCHAR},
+        is_start_flag = #{isStartFlag,jdbcType=VARCHAR},
+        natives = #{natives,jdbcType=VARCHAR},
+        place = #{place,jdbcType=VARCHAR},
+        phone = #{phone,jdbcType=VARCHAR},
+        email = #{email,jdbcType=VARCHAR},
+        height = #{height,jdbcType=VARCHAR},
+        nation = #{nation,jdbcType=VARCHAR},
+        mobile = #{mobile,jdbcType=VARCHAR},
+        address = #{address,jdbcType=VARCHAR},
+        photo = #{photo,jdbcType=VARCHAR},
+        is_del = #{isDel,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        emp_name = #{empName,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+  <!-- 用户登录验证查询 -->
+  <select id="authentication" resultMap="BaseResultMap" parameterType="com.yqsh.diningsys.web.model.SysUser">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where emp_code = #{empCode,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from sys_user
+    where emp_code = #{empCode,jdbcType=VARCHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKeys" parameterType="list">
+    DELETE from sys_user where id in
+    <foreach collection="list" open="(" close=")" separator="," item="id">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+  <update id="modifyUserPassword" parameterType="list">
+    UPDATE sys_user set password = '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92' where id in
+    <foreach collection="list" open="(" close=")" separator="," item="id">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+  <update id="modifyUserState" parameterType="map">
+    UPDATE sys_user set state = #{state,jdbcType=VARCHAR} where id in
+    <foreach collection="ids" open="(" close=")" separator="," item="id">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+  <insert id="insertUserRole" parameterType="map">
+    insert into sys_user_role(user_id,role_id) VALUES ${params}
+  </insert>
+
+  <insert id="insertOneUserRole" parameterType="map">
+    insert into sys_user_role(user_id,role_id) VALUES (#{userId,jdbcType=INTEGER},#{roleId,jdbcType=INTEGER})
+  </insert>
+
+  <delete id="deleteUsderRoleByUserId" parameterType="integer">
+    DELETE from sys_user_role where user_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteUsderRoleByUserIds" parameterType="list">
+    DELETE from sys_user_role where user_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+  <select id="selectByUsernameWithOutSelf" resultType="SysUser" parameterType="map">
+   select * from sys_user u where  u.id != #{loginId,jdbcType=INTEGER} and u.emp_code = #{name,jdbcType=VARCHAR}
+  </select>
+
+    <select id="getListByPage" resultType="SysUser" parameterType="SysUser">
+        select 
+        <include refid="Base_Column_List2" />
+        from sys_user o
+        left join t_b_dep a on a.id = o.emp_department
+        left join t_b_org b on b.id = o.emp_organization
+        left join (select * from dg_public_code0 dpc0 where cParent = 16) c on c.cCode = o.emp_duties
+        <where>
+            <if test="empCode != null and empCode != ''">
+                and o.emp_code like '%${empCode}%'
+            </if>
+            <if test="empName != null and empName != ''">
+                and o.emp_name like '%${empName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{startRow},#{endRow}
+  </select>
+
+    <!-- 提供查询页码 -->
+    <select id="countListByPage" resultType="integer" parameterType="SysUser">
+        SELECT
+        count(0)
+        from sys_user o
+        <where>
+            <if test="empCode != null and empCode != ''">
+                and o.emp_code like '%${empCode}%'
+            </if>
+            <if test="empName != null and empName != ''">
+                and o.emp_name like '%${empName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+    </select>
+
+    <!-- 员工信息回收站 -->
+    <update id="deleteTrash" parameterType="SysUser">
+        update sys_user set is_del = '1' where id in
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+
+    <select id="checkHavaYxeEmp" resultType="java.lang.Integer" parameterType="TbEmp">
+	    select count(*) from  sys_user where id in 
+	    <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	        #{ids}  
+	    </foreach> 
+	    and emp_code = 'yxe_water'
+    </select>
+  
+    <!-- 还原回收站员工信息 -->
+    <update id="replyEmp" parameterType="SysUser">
+        update sys_user set is_del = '0' where id in
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </update>
+
+    <!-- 删除员工信息 -->
+    <delete id="delete" parameterType="SysUser">
+        delete from sys_user where id in
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <!-- 获取所有员工信息 -->
+    <select id="getAllList" parameterType="SysUser" resultType="SysUser">
+        select 
+        <include refid="Base_Column_List2" />
+        from sys_user o
+        left join t_b_dep a on a.id = o.emp_department
+        left join t_b_org b on b.id = o.emp_organization
+        left join (select * from dg_public_code0 dpc0 where cParent = 16) c on c.cCode = o.emp_duties
+        <where>
+            <if test="empCode != null and empCode != ''">
+                and o.emp_code like '%${empCode}%'
+            </if>
+            <if test="empName != null and empName != ''">
+                and o.emp_name like '%${empName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+    </select>
+    
+    <!-- 获取所有厨师信息 -->
+    <select id="getAllCooker" resultType="SysUser">
+        select 
+        <include refid="Base_Column_List2" />
+        from sys_user o
+        left join t_b_dep a on a.id = o.emp_department
+        left join t_b_org b on b.id = o.emp_organization
+        left join (select * from dg_public_code0 dpc0 where cParent = 16) c on c.cCode = o.emp_duties
+		where (o.emp_duties = '007' or o.emp_duties = '008') and o.is_del = '0'
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+    </select>
+    
+
+
+    <select id="selectUsersByRoleId" parameterType="java.lang.Integer" resultType="SysUser">
+        select a.*,b.selected from sys_user a left join
+        (select sur.*,'selected' selected from sys_user_role sur where sur.role_id = #{id,jdbcType=INTEGER}) b
+        on a.id = b.user_id;
+    </select>
+
+    <select id="selectAllUser" resultType="SysUser">
+        select * from sys_user
+    </select>
+
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        DELETE from sys_user where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="getAllPostData" resultType="com.yqsh.diningsys.web.model.archive.DgPublicCode0">
+        select * from dg_public_code0 where cParent = 16 and iDelFlg = '0' order by cOrder
+    </select>
+    
+    <select id="chekUserCode" parameterType="java.lang.String" resultType="SysUser">
+        select * from sys_user where emp_code = #{empCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectUserByAuthCode" resultType="com.yqsh.diningsys.web.model.SysUser">
+        select * from sys_user where sqh_no1 = #{authCode} or sqh_no2 = #{authCode}
+    </select>
+
+    <select id="selectMenuByUserZwAndMenuId" resultType="com.yqsh.diningsys.web.model.SysRoleMenu">
+        select * from sys_role_menu where role_code = #{zwCode} and menu_id = #{menuId}
+    </select>
+
+    <select id="selectUserByUserCode" resultType="com.yqsh.diningsys.web.model.SysUser">
+        select * from sys_user where emp_code = #{userCode}
+    </select>
+
+    <select id="selectSysUserDiscountByZwCode"
+            resultType="com.yqsh.diningsys.web.model.permission.SysPerDiscount">
+        select * from sys_per_discount where zw_code = #{empDuties}
+    </select>
+</mapper>

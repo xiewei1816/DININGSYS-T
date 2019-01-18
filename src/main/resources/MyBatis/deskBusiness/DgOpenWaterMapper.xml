@@ -1,0 +1,1004 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgOpenWaterMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ow_num" property="owNum" jdbcType="VARCHAR" />
+    <result column="seat_id" property="seatId" jdbcType="INTEGER" />
+    <result column="people_count" property="peopleCount" jdbcType="INTEGER" />
+    <result column="item_costs_sum" property="itemCostsSum" jdbcType="DOUBLE" />
+    <result column="discount_costs" property="discountCosts" jdbcType="DOUBLE" />
+    <result column="service_charge" property="serviceCharge" jdbcType="DOUBLE" />
+    <result column="private_room_cost" property="privateRoomCost" jdbcType="DOUBLE" />
+    <result column="minimum_consumption" property="minimumConsumption" jdbcType="DOUBLE" />
+    <result column="minimum_charge_complete" property="minimumChargeComplete" jdbcType="DOUBLE" />
+    <result column="subtotal" property="subtotal" jdbcType="DOUBLE" />
+    <result column="clearing_water_id" property="clearingWaterId" jdbcType="INTEGER" />
+    <result column="first_time" property="firstTime" jdbcType="TIMESTAMP" />
+    <result column="seat_label" property="seatLabel" jdbcType="VARCHAR" />
+    <result column="open_pos" property="openPos" jdbcType="INTEGER" />
+    <result column="posName" property="posName" jdbcType="VARCHAR" />
+    <result column="waiter" property="waiter" jdbcType="INTEGER" />
+    <result column="marketing_staff" property="marketingStaff" jdbcType="INTEGER" />
+    <result column="cr_id" property="crId" jdbcType="VARCHAR" />
+    <result column="documents" property="documents" jdbcType="VARCHAR" />
+    <result column="ow_notes" property="owNotes" jdbcType="VARCHAR" />
+    <result column="closed_time" property="closedTime" jdbcType="TIMESTAMP" />
+    <result column="team_members" property="teamMembers" jdbcType="VARCHAR" />
+    <result column="is_team" property="isTeam" jdbcType="INTEGER" />
+    <result column="seatId2" property="seatId2" jdbcType="INTEGER" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+    <result column="allowNumber" property="allowNumber" jdbcType="INTEGER" />
+    <result column="seatState" property="seatState" jdbcType="INTEGER" />
+    <result column="areaName" property="areaName" jdbcType="VARCHAR" />
+    <result column="is_increasing_item" property="isIncreasingItem" jdbcType="INTEGER" />
+    <result column="team_main_seat" property="teamMainSeat" jdbcType="INTEGER" />
+    <result column="yd_id" property="ydId" jdbcType="INTEGER" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ow_num,is_team, seat_id, people_count, item_costs_sum, discount_costs, service_charge, yd_id,
+    private_room_cost, minimum_consumption, minimum_charge_complete, subtotal, clearing_water_id,team_main_seat, 
+    first_time,seat_label,open_pos,waiter,marketing_staff,cr_id,documents,ow_notes,closed_time,team_members,ow_state,private_room_type,is_increasing_item
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_open_water
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectByIds" resultMap="BaseResultMap" parameterType="List" >
+    select 	A.*,con.name as areaName
+    from dg_open_water A left join dg_consumer_seat seat on A.seat_id = seat.id 
+    left join dg_consumption_area con on seat.cons_area = con.id
+    where a.id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  <select id="selectByOpenWaterByNum" resultMap="BaseResultMap" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    select A.*,su.emp_name as waiterName,su.emp_code as waiterCode,su1.emp_name as marketingStaffName,su1.emp_code as marketingStaffCode,
+     seat.name as seatName,seat.seat_state as seatState,con.name as areaName,DG_FU_getPosName(A.open_pos) as posName
+     from (
+      select
+      <include refid="Base_Column_List" />
+      from dg_open_water
+      where ow_num = #{owNum}
+    ) A left join sys_user su on A.waiter = su.id
+    left join sys_user su1 on A.marketing_staff = su1.id
+    left join dg_consumer_seat seat on A.seat_id = seat.id
+    left join dg_consumption_area con on seat.cons_area = con.id
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from dg_open_water
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    insert into dg_open_water (id, ow_num, seat_id,
+      people_count, item_costs_sum, discount_costs, 
+      service_charge, private_room_cost, minimum_consumption, 
+      minimum_charge_complete, subtotal, clearing_water_id, 
+      first_time,seat_label,open_pos,waiter,marketing_staff,cr_id,documents,ow_notes,closed_time,team_members,private_room_type,
+      is_increasing_item,team_main_seat,yd_id)
+    values (#{id,jdbcType=INTEGER}, #{owNum,jdbcType=VARCHAR}, #{seatId,jdbcType=INTEGER},
+      #{peopleCount,jdbcType=INTEGER}, #{itemCostsSum,jdbcType=DOUBLE}, #{discountCosts,jdbcType=DOUBLE}, 
+      #{serviceCharge,jdbcType=DOUBLE}, #{privateRoomCost,jdbcType=DOUBLE}, #{minimumConsumption,jdbcType=DOUBLE}, 
+      #{minimumChargeComplete,jdbcType=DOUBLE}, #{subtotal,jdbcType=DOUBLE}, #{clearingWaterId,jdbcType=INTEGER}, 
+      #{firstTime,jdbcType=TIMESTAMP},#{seatLabel,jdbcType=VARCHAR},#{openPos,jdbcType=INTEGER},${waiter,jbdcType=INTEGER},#{marketingStaff,jdbcType=INTEGER},
+      #{crId,jdbcType=VARCHAR},#{documents,jdbcType=VARCHAR},#{owNotes,jdbcType=VARCHAR},#{closedTime,jdbcType=TIMESTAMP},#{teamMembers,jdbcType=VARCHAR},#{privateRoomType,jdbcType=INTEGER},
+      #{isIncreasingItem,jdbcType=INTEGER},#{teamMainSeat,jdbcType=INTEGER},#{ydId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    insert into dg_open_water
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="owNum != null" >
+        ow_num,
+      </if>
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+      <if test="peopleCount != null" >
+        people_count,
+      </if>
+      <if test="itemCostsSum != null" >
+        item_costs_sum,
+      </if>
+      <if test="discountCosts != null" >
+        discount_costs,
+      </if>
+      <if test="serviceCharge != null" >
+        service_charge,
+      </if>
+      <if test="privateRoomCost != null" >
+        private_room_cost,
+      </if>
+      <if test="minimumConsumption != null" >
+        minimum_consumption,
+      </if>
+      <if test="minimumChargeComplete != null" >
+        minimum_charge_complete,
+      </if>
+      <if test="subtotal != null" >
+        subtotal,
+      </if>
+      <if test="clearingWaterId != null" >
+        clearing_water_id,
+      </if>
+      <if test="firstTime != null" >
+        first_time,
+      </if>
+      <if test="seatLabel != null" >
+        seat_label,
+      </if>
+      <if test="openPos != null" >
+        open_pos,
+      </if>
+      <if test="crId != null" >
+        cr_id,
+      </if>
+      <if test="documents != null" >
+        documents,
+      </if>
+      <if test="owNotes != null" >
+        owNotes,
+      </if>
+      <if test="closedTime != null" >
+        closed_time,
+      </if>
+      <if test="teamMembers != null" >
+        team_members,
+      </if>
+      <if test="privateRoomType != null" >
+        private_room_type,
+      </if>
+      <if test="isIncreasingItem != null" >
+        is_increasing_item,
+      </if>
+      <if test="teamMainSeat != null" >
+        team_main_seat,
+      </if>
+      <if test="ydId != null" >
+        yd_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="peopleCount != null" >
+        #{peopleCount,jdbcType=INTEGER},
+      </if>
+      <if test="itemCostsSum != null" >
+        #{itemCostsSum,jdbcType=DOUBLE},
+      </if>
+      <if test="discountCosts != null" >
+        #{discountCosts,jdbcType=DOUBLE},
+      </if>
+      <if test="serviceCharge != null" >
+        #{serviceCharge,jdbcType=DOUBLE},
+      </if>
+      <if test="privateRoomCost != null" >
+        #{privateRoomCost,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        #{minimumConsumption,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumChargeComplete != null" >
+        #{minimumChargeComplete,jdbcType=DOUBLE},
+      </if>
+      <if test="subtotal != null" >
+        #{subtotal,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingWaterId != null" >
+        #{clearingWaterId,jdbcType=INTEGER},
+      </if>
+      <if test="firstTime != null" >
+        #{firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="seatLabel != null" >
+        #{seatLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="openPos != null" >
+        #{openPos,jdbcType=INTEGER},
+      </if>
+      <if test="waiter != null" >
+        #{waiter,jdbcType=INTEGER},
+      </if>
+      <if test="marketingStaff != null" >
+        #{marketingStaff,jdbcType=INTEGER},
+      </if>
+      <if test="crId != null" >
+        #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="documents != null" >
+        #{documents,jdbcType=VARCHAR},
+      </if>
+      <if test="owNotes != null" >
+        #{owNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="closedTime != null" >
+        #{closedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="teamMembers != null" >
+        #{teamMembers,jdbcType=VARCHAR},
+      </if>
+      <if test="privateRoomType != null" >
+        #{privateRoomType,jdbcType=INTEGER},
+      </if>
+      <if test="isIncreasingItem != null" >
+        #{isIncreasingItem,jdbcType=INTEGER},
+      </if>
+      <if test="teamMainSeat != null" >
+        #{teamMainSeat,jdbcType=INTEGER},
+      </if>
+      <if test="ydId != null" >
+        #{ydId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    update dg_open_water
+    <set >
+      <if test="owNum != null" >
+        ow_num = #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null" >
+        seat_id = #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="peopleCount != null" >
+        people_count = #{peopleCount,jdbcType=INTEGER},
+      </if>
+      <if test="itemCostsSum != null" >
+        item_costs_sum = #{itemCostsSum,jdbcType=DOUBLE},
+      </if>
+      <if test="discountCosts != null" >
+        discount_costs = #{discountCosts,jdbcType=DOUBLE},
+      </if>
+      <if test="serviceCharge != null" >
+        service_charge = #{serviceCharge,jdbcType=DOUBLE},
+      </if>
+      <if test="privateRoomCost != null" >
+        private_room_cost = #{privateRoomCost,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        minimum_consumption = #{minimumConsumption,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumChargeComplete != null" >
+        minimum_charge_complete = #{minimumChargeComplete,jdbcType=DOUBLE},
+      </if>
+      <if test="subtotal != null" >
+        subtotal = #{subtotal,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingWaterId != null" >
+        clearing_water_id = #{clearingWaterId,jdbcType=INTEGER},
+      </if>
+      <if test="firstTime != null" >
+        first_time = #{firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="seatLabel != null" >
+        seat_label = #{seatLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="openPos != null" >
+        open_pos = #{openPos,jdbcType=INTEGER},
+      </if>
+      <if test="waiter != null" >
+        waiter = #{waiter,jdbcType=INTEGER},
+      </if>
+      <if test="marketingStaff != null" >
+        marketing_staff = #{marketingStaff,jdbcType=INTEGER},
+      </if>
+      <if test="crId != null" >
+        cr_id = #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="documents != null" >
+        documents = #{documents,jdbcType=VARCHAR},
+      </if>
+      <if test="owNotes != null" >
+        ow_notes = #{owNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="closedTime != null" >
+        closed_time = #{closedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="teamMembers != null" >
+        team_members = #{teamMembers,jdbcType=VARCHAR},
+      </if>
+      <if test="privateRoomType != null" >
+        private_room_type = #{privateRoomType,jdbcType=INTEGER},
+      </if>
+      <if test="isIncreasingItem != null" >
+        is_increasing_item = #{isIncreasingItem,jdbcType=INTEGER},
+      </if>
+      <if test="isTeam != null" >
+        is_team = #{isTeam,jdbcType=INTEGER},
+      </if>
+      <if test="teamMainSeat != null" >
+        team_main_seat = #{teamMainSeat,jdbcType=INTEGER},
+      </if>
+      <if test="ydId != null" >
+        yd_id = #{ydId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    update dg_open_water
+    set ow_num = #{owNum,jdbcType=VARCHAR},
+      seat_id = #{seatId,jdbcType=INTEGER},
+      people_count = #{peopleCount,jdbcType=INTEGER},
+      item_costs_sum = #{itemCostsSum,jdbcType=DOUBLE},
+      discount_costs = #{discountCosts,jdbcType=DOUBLE},
+      service_charge = #{serviceCharge,jdbcType=DOUBLE},
+      private_room_cost = #{privateRoomCost,jdbcType=DOUBLE},
+      minimum_consumption = #{minimumConsumption,jdbcType=DOUBLE},
+      minimum_charge_complete = #{minimumChargeComplete,jdbcType=DOUBLE},
+      subtotal = #{subtotal,jdbcType=DOUBLE},
+      clearing_water_id = #{clearingWaterId,jdbcType=INTEGER},
+      first_time = #{firstTime,jdbcType=TIMESTAMP},
+      seat_label = #{seatLabel,jdbcType=TIMESTAMP},
+      open_pos = #{openPos,jdbcType=INTEGER},
+      waiter = #{waiter,jdbcType=INTEGER},
+      marketing_staff = #{marketingStaff,jdbcType=INTEGER},
+      cr_id = #{crId,jdbcType=VARCHAR},
+      documents = #{documents,jdbcType=VARCHAR},
+      ow_notes = #{owNotes,jdbcType=VARCHAR},
+      closed_time = #{closedTime,jdbcType=VARCHAR},
+      team_members = #{teamMembers,jdbcType=VARCHAR},
+      is_increasing_item = #{isIncreasingItem,jdbcType=VARCHAR},
+      private_room_type = #{privateRoomType,jdbcType=INTEGER},
+      team_main_seat = #{teamMainSeat,jdbcType=INTEGER},
+      yd_id = #{ydId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="selectCurrentSeatInfo" resultMap="BaseResultMap" parameterType="map">
+    select dow.*,dcs.id as seatId2,dcs.name as seatName,dcs.allow_number as allowNumber,dcs.seat_state as seatState,dca.name as areaName from (select * from  dg_open_water where ow_state = 1) dow RIGHT JOIN dg_consumer_seat dcs on dow.seat_id = dcs.id left JOIN dg_consumption_area dca on dcs.cons_area = dca.id
+    <where>
+      <if test="place != null and place != ''">
+       and dcs.cons_area = #{place,jdbcType=INTEGER}
+      </if>
+      <if test="seatState != null and seatState != ''">
+        and dcs.seat_state = #{seatState,jdbcType=INTEGER}
+      </if>
+    </where>
+</select>
+
+  <select id="selectAllSeatPeople" parameterType="map" resultType="map">
+    select * from
+    (select sum(dcs.allow_number) allNum from dg_consumer_seat dcs LEFT JOIN dg_consumption_area dca on dcs.cons_area=dca.id
+    <where>
+      <if test="place != null and place != ''">
+        dca.id = #{place,jdbcType=INTEGER}
+      </if>
+    </where>
+    ) a,
+    (select sum(dow.people_count) as acNum from dg_consumer_seat dcs
+    LEFT JOIN dg_consumption_area dca on dcs.cons_area=dca.id left JOIN dg_open_water dow on dcs.id = dow.seat_id
+    where dcs.seat_state = 2  and dow.ow_state = 1 and date(dow.first_time) = curdate()
+    <if test="place != null and place != ''">
+      and dca.id = #{place,jdbcType=INTEGER}
+    </if>
+    ) b
+  </select>
+
+  <select id="selectCurrentSeatCount" resultType="map" parameterType="map">
+    select count(id) as countNumber,seat_state as seatState from dg_consumer_seat
+    <where>
+      <if test="place != null and place != ''">
+        cons_area = #{place,jdbcType=INTEGER}
+      </if>
+    </where>
+      GROUP BY seat_state
+</select>
+
+
+  <select id="getOWByDate" resultType="map" parameterType="map">
+    select sum(people_count) as pcount,year(first_time) as myear,month(first_time) as mmonth,DAY(first_time) as mday from 
+    	(select people_count,first_time from dg_open_water
+		 union all
+		 select people_count,first_time from dg_open_water_${tableDate} 
+		) dow 
+    <where>
+      <if test="starttime != null and starttime != '' and endtime != null and endtime != ''">
+        dow.first_time >= #{starttime} and dow.first_time &lt;= #{endtime}
+      </if>
+    </where>
+    group by DATE_FORMAT(dow.first_time, "%Y-%m-%d" )
+  </select>
+
+
+  <select id="getPCountAndCNum" resultType="map" parameterType="map">
+    select t2.people_count as pcount,COUNT(*) as psumcount,sum(t.amounts_receivable) as cnum from dg_reception_clearing_water t join dg_open_water t2 on t2.clearing_water_id = t.id
+    where people_count is not NULL  and (t2.is_team = 0 or (t2.is_team = 1 and t2.transfer_target is null))
+    and clearing_time >= #{starttime} and clearing_time &lt;= #{endtime}
+    and clearing_bis = #{cbis}
+    group by t2.people_count
+  </select>
+
+
+  <select id="selectCurrentSeatCountByPostAreaState" resultType="map" parameterType="map">
+    select count(id) as countNumber,seat_state as seatState from dg_consumer_seat
+    <where>
+      del_flag = '0'
+      <if test="areas != null">
+        and cons_area in
+        <foreach item="id" collection="areas" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+      </if>
+    </where>
+      GROUP BY seat_state
+  </select>
+
+  <select id="selectCurrentSeatCountByPostArea" resultType="map" parameterType="map">
+    select count(dcs.id) as countNumberArea,dcs.cons_area as consArea,dca.name as areaName from dg_consumer_seat dcs
+    left join dg_consumption_area dca on dcs.cons_area = dca.id
+    where dcs.del_flag = '0'
+    <if test="areas != null">
+      and dcs.cons_area in
+      <foreach item="id" collection="areas" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    GROUP BY dcs.cons_area,dca.name
+  </select>
+
+    <select id="selectCurrentPayInfo" resultType="map" parameterType="map">
+      select dsw.name as payWayName,
+      sum(cast(doc.settlement_amount as DECIMAL(18,2))) as settlementAmount,
+      sum(cast(drcw.amounts_receivable as DECIMAL(18,2))) as amountsReceivable,
+      sum(cast(drcw.change_amount as DECIMAL(18,2))) as changeAmount
+      from dg_ow_clearingway doc
+      left join dg_reception_clearing_water drcw on doc.cw_id = drcw.id
+      LEFT JOIN dg_settlement_way dsw on doc.cw_code=dsw.number
+      left join (
+        select dow.clearing_water_id
+        from dg_open_water dow
+        LEFT JOIN dg_consumer_seat dcs on dow.seat_id = dcs.id
+        where dow.clearing_water_id is not null
+        <if test="place != null">
+          and dcs.cons_area = #{place,jdbcType=INTEGER}
+        </if>
+        group by dow.clearing_water_id
+        ) A on doc.cw_id = A.clearing_water_id
+      where date(doc.cw_time)=curdate()
+      and drcw.clearing_state not in(3)
+      group by cw_code,dsw.name
+</select>
+
+  <select id="selectCurrentBisClassInfo" resultType="map" parameterType="map">
+    select * from (
+    (select count(dow.id) as bisClosedClassCount ,sum(cast(drcw.paid_amount as DECIMAL(18,2)) ) - sum(cast(drcw.change_amount as DECIMAL(18,2))) as bisClosedClassAmount ,sum(people_count) as bisClosedClassPeopleCount  from dg_reception_clearing_water drcw LEFT JOIN dg_open_water dow on drcw.id = dow.clearing_water_id
+      where dow.ow_state in(2,6) and date(drcw.clearing_time) = curdate()
+      <if test="bis != null">
+        and drcw.clearing_bis = #{bis,jdbcType=INTEGER}
+      </if>
+      ) a,<!--所选市别已结-->
+    (select count(dow.id) as bisOpenClassCount,sum(people_count) as bisOpenClassPeopleCount from dg_consumer_seat dcs LEFT JOIN dg_consumption_area dca on dcs.cons_area = dca.id RIGHT JOIN dg_open_water dow on dcs.id = dow.seat_id where dow.ow_state not in(2,6)) b,<!--今日未结-->
+    (select count(dow2.id) as allClassCount,sum(dow2.people_count) as allClassPeople,sum(cast(drcw2.amounts_receivable as DECIMAL(18,2))) as allAmount from dg_reception_clearing_water drcw2 left JOIN dg_open_water dow2 on drcw2.id = dow2.clearing_water_id where date(drcw2.clearing_time) = curdate() and dow2.ow_state in (2,6)) c,<!--今日已结-->
+    (select sum(cast(drcw3.amounts_receivable as DECIMAL(18,2)))  as operatingIncome from dg_reception_clearing_water drcw3 where date(drcw3.clearing_time) = curdate()) d <!--今日营业收入-->
+    )
+  </select>
+
+  <select id="selecttodayReservationInfo" parameterType="map" resultType="map">
+    select * from
+    (select count(dsr.id) as todatRe from dg_seat_reservation dsr left join dg_consumer_seat dcs on dsr.seat_id = dcs.id
+      LEFT JOIN dg_consumption_area dca on dcs.cons_area=dca.id where date(dsr.reservation_time) = curdate()
+      <if test="id != null and id != ''">
+        and dca.id = #{id,jdbcType=INTEGER}
+      </if>
+      ) a,
+    (select count(dsr.id) as todayImp from dg_seat_reservation dsr left join dg_consumer_seat dcs on dsr.seat_id = dcs.id
+    LEFT JOIN dg_consumption_area dca on dcs.cons_area=dca.id where date(dsr.actual_time) = curdate()
+    <if test="id != null and id !=''">
+     and dca.id = #{id,jdbcType=INTEGER}
+    </if>
+    ) b
+  </select>
+
+  <select id="selectPlaceBisRes" parameterType="map" resultType="map">
+    select * from
+    (select count(dsr.id) as todatPBRe from dg_seat_reservation dsr left join dg_consumer_seat dcs on dsr.seat_id = dcs.id
+    LEFT JOIN dg_consumption_area dca on dcs.cons_area=dca.id where date(dsr.reservation_time) = curdate()
+    <if test="place != null and place != ''">
+      and dca.id = #{place,jdbcType=INTEGER}
+    </if>
+    <if test="bis != null and bis != ''">
+      and dsr.reserve_bis = #{bis,jdbcType=INTEGER}
+    </if>
+    ) a,
+    (select count(dsr.id) as todayPBImp from dg_seat_reservation dsr left join dg_consumer_seat dcs on dsr.seat_id = dcs.id
+    LEFT JOIN dg_consumption_area dca on dcs.cons_area=dca.id where date(dsr.actual_time) = curdate()
+    <if test="place != null and place != ''">
+      and dca.id = #{place,jdbcType=INTEGER}
+    </if>
+    <if test="bis != null and bis != ''">
+      and dsr.reserve_bis = #{bis,jdbcType=INTEGER}
+    </if>
+    ) b
+  </select>
+
+  <select id="selectOpenWaterInfoById" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" parameterType="map">
+    select dow.*,dp.name as posName,su.emp_name as waiterName from dg_open_water dow left join dg_pos dp on dow.open_pos = dp.id left join sys_user su on dow.waiter = su.id where dow.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectOpenWaterItemFileByOwId" resultType="map" parameterType="map">
+    select docd.*,dif.name as itemFileName,dif.standard_price as itemFilePrice
+    from dg_ow_consumer_details docd
+    LEFT JOIN dg_item_file dif on docd.item_file_id = dif.id
+    where dif.delFlag = '0' and docd.ow_id in(select id from dg_ow_service_form where ow_id = #{id,jdbcType=INTEGER})
+  </select>
+
+    <select id="selectSeatHasClosedCheck" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+      select drcw.*,tbb.bis_name as bisName,su.emp_name as clearingOperatorName,
+      DG_FU_getPosName(drcw.clearing_pos) as clearingPosName
+      from dg_reception_clearing_water drcw
+      left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+      left join sys_user su on drcw.clearing_operator = su.emp_code
+      where drcw.id = (
+            select clearing_water_id
+            from dg_open_water
+             where seat_id = #{id,jdbcType=INTEGER}
+             order by closed_time DESC LIMIT 0,1
+             )
+    </select>
+
+    <select id="getSeatOpenWater" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+      select * from dg_open_water where clearing_water_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectSettlementInfoByCwId" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+      select doc.*,dsw.name as seName from dg_ow_clearingway doc left join dg_settlement_way dsw on doc.cw_code = dsw.number where cw_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectConsumerDetailsByOwId" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+      select docd.*,dif.name as itemFileName,dif.num as itemFileNum,dif.standard_price as standardPrice,dif.unit
+      from dg_ow_consumer_details docd left join dg_item_file dif on docd.item_file_id=dif.id
+      where (dif.delFlag = '0' or dif.delFlag is null) and docd.ow_id in (select id from dg_ow_service_form where ow_id = #{id,jdbcType=INTEGER})
+    </select>
+
+    <select id="selectDiscountInfoByCwId" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDiscount">
+      select * from dg_ow_discount where cw_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectReceiptInfoByCwId" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwReceipt">
+      select dor.cw_id as cwId,dor.receipt_denomination as receiptDenomination,dor.receipt_count as receiptCount,dor.receipt_amount as receiptAmount,dor.receipt_num as receiptNum,dor.notes
+      from dg_ow_receipt dor  where cw_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectReceiptInfoByCwId_new" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwReceipt">
+      <if test="flag == true">
+        select dor.cw_id as cwId,dor.receipt_denomination as receiptDenomination,dor.receipt_count as receiptCount,dor.receipt_amount as receiptAmount,dor.receipt_num as receiptNum,dor.notes
+        from dg_ow_receipt dor  where cw_id = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="flag == false">
+        select dor.cw_id as cwId,dor.receipt_denomination as receiptDenomination,dor.receipt_count as receiptCount,dor.receipt_amount as receiptAmount,dor.receipt_num as receiptNum,dor.notes
+        from dg_ow_receipt_${suffix} dor  where cw_id = #{id,jdbcType=INTEGER}
+      </if>
+    </select>
+
+  <update id="editClearingNotes" parameterType="map">
+    update dg_reception_clearing_water set clearing_notes = #{clearingNotes,jdbcType=VARCHAR},statement_label = #{statementLabel,jdbcType=INTEGER} where id = #{cwId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getNotesAndLabel" resultType="map" parameterType="map">
+    select statement_label as statementLabel,clearing_notes as clearingNotes from dg_reception_clearing_water where id=#{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectCurrentOpenWater" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    select dow.*,dcs.name as seatName,dp.name as posName from dg_open_water dow left join dg_consumer_seat dcs on dow.seat_id = dcs.id left join dg_pos dp on dow.open_pos = dp.id where ow_state in(1,3,8,9)
+    <if test="place != null and place != ''">
+     and dcs.cons_area = #{place,jdbcType=INTEGER}
+    </if>
+    <if test="seatName != null and seatName != ''">
+     and dcs.name like concat('%',#{seatName},'%')
+    </if>
+    <if test="owNum != null and owNum != ''">
+     and dow.ow_num = #{owNum,jdbcType=VARCHAR}
+    </if>
+  </select>
+
+  <!--已结账单-->
+  <!-- <select id="selectClosedOpenWaterByDate" parameterType="map" resultType="map">
+    select drcw.id as closedId,dow.id as openId,drcw.cw_num as cwNum,CONCAT(concat(dcs.number,'-'),dcs.name) as seatName,DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d %H:%I:%S') as clearingTime,dow.ow_num as owNum from dg_reception_clearing_water drcw left join dg_open_water dow on dow.clearing_water_id = drcw.id left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+    <where>
+      clearing_state = 2
+      <if test="date != null and date != ''">
+       and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d')= #{date,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select> -->
+   <select id="selectClosedOpenWaterByDate" parameterType="map" resultType="map">
+     <if test="flag == true">
+       select drcw.id as closedId,dow.id as openId,drcw.cw_num as cwNum,dcs.name as seatName,DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d %T') as clearingTime,dow.ow_num as owNum
+       from dg_reception_clearing_water drcw
+       left join dg_open_water dow on drcw.id = dow.clearing_water_id
+       left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+       left join dg_consumption_area dca on dca.id = dcs.cons_area
+       left join t_b_bis tbb on tbb.id = drcw.clearing_bis
+       left join dg_pos dp on dp.id = drcw.clearing_pos
+       <where>
+         clearing_state = 2
+         <if test="date != null and date != ''">
+           and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d')= #{date,jdbcType=VARCHAR}
+         </if>
+         <if test="clientSeat != null and clientSeat != ''">
+           and dcs.name like concat('%',#{clientSeat,jdbcType=VARCHAR},'%')
+         </if>
+         <if test="bis != null and bis != ''">
+           and tbb.id = #{bis,jdbcType=VARCHAR}
+         </if>
+         <if test="expArea != null and expArea != ''">
+           and dca.id = #{expArea,jdbcType=VARCHAR}
+         </if>
+         <if test="pos != null and pos != ''">
+           and dp.id = #{pos,jdbcType=VARCHAR}
+         </if>
+         <if test="choiceCode == 1 and code != null and code != ''">
+           and dow.ow_num = #{code,jdbcType=VARCHAR}
+         </if>
+         <if test="choiceCode == 2 and code != null and code != ''">
+           and drcw.cw_num = #{code,jdbcType=VARCHAR}
+         </if>
+         <if test="choiceCode == 3 and code != null and code != ''">
+           and dcs.number = #{code,jdbcType=VARCHAR}
+         </if>
+       </where>
+       order by drcw.clearing_time desc
+     </if>
+     <if test="flag == false">
+       select drcw.id as closedId,dow.id as openId,drcw.cw_num as cwNum,dcs.name as seatName,DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d %T') as clearingTime,dow.ow_num as owNum
+       from dg_reception_clearing_water_${suffix} drcw
+       left join dg_open_water_${suffix} dow on drcw.id = dow.clearing_water_id
+       left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+       left join dg_consumption_area dca on dca.id = dcs.cons_area
+       left join t_b_bis tbb on tbb.id = drcw.clearing_bis
+       left join dg_pos dp on dp.id = drcw.clearing_pos
+       <where>
+         clearing_state = 2
+         <if test="date != null and date != ''">
+           and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d')= #{date,jdbcType=VARCHAR}
+         </if>
+         <if test="clientSeat != null and clientSeat != ''">
+           and dcs.name like concat('%',#{clientSeat},'%')
+         </if>
+         <if test="bis != null and bis != ''">
+           and tbb.id = #{bis,jdbcType=VARCHAR}
+         </if>
+         <if test="expArea != null and expArea != ''">
+           and dca.id = #{expArea,jdbcType=VARCHAR}
+         </if>
+         <if test="pos != null and pos != ''">
+           and dp.id = #{pos,jdbcType=VARCHAR}
+         </if>
+         <if test="choiceCode == 1 and code != null and code != ''">
+           and dow.ow_num = #{code,jdbcType=VARCHAR}
+         </if>
+         <if test="choiceCode == 2 and code != null and code != ''">
+           and drcw.cw_num = #{code,jdbcType=VARCHAR}
+         </if>
+       </where>
+       order by drcw.clearing_time desc
+     </if>
+  </select>
+  
+  <select id="selectCwInfoById" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+    <if test="flag == true">
+      select drcw.*,tbb.bis_name as bisName,DG_FU_getUserName(drcw.clearing_operator) as clearingOperatorName,DG_FU_getPosName(drcw.clearing_pos) as posName from dg_reception_clearing_water drcw
+      left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+      where drcw.id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="flag == false">
+      select drcw.*,tbb.bis_name as bisName,DG_FU_getUserName(drcw.clearing_operator) as clearingOperatorName,DG_FU_getPosName(drcw.clearing_pos) as posName
+      from dg_reception_clearing_water_${suffix} drcw
+      left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+      where drcw.id = #{id,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <select id="selectOwInfoByCwId" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    <if test="flag == true">
+        select dow.*,DG_FU_getSeatName(dow.seat_id) as seatName from dg_open_water dow
+        where dow.clearing_water_id = #{id,jdbcType=INTEGER}
+    </if>
+    <if test="flag == false">
+        select dow.*,DG_FU_getSeatName(dow.seat_id) as seatName from dg_open_water_${suffix} dow
+        where dow.clearing_water_id = #{id,jdbcType=INTEGER}
+    </if>
+  </select>
+
+    <select id="selectAllReceipt" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceipt">
+        select id,receipt_amount as receiptAmount,receipt_amount as receiptAmount,notes
+        from dg_receipt
+    </select>
+
+    <delete id="deleteInvoiceByCwId" parameterType="map">
+      <if test="flag == true">
+        delete from dg_ow_receipt where cw_id = #{cwId,jdbcType=INTEGER}
+      </if>
+      <if test="flag == false">
+        delete from dg_ow_receipt_${suffix} where cw_id = #{cwId,jdbcType=INTEGER}
+      </if>
+    </delete>
+
+    <insert id="insertInvoice" parameterType="map">
+      <if test="flag == true">
+        insert into dg_ow_receipt values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+          ( #{cwId}, #{item.receiptDenomination}, #{item.receiptCount},
+          #{item.receiptAmount}, #{item.receiptNum},
+          #{item.notes} )
+        </foreach>
+      </if>
+      <if test="flag == false">
+        insert into dg_ow_receipt_${suffix} values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+          ( #{cwId}, #{item.receiptDenomination}, #{item.receiptCount},
+          #{item.receiptAmount}, #{item.receiptNum},
+          #{item.notes} )
+        </foreach>
+      </if>
+    </insert>
+
+    <select id="selectAllCommonWay" resultType="DgPublicCode">
+        select * from dg_public_code where cParent = 27
+    </select>
+
+    <select id="selectOpenWaterbyCwId" parameterType="integer"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+      SELECT * from dg_open_water where clearing_water_id = #{clearingWaterId,jdbcType=INTEGER}
+    </select>
+
+  <select id="selectSeatInfoBySeatIds" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+      SELECT * from dg_consumer_seat where id in
+      <foreach collection="dgOpenWaters" item="openWater" close=")" open="(" separator=",">
+        #{openWater.seatId,jdbcType=INTEGER}
+      </foreach>
+      and (seat_state = 3 or inset_retention_room = 1)
+  </select>
+
+  <select id="selectAllItemByOpenWaters" parameterType="list"
+          resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+    select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id in
+      <foreach collection="dgOpenWaters" item="openWater" close=")" open="(" separator=",">
+        #{openWater.id,jdbcType=INTEGER}
+      </foreach>
+    )
+  </select>
+
+  <select id="selectOpenWaterFreeSeat" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+    SELECT * from dg_consumer_seat where id in
+    <foreach collection="dgOpenWaters" item="openWater" close=")" open="(" separator=",">
+      #{openWater.seatId,jdbcType=INTEGER}
+    </foreach>
+    and seat_state = 1
+  </select>
+
+  <update id="updateCwMoney" parameterType="map">
+    update dg_reception_clearing_water set paid_amount = #{ss,jdbcType=DOUBLE},change_amount = #{zl,jdbcType=DOUBLE} where id = #{cwId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryOpenWaterNum" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    update dg_open_water set people_count = #{peopleCount}
+    where ow_num = #{owNum}
+  </update>
+
+
+  <delete id="deleteClearingWayByCwId" parameterType="map">
+    DELETE from dg_ow_clearingway where cw_id = #{cwId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertClearingWay" parameterType="map">
+    insert into dg_ow_clearingway values
+    <foreach collection="list" item="item" index="index"
+             separator=",">
+      ( #{cwId},
+      #{item.settlementAmount}, #{item.conversionAmount},
+      #{item.notes}, #{item.cwCode},
+      #{item.nonZeroAmount},#{item.foreignPay} )
+    </foreach>
+  </insert>
+
+    <insert id="insertFwjsLog">
+      insert into sys_fwjs_log(cw_id,op_time) VALUES (#{id},now())
+    </insert>
+
+    <!-- 检测是否有开台 -->
+	<select id="isExists" resultType="Integer">
+		SELECT count(0) FROM dg_open_water WHERE ow_state=1 OR ow_state=3
+	</select>
+
+  <select id="selectAllSeat" parameterType="map"
+          resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+    select dcs.*,dca.name as areaName from dg_consumer_seat dcs left join dg_consumption_area dca on dcs.cons_area = dca.id
+    <where>
+       dcs.del_flag = 0
+       <if test="place != null and place != ''">
+       and dcs.cons_area = #{place,jdbcType=INTEGER}
+       </if>
+      <if test="seatState != null and seatState != ''">
+        and dcs.seat_state = #{seatState,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectSeatCurrentOpenWater"
+          resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    select dow.* from dg_open_water dow left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+    where dow.ow_state in (1,3,8,9)
+     <if test="place != null and place != ''">
+        and dcs.cons_area = #{place,jdbcType=INTEGER}
+      </if>
+      <if test="seatState != null and seatState != ''">
+        and dcs.seat_state = #{seatState,jdbcType=INTEGER}
+      </if>
+  </select>
+
+  <select id="selectOpenWaterBySeatId" parameterType="integer"
+          resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    SELECT * from dg_open_water where seat_id = #{seatId,jdbcType=INTEGER} and  ow_state in (1,3,8,9)
+  </select>
+
+  <select id="selectCurrentOpeningWater"
+          resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    select dow.* from dg_consumer_seat dcs
+    LEFT JOIN dg_consumption_area dca on dcs.cons_area = dca.id
+    RIGHT JOIN dg_open_water dow on dcs.id = dow.seat_id
+    where dow.ow_state not in(2,6)
+  </select>
+
+  <select id="selectSettlementInfoByCwId_new"
+          resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+      <if test="flag == true">
+        select doc.*,dsw.name as seName from dg_ow_clearingway doc left join dg_settlement_way dsw on doc.cw_code = dsw.number where cw_id = #{id,jdbcType=INTEGER}
+      </if>
+      <if test="flag == false">
+        select doc.*,dsw.name as seName from dg_ow_clearingway_${suffix} doc left join dg_settlement_way dsw on doc.cw_code = dsw.number where cw_id = #{id,jdbcType=INTEGER}
+      </if>
+  </select>
+
+  <select id="selectConsumerDetailsByOwId_new"
+          resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+      <if test="flag == true">
+        select docd.*,dif.name as itemFileName,dif.num as itemFileNum,dif.standard_price as standardPrice,dif.unit
+        from dg_ow_consumer_details docd left join dg_item_file dif on docd.item_file_id=dif.id
+        where (dif.delFlag = '0' or dif.delFlag is null) and docd.ow_id in (select id from dg_ow_service_form where ow_id = #{id,jdbcType=INTEGER})
+      </if>
+      <if test="flag == false">
+        select docd.*,dif.name as itemFileName,dif.num as itemFileNum,dif.standard_price as standardPrice,dif.unit
+        from dg_ow_consumer_details_${suffix} docd left join dg_item_file dif on docd.item_file_id=dif.id
+        where (dif.delFlag = '0' or dif.delFlag is null) and docd.ow_id in (select id from dg_ow_service_form_${suffix} where ow_id = #{id,jdbcType=INTEGER})
+      </if>
+  </select>
+
+  <!-- 批量更新修改-->
+  <update id="updateWaterList" parameterType="java.util.List">
+  	 <foreach close="" collection="list" index="index" item="item" open="" separator=";">
+		update dg_open_water
+	    <set>
+	      <if test="item.owNum != null" >
+            ow_num = #{item.owNum,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.seatId != null" >
+	        seat_id = #{item.seatId,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.peopleCount != null" >
+	        people_count = #{item.peopleCount,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.itemCostsSum != null" >
+	        item_costs_sum = #{item.itemCostsSum,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.discountCosts != null" >
+	        discount_costs = #{item.discountCosts,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.serviceCharge != null" >
+	        service_charge = #{item.serviceCharge,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.privateRoomCost != null" >
+	        private_room_cost = #{item.privateRoomCost,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.minimumConsumption != null" >
+	        minimum_consumption = #{item.minimumConsumption,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.minimumChargeComplete != null" >
+	        minimum_charge_complete = #{item.minimumChargeComplete,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.subtotal != null" >
+	        subtotal = #{item.subtotal,jdbcType=DOUBLE},
+	      </if>
+	      <if test="item.clearingWaterId != null" >
+	        clearing_water_id = #{item.clearingWaterId,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.firstTime != null" >
+	        first_time = #{item.firstTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="item.seatLabel != null" >
+	        seat_label = #{item.seatLabel,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.openPos != null" >
+	        open_pos = #{item.openPos,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.waiter != null" >
+	        waiter = #{item.waiter,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.marketingStaff != null" >
+	        marketing_staff = #{item.marketingStaff,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.crId != null" >
+	        cr_id = #{item.crId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.documents != null" >
+	        documents = #{item.documents,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.owNotes != null" >
+	        ow_notes = #{item.owNotes,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.closedTime != null" >
+	        closed_time = #{item.closedTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="item.teamMembers != null" >
+	        team_members = #{item.teamMembers,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.privateRoomType != null" >
+	        private_room_type = #{item.privateRoomType,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.isIncreasingItem != null" >
+	        is_increasing_item = #{item.isIncreasingItem,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.isTeam != null" >
+	        is_team = #{item.isTeam,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.teamMainSeat != null" >
+	        team_main_seat = #{item.teamMainSeat,jdbcType=INTEGER},
+	      </if>
+	      <if test="item.ydId != null" >
+	        yd_id = #{item.ydId,jdbcType=INTEGER},
+	      </if>
+	    </set>
+	    where id = #{item.id,jdbcType=INTEGER}
+	 </foreach>
+  </update>
+
+  <update id="resetOpenWaterState" parameterType="list">
+    update dg_open_water set ow_state = 1,clearing_water_id = NULL where id in
+    <foreach collection="dgOpenWaters" item="openWater" separator="," open="(" close=")">
+      #{openWater.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+  <update id="resetItemFinalPayMoney" parameterType="list">
+      update dg_ow_consumer_details set item_pay_money = null,settlement_status = 0,couponNum = 0,item_file_number=#{itemFileNumber,jdbcType=INTEGER},subtotal=#{subtotal} where item_file_id =
+      #{itemFileId,jdbcType=INTEGER} and ow_id = #{owId,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteOwConsumerDetail">
+    delete from dg_ow_consumer_details  where item_file_id =
+    #{itemFileId,jdbcType=INTEGER} and ow_id = #{owId,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateClearingWaterState" parameterType="integer">
+    update dg_reception_clearing_water set clearing_state = 3 where id =#{clearingWaterId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateSeatBusy" parameterType="list">
+    UPDATE dg_consumer_seat set seat_state = 2,last_open_time = now() where id in
+    <foreach collection="dgConsumerSeats" separator="," open="(" close=")" item="seat">
+      #{seat.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemPricePriorityMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemPricePriority" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="n_index" property="nIndex" jdbcType="INTEGER" />
+    <result column="m_index" property="mIndex" jdbcType="INTEGER" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, code, name, n_index, m_index, enable
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_price_priority
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_price_priority
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPricePriority" >
+    insert into dg_item_price_priority (id, code, name, 
+      n_index, m_index, enable
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{nIndex,jdbcType=INTEGER}, #{mIndex,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPricePriority" >
+    insert into dg_item_price_priority
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="nIndex != null" >
+        n_index,
+      </if>
+      <if test="mIndex != null" >
+        m_index,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nIndex != null" >
+        #{nIndex,jdbcType=INTEGER},
+      </if>
+      <if test="mIndex != null" >
+        #{mIndex,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPricePriority" >
+    update dg_item_price_priority
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nIndex != null" >
+        n_index = #{nIndex,jdbcType=INTEGER},
+      </if>
+      <if test="mIndex != null" >
+        m_index = #{mIndex,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPricePriority" >
+    update dg_item_price_priority
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      n_index = #{nIndex,jdbcType=INTEGER},
+      m_index = #{mIndex,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="getAll" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_price_priority where 1=1
+    order by n_index asc
+  </select>
+  
+  <update id="updateAll">
+    update dg_item_price_priority
+    <set >
+        n_index = m_index
+    </set>
+    where 1=1
+  </update>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_price_priority 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_price_priority
+        (
+		    id,code,name,n_index,m_index,enable
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.code">#{im.code},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.name">#{im.name},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.nIndex">#{im.nIndex},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.mIndex">#{im.mIndex},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.enable">#{im.enable}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

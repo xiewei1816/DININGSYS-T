@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.DgCallServiceMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.api.DgCallService" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="seat_id" property="seatId" jdbcType="INTEGER" />
+    <result column="ow_num" property="owNum" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+    <result column="seatCode" property="seatCode" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, seat_id, ow_num, content, state ,type
+  </sql>
+  <sql id="Seat_Column_List" >
+    a.id as id, 
+    a.seat_id as seat_id, 
+    a.ow_num as ow_num, 
+    a.content as content, 
+    a.type as type,
+    a.state as state,
+    b.number as seatCode,
+    b.name as seatName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_call_service
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_call_service
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.api.DgCallService" >
+    insert into dg_call_service (id, seat_id, ow_num, 
+      content, state,type)
+    values (#{id,jdbcType=INTEGER}, #{seatId,jdbcType=INTEGER}, #{owNum,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{type,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.api.DgCallService" >
+    insert into dg_call_service
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+      <if test="owNum != null" >
+        ow_num,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.api.DgCallService" >
+    update dg_call_service
+    <set >
+      <if test="seatId != null" >
+        seat_id = #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        ow_num = #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.api.DgCallService" >
+    update dg_call_service
+    set seat_id = #{seatId,jdbcType=INTEGER},
+      ow_num = #{owNum,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectTop5" resultMap="BaseResultMap" parameterType="Map">
+    select 
+    <include refid="Seat_Column_List" />
+    from dg_call_service a 
+    left join dg_consumer_seat b on a.seat_id = b.id 
+    left join dg_consumption_area c on b.cons_area = c.id
+    where c.id in 
+    <foreach collection="areaIds" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+    and a.type = #{type,jdbcType=INTEGER}
+    order by a.id asc limit 5 
+  </select>
+  
+  <delete id="deleteIds" parameterType="list">
+    delete from dg_call_service where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  <select id="selectTopZccf5" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_call_service  
+    where type = 3 
+    order by id asc limit 5 
+  </select>
+  
+  <select id="selectOnlineCount" resultType="java.lang.Integer">
+    select 
+	count(*)
+    from dg_call_service  
+    where type = 4 
+  </select>
+  
+  
+   <select id="getFirstItem" resultMap="BaseResultMap">
+    select    
+    <include refid="Base_Column_List" />
+    from dg_call_service 
+    where  type = 4  order by id limit 1
+   </select>
+   
+   <select id="selectReserveCount" resultType="java.lang.Integer">
+    select 
+	count(*)
+    from dg_call_service  
+    where type = 5 
+  </select>
+  
+  <select id="selectReserve" resultMap="BaseResultMap">
+    select * 
+    from dg_call_service  
+    where type = 5 
+  </select>
+  
+  
+   <select id="selectTop5Reserve" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_call_service  
+    where type = 5 
+    order by id asc limit 5 
+  </select>
+
+  <select id="selectCxptCount" resultType="java.lang.Integer">
+    select
+    count(*)
+    from dg_call_service
+    where type = 11
+  </select>
+
+  <select id="selectCxptTop5" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dg_call_service
+    where type =11
+    order by id asc limit 5
+  </select>
+
+  <select id="getFirstCxptItem" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dg_call_service
+    where  type =11  order by id limit 1
+  </select>
+</mapper>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbFyxmMapper" >
+    <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbFyxm" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="fyxm_num" property="fyxmNum" jdbcType="VARCHAR" />
+        <result column="fyxm_name" property="fyxmName" jdbcType="VARCHAR" />
+        <result column="fyxm_type" property="fyxmType" jdbcType="VARCHAR" />
+        <result column="fyxm_organization" property="fyxmOrganization" jdbcType="VARCHAR" />
+        <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,fyxm_num,fyxm_name,fyxm_type,fyxm_organization,is_del,create_time,update_time
+    </sql> 
+    <sql id="selectCols">
+        o.id AS "id",
+        o.fyxm_num AS "fyxmNum",
+        o.fyxm_name AS "fyxmName",
+        c.fylx_name AS "fyxmType",
+        b.org_name AS "fyxmOrganization",
+        o.is_del AS "isDel",
+        o.create_time AS "createTime",
+        o.update_time AS "updateTime"
+    </sql>
+    <!-- 分页查询费用项目信息 -->
+    <select id="getListByPage" resultType="TbFyxm" parameterType="TbFyxm">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_fyxm o
+        left join t_b_org b on b.id = o.fyxm_organization
+        left join t_b_fylx c on c.id = o.fyxm_type
+        <where>
+            <if test="fyxmNum != null and fyxmNum != ''">
+                and o.fyxm_num like '%${fyxmNum}%'
+            </if>
+            <if test="fyxmName != null and fyxmName != ''">
+                and o.fyxm_name like '%${fyxmName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{startRow},#{endRow}	
+    </select>
+    <!-- 提供查询页码 -->
+    <select id="countListByPage" resultType="Integer" parameterType="TbFyxm">
+        SELECT
+        count(0)
+        from t_b_fyxm o
+        left join t_b_org b on b.id = o.fyxm_organization
+        <where>
+            <if test="fyxmNum != null and fyxmNum != ''">
+                and o.fyxm_num like '%${fyxmNum}%'
+            </if>
+            <if test="fyxmName != null and fyxmName != ''">
+                and o.fyxm_name like '%${fyxmName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+    </select>
+    <!-- 通过费用项目ID查询费用项目信息 -->
+    <select id="getFyxmById" parameterType="TbFyxm" resultType="TbFyxm">
+        SELECT 
+        <include refid="Base_Column_List"></include>
+        from t_b_fyxm o where o.id = #{id}
+    </select>
+    
+    <select id="getFyxmByNum" parameterType="String" resultType="TbFyxm">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_fyxm o 
+        left join t_b_org b on b.id = o.fyxm_organization
+        left join t_b_fylx c on c.id = o.fyxm_type
+        where o.fyxm_num = #{fyxmName}
+    </select>
+        
+    <!-- 添加费用项目信息 -->
+    <insert id="newInsert" parameterType="TbFyxm">
+        insert into t_b_fyxm(
+        fyxm_num,
+        fyxm_name,
+        fyxm_type,
+        fyxm_organization,
+        create_time,
+        update_time
+        ) values (
+        #{fyxmNum},
+        #{fyxmName},
+        #{fyxmType},
+        #{fyxmOrganization},
+        #{createTime},
+        #{updateTime}
+        )
+    </insert>
+    <!-- 根据费用项目ID修改费用项目信息 -->
+    <update id="update" parameterType="TbFyxm">
+        update t_b_fyxm set 
+        fyxm_num = #{fyxmNum},
+        fyxm_name = #{fyxmName},
+        fyxm_type = #{fyxmType},
+        fyxm_organization = #{fyxmOrganization},
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+    <!-- 费用项目信息回收站 -->
+    <update id="deleteTrash" parameterType="TbFyxm">
+        update t_b_fyxm set is_del = '1' where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </update>
+	
+    <!-- 还原回收站费用项目信息 -->
+    <update id="replyFyxm" parameterType="TbFyxm">
+        update t_b_fyxm set is_del = '0' where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </update>
+    <!-- 删除费用项目信息 -->
+    <delete id="delete" parameterType="TbFyxm">
+        delete from t_b_fyxm where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </delete>
+    <!-- 获取所有费用项目信息 -->
+    <select id="getAllList" parameterType="TbFyxm" resultType="TbFyxm">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_fyxm o
+        left join t_b_org b on b.id = o.fyxm_organization
+        left join t_b_fylx c on c.id = o.fyxm_type
+        <where>
+            <if test="fyxmNum != null and fyxmNum != ''">
+                and o.fyxm_num like '%${fyxmNum}%'
+            </if>
+            <if test="fyxmName != null and fyxmName != ''">
+                and o.fyxm_name like '%${fyxmName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

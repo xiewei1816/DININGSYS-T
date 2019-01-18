@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemPriceLadderMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="ladder_1" property="ladder1" jdbcType="DOUBLE" />
+    <result column="ladder_2" property="ladder2" jdbcType="DOUBLE" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="standard_price" property="sPrice" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_code, item_id, ladder_1, ladder_2
+  </sql>
+  
+  <sql id="Next_Column_List">
+    a.id as id, 
+    a.item_id as item_id, 
+    a.item_code as item_code, 
+    a.ladder_1 as ladder_1,
+    a.ladder_2 as ladder_2,
+    b.name as name,
+    b.standard_price as standard_price
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_price_ladder
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_price_ladder
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder" >
+    insert into dg_item_price_ladder (id, item_code, item_id, 
+      ladder_1, ladder_2)
+    values (#{id,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}, #{itemId,jdbcType=INTEGER}, 
+      #{ladder1,jdbcType=DOUBLE}, #{ladder2,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder" >
+    insert into dg_item_price_ladder
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="ladder1 != null" >
+        ladder_1,
+      </if>
+      <if test="ladder2 != null" >
+        ladder_2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="ladder1 != null" >
+        #{ladder1,jdbcType=DOUBLE},
+      </if>
+      <if test="ladder2 != null" >
+        #{ladder2,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder" >
+    update dg_item_price_ladder
+    <set >
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="ladder1 != null" >
+        ladder_1 = #{ladder1,jdbcType=DOUBLE},
+      </if>
+      <if test="ladder2 != null" >
+        ladder_2 = #{ladder2,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder" >
+    update dg_item_price_ladder
+    set item_code = #{itemCode,jdbcType=VARCHAR},
+      item_id = #{itemId,jdbcType=INTEGER},
+      ladder_1 = #{ladder1,jdbcType=DOUBLE},
+      ladder_2 = #{ladder2,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAllData" resultMap="BaseResultMap"  parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_price_ladder a left join 
+    dg_item_file b on a.item_id = b.id
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND b.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND b.num  like CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' )
+        </if>
+        AND b.yxdz = 1 
+        AND b.delFlag = 0
+        AND b.id not in (select item_id from dg_item_disable where 1=1)
+     </where>
+  </select>
+  
+  
+  <select id="getAllItemId" resultType="java.lang.Integer"  >
+    select item_id
+    from dg_item_price_ladder where 1=1
+  </select>
+  
+  
+  <select id="selectItemByAdd" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile" parameterType="list">
+     select 
+		*
+	 from dg_item_file 
+	 where delFlag = 0 and yxdz = 1 and id not in (select item_id from dg_item_disable where 1=1) and id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+  <delete id="deleteAll">
+    delete from dg_item_price_ladder
+    where 1=1
+  </delete>
+  
+  
+    
+  <delete id="deleteNotIn" parameterType="list">
+    delete from dg_item_price_ladder where item_id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+       <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_price_ladder where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_price_ladder
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+    <select id="selectByItemId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_price_ladder
+    where item_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_price_ladder(item_code, item_id, 
+      ladder_1, ladder_2)   values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+	(#{item.itemCode,jdbcType=VARCHAR}, #{item.itemId,jdbcType=INTEGER}, 
+      #{item.ladder1,jdbcType=DOUBLE}, #{item.ladder2,jdbcType=DOUBLE})
+    </foreach>  
+  </insert>
+  
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_price_ladder 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_price_ladder
+        (
+		    id,item_code,item_id,ladder_1,ladder_2
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemCode">#{im.itemCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.ladder1">#{im.ladder1},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.ladder2">#{im.ladder2}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.PLcswMerchantMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.PLcswMerchant" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="merchantNo" property="merchantno" jdbcType="VARCHAR" />
+    <result column="payVer" property="payver" jdbcType="VARCHAR" />
+    <result column="serviceJspayId" property="servicejspayid" jdbcType="VARCHAR" />
+    <result column="terminalId" property="terminalid" jdbcType="VARCHAR" />
+    <result column="accessToken" property="accesstoken" jdbcType="VARCHAR" />
+    <result column="serviceSlotCard" property="serviceslotcard" jdbcType="VARCHAR" />
+    <result column="servicePrepay" property="serviceprepay" jdbcType="VARCHAR" />
+    <result column="serviceQuery" property="servicequery" jdbcType="VARCHAR" />
+    <result column="zfbPayType" property="zfbpaytype" jdbcType="VARCHAR" />
+    <result column="wxPayType" property="wxpaytype" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, merchantNo, payVer, serviceJspayId, terminalId, accessToken, serviceSlotCard, 
+    servicePrepay, serviceQuery, zfbPayType, wxPayType
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from p_lcsw_merchant
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from p_lcsw_merchant
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.PLcswMerchant" >
+    insert into p_lcsw_merchant (id, merchantNo, payVer, 
+      serviceJspayId, terminalId, accessToken, 
+      serviceSlotCard, servicePrepay, serviceQuery, 
+      zfbPayType, wxPayType)
+    values (#{id,jdbcType=INTEGER}, #{merchantno,jdbcType=VARCHAR}, #{payver,jdbcType=VARCHAR}, 
+      #{servicejspayid,jdbcType=VARCHAR}, #{terminalid,jdbcType=VARCHAR}, #{accesstoken,jdbcType=VARCHAR}, 
+      #{serviceslotcard,jdbcType=VARCHAR}, #{serviceprepay,jdbcType=VARCHAR}, #{servicequery,jdbcType=VARCHAR}, 
+      #{zfbpaytype,jdbcType=VARCHAR}, #{wxpaytype,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.PLcswMerchant" >
+    insert into p_lcsw_merchant
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="merchantno != null" >
+        merchantNo,
+      </if>
+      <if test="payver != null" >
+        payVer,
+      </if>
+      <if test="servicejspayid != null" >
+        serviceJspayId,
+      </if>
+      <if test="terminalid != null" >
+        terminalId,
+      </if>
+      <if test="accesstoken != null" >
+        accessToken,
+      </if>
+      <if test="serviceslotcard != null" >
+        serviceSlotCard,
+      </if>
+      <if test="serviceprepay != null" >
+        servicePrepay,
+      </if>
+      <if test="servicequery != null" >
+        serviceQuery,
+      </if>
+      <if test="zfbpaytype != null" >
+        zfbPayType,
+      </if>
+      <if test="wxpaytype != null" >
+        wxPayType,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="merchantno != null" >
+        #{merchantno,jdbcType=VARCHAR},
+      </if>
+      <if test="payver != null" >
+        #{payver,jdbcType=VARCHAR},
+      </if>
+      <if test="servicejspayid != null" >
+        #{servicejspayid,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalid != null" >
+        #{terminalid,jdbcType=VARCHAR},
+      </if>
+      <if test="accesstoken != null" >
+        #{accesstoken,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceslotcard != null" >
+        #{serviceslotcard,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceprepay != null" >
+        #{serviceprepay,jdbcType=VARCHAR},
+      </if>
+      <if test="servicequery != null" >
+        #{servicequery,jdbcType=VARCHAR},
+      </if>
+      <if test="zfbpaytype != null" >
+        #{zfbpaytype,jdbcType=VARCHAR},
+      </if>
+      <if test="wxpaytype != null" >
+        #{wxpaytype,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.PLcswMerchant" >
+    update p_lcsw_merchant
+    <set >
+      <if test="merchantno != null" >
+        merchantNo = #{merchantno,jdbcType=VARCHAR},
+      </if>
+      <if test="payver != null" >
+        payVer = #{payver,jdbcType=VARCHAR},
+      </if>
+      <if test="servicejspayid != null" >
+        serviceJspayId = #{servicejspayid,jdbcType=VARCHAR},
+      </if>
+      <if test="terminalid != null" >
+        terminalId = #{terminalid,jdbcType=VARCHAR},
+      </if>
+      <if test="accesstoken != null" >
+        accessToken = #{accesstoken,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceslotcard != null" >
+        serviceSlotCard = #{serviceslotcard,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceprepay != null" >
+        servicePrepay = #{serviceprepay,jdbcType=VARCHAR},
+      </if>
+      <if test="servicequery != null" >
+        serviceQuery = #{servicequery,jdbcType=VARCHAR},
+      </if>
+      <if test="zfbpaytype != null" >
+        zfbPayType = #{zfbpaytype,jdbcType=VARCHAR},
+      </if>
+      <if test="wxpaytype != null" >
+        wxPayType = #{wxpaytype,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.PLcswMerchant" >
+    update p_lcsw_merchant
+    set merchantNo = #{merchantno,jdbcType=VARCHAR},
+      payVer = #{payver,jdbcType=VARCHAR},
+      serviceJspayId = #{servicejspayid,jdbcType=VARCHAR},
+      terminalId = #{terminalid,jdbcType=VARCHAR},
+      accessToken = #{accesstoken,jdbcType=VARCHAR},
+      serviceSlotCard = #{serviceslotcard,jdbcType=VARCHAR},
+      servicePrepay = #{serviceprepay,jdbcType=VARCHAR},
+      serviceQuery = #{servicequery,jdbcType=VARCHAR},
+      zfbPayType = #{zfbpaytype,jdbcType=VARCHAR},
+      wxPayType = #{wxpaytype,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectOne" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from p_lcsw_merchant limit 0,1
+  </select>
+</mapper>

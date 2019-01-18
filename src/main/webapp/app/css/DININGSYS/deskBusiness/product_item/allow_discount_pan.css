@@ -1,0 +1,45 @@
+.content{
+	margin: 0 auto;
+	width: 600px;	
+	height: AUTO;
+}
+.form-inline{
+	margin-top: 10px;
+}
+.input-small{
+	display:inline-block;
+	width:200px;
+	height: 30px;
+	line-height: 30px;
+	padding-left: 10px;
+	font-size: 14px;
+	color: #404040;
+}
+.input-sele{
+	width: 300px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	color: #404040;
+}
+.text-1{
+	display:inline-block;
+	font-size: 14px;
+	color: #404040;
+	height: 30px;
+	line-height: 30px;
+	text-align: left;
+	width: 100px;
+}
+.m-left{
+	margin-left: 20px;
+}
+.select-week{
+	width: 200px;
+}
+
+.inputStyle {
+	vertical-align: text-bottom;
+	margin-bottom: 10px;
+	*margin-bottom: -10px;  //ºÊ»›IE6£¨IE7
+}

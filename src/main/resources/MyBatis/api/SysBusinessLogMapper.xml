@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.SysBusinessLogMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.api.SysBusinessLog" >
+    <id column="uuid" property="uuid" jdbcType="VARCHAR" />
+    <result column="oper" property="oper" jdbcType="VARCHAR" />
+    <result column="pos" property="pos" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="ow_num" property="owNum" jdbcType="VARCHAR" />
+    <result column="seat_name" property="seatName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.yqsh.diningsys.web.model.api.SysBusinessLog" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, oper, pos, time, type, ow_num, seat_name
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_business_log
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from sys_business_log
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog" >
+    insert into sys_business_log_${table_end}  (uuid, oper, pos, 
+      time, type, ow_num, 
+      seat_name, content)
+    values (#{uuid,jdbcType=VARCHAR}, #{oper,jdbcType=VARCHAR}, #{pos,jdbcType=VARCHAR}, 
+      #{time,jdbcType=TIMESTAMP}, #{type,jdbcType=INTEGER}, #{owNum,jdbcType=VARCHAR}, 
+      #{seatName,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog" >
+    insert into sys_business_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="oper != null" >
+        oper,
+      </if>
+      <if test="pos != null" >
+        pos,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="owNum != null" >
+        ow_num,
+      </if>
+      <if test="seatName != null" >
+        seat_name,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=VARCHAR},
+      </if>
+      <if test="oper != null" >
+        #{oper,jdbcType=VARCHAR},
+      </if>
+      <if test="pos != null" >
+        #{pos,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatName != null" >
+        #{seatName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog" >
+    update sys_business_log
+    <set >
+      <if test="oper != null" >
+        oper = #{oper,jdbcType=VARCHAR},
+      </if>
+      <if test="pos != null" >
+        pos = #{pos,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        ow_num = #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatName != null" >
+        seat_num = #{seatName,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog" >
+    update sys_business_log
+    set oper = #{oper,jdbcType=VARCHAR},
+      pos = #{pos,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=INTEGER},
+      ow_num = #{owNum,jdbcType=VARCHAR},
+      seat_name = #{seatName,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog" >
+    update sys_business_log
+    set oper = #{oper,jdbcType=VARCHAR},
+      pos = #{pos,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      type = #{type,jdbcType=INTEGER},
+      ow_num = #{owNum,jdbcType=VARCHAR},
+      seat_name = #{seatName,jdbcType=VARCHAR}
+    where uuid = #{uuid,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <select id="getCount" resultType="Integer" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog">
+	  	 SELECT count(0)
+	  	 from sys_business_log_${table_end} o
+	  	 <where>
+	        <if test="oper != null and oper != ''">
+	         		and o.oper  like CONCAT('%',#{oper,jdbcType=VARCHAR},'%' )
+	        </if>
+	        <if test="type != null and type != ''">
+	         		and o.type = #{type}
+	        </if>
+	        <if test="seatName != null and seatName != ''">
+	         		and o.seat_name = #{seatName}
+	        </if>
+	        <if test="time != null and time != null">
+	         		and date_format(o.time,'%Y-%m-%d') = date_format(#{time},'%Y-%m-%d')
+	        </if>
+	     </where>
+    </select>
+    
+    <select id="getListByPage" resultType="com.yqsh.diningsys.web.model.api.SysBusinessLog" parameterType="com.yqsh.diningsys.web.model.api.SysBusinessLog">
+	  	 SELECT o.*
+	  	 from sys_business_log_${table_end} o 
+	  	 <where>
+	        <if test="oper != null and oper != ''">
+	         		and o.oper  like CONCAT('%',#{oper,jdbcType=VARCHAR},'%' )
+	        </if>
+	        <if test="type != null and type != ''">
+	         		and o.type = #{type}
+	        </if>
+	        <if test="seatName != null and seatName != ''">
+	         		and o.seat_name = #{seatName}
+	        </if>
+	        <if test="time != null and time != null">
+	         		and date_format(o.time,'%Y-%m-%d') = date_format(#{time},'%Y-%m-%d')
+	        </if>
+	     </where>
+	     order by o.time desc limit #{startRow},#{endRow}
+    </select>
+</mapper>

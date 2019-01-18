@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemTimeLimitPicMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="pic_names" property="picNames" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, p_id, pic_names ,type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_time_limit_pic
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_time_limit_pic
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic" >
+    insert into dg_item_time_limit_pic (id, p_id, pic_names,type
+      )
+    values (#{id,jdbcType=INTEGER}, #{pId,jdbcType=INTEGER}, #{picNames,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic" >
+    insert into dg_item_time_limit_pic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pId != null" >
+        p_id,
+      </if>
+      <if test="picNames != null" >
+        pic_names,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="picNames != null" >
+        #{picNames,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic" >
+    update dg_item_time_limit_pic
+    <set >
+      <if test="pId != null" >
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="picNames != null" >
+        pic_names = #{picNames,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic" >
+    update dg_item_time_limit_pic
+    set p_id = #{pId,jdbcType=INTEGER},
+      pic_names = #{picNames,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="selectHCount" resultType="java.lang.Integer">
+    select count(1) from dg_item_time_limit_pic where type = 1
+  </select>
+  
+  <select id="selectZCount" resultType="java.lang.Integer">
+    select count(1) from dg_item_time_limit_pic where type = 2
+  </select>
+  
+  <select id="selectAllHPic" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic">
+    select * from dg_item_time_limit_pic where type = 1
+  </select>
+  
+  <select id="selectAllZPic" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTimeLimitPic">
+    select * from dg_item_time_limit_pic where type = 2
+  </select>
+  
+  
+  <delete id="deleteAll">
+    delete from dg_item_time_limit_pic
+    where 1=1
+  </delete>
+  <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_time_limit_pic (id, p_id, pic_names ,type
+      ) values
+    <foreach collection="list" item="item" index="index" separator="," >  
+	  (#{item.id,jdbcType=INTEGER}, #{item.pId,jdbcType=INTEGER}, #{item.picNames,jdbcType=VARCHAR}, #{item.type,jdbcType=INTEGER}
+     )
+    </foreach>  
+  </insert>
+</mapper>

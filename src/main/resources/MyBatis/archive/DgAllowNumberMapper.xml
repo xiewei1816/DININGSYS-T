@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgAllowNumberMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgAllowNumber" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="min_allow_number" property="minAllowNumber" jdbcType="INTEGER" />
+    <result column="max_allow_number" property="maxAllowNumber" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="DgAllowNumber" useGeneratedKeys="true" keyProperty="id">
+    insert into dg_allow_number (
+    	id, 
+    	name, 
+    	min_allow_number,
+    	max_allow_number
+    )values (
+    	#{id,jdbcType=INTEGER},
+	    #{name,jdbcType=VARCHAR}, 
+	    #{minAllowNumber,jdbcType=INTEGER}, 
+	    #{maxAllowNumber,jdbcType=INTEGER}
+    )
+  </insert>
+
+  <delete id="deleteById" parameterType="java.util.List" >
+    delete from dg_allow_number where id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+   <update id="updateById" parameterType="DgAllowNumber" >
+	    update dg_allow_number set 
+	    	name = #{name,jdbcType=VARCHAR},
+		    min_allow_number = #{minAllowNumber,jdbcType=INTEGER}, 
+    		max_allow_number =  #{maxAllowNumber,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getListByPage" resultType="DgAllowNumber" parameterType="DgAllowNumber">
+  	 SELECT * from dg_allow_number o 
+  	  <where>
+        <if test="name != null and name != ''">
+            o.name like concat(concat('%', <![CDATA[ #{name,jdbcType=VARCHAR} ]]>,'%' ))
+        </if>
+     </where>
+     limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="getCount" resultType="Integer" parameterType="DgAllowNumber">
+  	 SELECT count(0)
+  	 from dg_allow_number
+  	 <where>
+        <if test="name != null">
+            name =  <![CDATA[ #{name,jdbcType=VARCHAR} ]]>
+        </if>
+     </where>
+    </select>
+    <select id="selectById" resultType="DgAllowNumber" parameterType="Integer">
+  	  SELECT * from dg_allow_number where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="getAllList" resultType="DgAllowNumber">
+  	  SELECT * from dg_allow_number o
+  	  <where>
+        <if test="name != null and name != ''">
+            o.name like concat(concat('%', <![CDATA[ #{name,jdbcType=VARCHAR} ]]>,'%' ))
+        </if>
+     </where>
+    </select>
+</mapper>

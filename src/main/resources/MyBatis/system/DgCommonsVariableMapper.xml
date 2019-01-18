@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.DgCommonsVariableMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.DgCommonsVariable" >
+    <id column="cv_code" property="cvCode" jdbcType="VARCHAR" />
+    <result column="cv_value" property="cvValue" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cv_code, cv_value
+  </sql>
+
+  <select id="selectByCode" parameterType="DgCommonsVariable" resultMap="BaseResultMap">
+    select * from dg_commons_variable where cv_code = #{cvCode,jdbcType=VARCHAR}
+  </select>
+
+  <update id="updateValueByCode" parameterType="DgCommonsVariable">
+    update dg_commons_variable set cv_value = #{cvValue,jdbcType=VARCHAR} where cv_code = #{cvCode,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

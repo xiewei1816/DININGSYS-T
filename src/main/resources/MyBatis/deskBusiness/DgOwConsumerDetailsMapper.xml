@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgOwConsumerDetailsMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" >
+    <result column="item_file_id" property="itemFileId" jdbcType="INTEGER" />
+    <result column="item_file_number" property="itemFileNumber" jdbcType="DOUBLE" />
+    <result column="item_file_zs" property="itemFileZs" jdbcType="DOUBLE" />
+    <result column="production_costs" property="productionCosts" jdbcType="DOUBLE" />
+    <result column="discount" property="discount" jdbcType="DOUBLE" />
+    <result column="subtotal" property="subtotal" jdbcType="DOUBLE" />
+    <result column="ow_id" property="owId" jdbcType="INTEGER" />
+    <result column="guest" property="guest" jdbcType="VARCHAR" />
+    <result column="notes" property="notes" jdbcType="VARCHAR" />
+    <result column="serving_type" property="servingType" jdbcType="INTEGER" />
+    <result column="serving_type_global" property="servingTypeGlobal" jdbcType="INTEGER" />
+    <result column="expectations_serving_time" property="expectationsServingTime" jdbcType="TIMESTAMP" />
+    <result column="serving_case" property="servingCase" jdbcType="INTEGER" />
+    <result column="is_tc" property="isTc" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="back_ow_id" property="backOwId" jdbcType="INTEGER" />
+    <result column="reminder_number" property="reminderNumber" jdbcType="INTEGER" />
+    <result column="qc_zt" property="qcZt" jdbcType="INTEGER" />
+    <result column="qc_fs" property="qcFs" jdbcType="INTEGER" />
+    <result column="qc_zhsj" property="qcZhsj" jdbcType="TIMESTAMP" />
+    <result column="qc_sl" property="qcSl" jdbcType="DOUBLE" />
+    <result column="item_final_price" property="itemFinalPrice" jdbcType="DOUBLE" />
+    <result column="initial_price" property="initialPrice" jdbcType="DOUBLE" />
+    <result column="zs_item_final_price" property="zsItemFinalPrice" jdbcType="DOUBLE" />
+    <result column="zs_production_costs" property="zsProductionCosts" jdbcType="DOUBLE" />
+    <result column="zs_subtotal" property="zsSubtotal" jdbcType="DOUBLE" />
+    <result column="is_price_cal" property="isPriceCal" jdbcType="INTEGER" />
+    <result column="item_pay_money" property="itemPayMoney" jdbcType="DOUBLE" />
+    <result column="discount_money" property="discountMoney" jdbcType="NUMERIC" />
+    <result column="settlement_status" property="settlementStatus" jdbcType="INTEGER" />
+    <result column="add_by_yxe" property="addByYxe" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" >
+    insert into dg_ow_consumer_details (item_file_id, item_file_number, item_file_zs,
+    production_costs, discount, subtotal,
+    ow_id, guest, notes,
+    serving_type, serving_type_global, expectations_serving_time,
+    serving_case, is_tc , parent_id,back_ow_id,reminder_number,qc_zt,qc_fs,qc_zhsj,qc_sl,is_price_cal,item_pay_money,discount_money,settlement_status,add_by_yxe,item_final_price,couponVal)
+    values (#{itemFileId,jdbcType=INTEGER}, #{itemFileNumber,jdbcType=DOUBLE}, #{itemFileZs,jdbcType=DOUBLE},
+    #{productionCosts,jdbcType=DOUBLE}, #{discount,jdbcType=DOUBLE}, #{subtotal,jdbcType=DOUBLE},
+    #{owId,jdbcType=INTEGER}, #{guest,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR},
+    #{servingType,jdbcType=INTEGER}, #{servingTypeGlobal,jdbcType=INTEGER}, #{expectationsServingTime,jdbcType=TIMESTAMP},
+    #{servingCase,jdbcType=INTEGER}, #{isTc,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{backOwId,jdbcType=INTEGER},
+    #{reminderNumber,jdbcType=INTEGER},#{qcZt,jdbcType=INTEGER},#{qcFs,jdbcType=INTEGER},#{qcZhsj,jdbcType=TIMESTAMP},
+    #{qcSl,jdbcType=DOUBLE},#{isPriceCal,jdbcType=INTEGER},#{itemPayMoney,jdbcType=DOUBLE}
+    ,#{discountMoney,jdbcType=NUMERIC},#{settlementStatus,jdbcType=INTEGER},#{addByYxe,jdbcType=INTEGER},#{itemFinalPrice,jdbcType=DOUBLE},#{couponVal,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" >
+    insert into dg_ow_consumer_details
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="itemFileId != null" >
+        item_file_id,
+      </if>
+      <if test="itemFileNumber != null" >
+        item_file_number,
+      </if>
+      <if test="itemFileZs != null" >
+        item_file_zs,
+      </if>
+      <if test="productionCosts != null" >
+        production_costs,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="subtotal != null" >
+        subtotal,
+      </if>
+      <if test="owId != null" >
+        ow_id,
+      </if>
+      <if test="guest != null" >
+        guest,
+      </if>
+      <if test="notes != null" >
+        notes,
+      </if>
+      <if test="servingType != null" >
+        serving_type,
+      </if>
+      <if test="servingTypeGlobal != null" >
+        serving_type_global,
+      </if>
+      <if test="expectationsServingTime != null" >
+        expectations_serving_time,
+      </if>
+      <if test="servingCase != null" >
+        serving_case,
+      </if>
+      <if test="isTc != null" >
+        is_tc,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="itemFinalPrice != null" >
+        item_final_price,
+      </if>
+      <if test="backOwId != null" >
+        back_ow_id,
+      </if>
+      <if test="reminderNumber != null" >
+        reminder_number,
+      </if>
+      <if test="qcZt != null" >
+        qc_zt,
+      </if>
+      <if test="qcFs != null" >
+        qc_fs,
+      </if>
+      <if test="qcZhsj != null" >
+        qc_zhsj,
+      </if>
+      <if test="qcSl != null" >
+        qc_sl,
+      </if>
+      <if test="initialPrice != null" >
+        initial_price,
+      </if>
+      <if test="zsItemFinalPrice != null" >
+        zs_item_final_price,
+      </if>
+      <if test="zsProductionCosts != null" >
+        zs_production_costs,
+      </if>
+      <if test="zsSubtotal != null" >
+        zs_subtotal,
+      </if>
+      <if test="isPriceCal != null" >
+        is_price_cal,
+      </if>
+      <if test="itemPayMoney != null" >
+        item_pay_money,
+      </if>
+      <if test="discountMoney != null" >
+        discount_money,
+      </if>
+      <if test="settlementStatus != null" >
+        settlement_status,
+      </if>
+      <if test="addByYxe != null" >
+        add_by_yxe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="itemFileId != null" >
+        #{itemFileId,jdbcType=INTEGER},
+      </if>
+      <if test="itemFileNumber != null" >
+        #{itemFileNumber,jdbcType=DOUBLE},
+      </if>
+      <if test="itemFileZs != null" >
+        #{itemFileZs,jdbcType=DOUBLE},
+      </if>
+      <if test="productionCosts != null" >
+        #{productionCosts,jdbcType=DOUBLE},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=DOUBLE},
+      </if>
+      <if test="subtotal != null" >
+        #{subtotal,jdbcType=DOUBLE},
+      </if>
+      <if test="owId != null" >
+        #{owId,jdbcType=INTEGER},
+      </if>
+      <if test="guest != null" >
+        #{guest,jdbcType=VARCHAR},
+      </if>
+      <if test="notes != null" >
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="servingType != null" >
+        #{servingType,jdbcType=INTEGER},
+      </if>
+      <if test="servingTypeGlobal != null" >
+        #{servingTypeGlobal,jdbcType=INTEGER},
+      </if>
+      <if test="expectationsServingTime != null" >
+        #{expectationsServingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="servingCase != null" >
+        #{servingCase,jdbcType=INTEGER},
+      </if>
+      <if test="isTc != null" >
+        #{isTc,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="itemFinalPrice != null" >
+        #{itemFinalPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="backOwId != null" >
+        #{backOwId,jdbcType=INTEGER},
+      </if>
+      <if test="reminderNumber != null" >
+        #{reminderNumber,jdbcType=INTEGER},
+      </if>
+      <if test="qcZt != null" >
+        #{qcZt,jdbcType=INTEGER},
+      </if>
+      <if test="qcFs != null" >
+        #{qcFs,jdbcType=INTEGER},
+      </if>
+      <if test="qcZhsj != null" >
+		#{qcZhsj,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qcSl != null" >
+        #{qcSl,jdbcType=DOUBLE},
+      </if>
+      <if test="initialPrice != null" >
+        #{initialPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="zsItemFinalPrice != null" >
+        #{zsItemFinalPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="zsProductionCosts != null" >
+        #{zsProductionCosts,jdbcType=DOUBLE},
+      </if>
+      <if test="zsSubtotal != null" >
+        #{zsSubtotal,jdbcType=DOUBLE},
+      </if>
+      <if test="isPriceCal != null" >
+        #{isPriceCal,jdbcType=INTEGER},
+      </if>
+      <if test="itemPayMoney != null" >
+        #{itemPayMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="discountMoney != null" >
+        #{discountMoney,jdbcType=NUMERIC},
+      </if>
+      <if test="settlementStatus != null" >
+        #{settlementStatus,jdbcType=INTEGER},
+      </if>
+      <if test="addByYxe != null" >
+        #{addByYxe,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateConsumerDetailsNumber" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+    update dg_ow_consumer_details set
+    item_file_number = #{itemFileNumber,jdbcType=DOUBLE},subtotal = #{subtotal,jdbcType=DOUBLE}
+    where
+    ow_id = #{owId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER}
+    and is_tc != -1 and item_file_number > 0
+  </update>
+
+  <update id="updateConsumerDetailsTcNbNumber" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+    update dg_ow_consumer_details set
+    item_file_number = #{itemFileNumber,jdbcType=DOUBLE}
+    where
+    ow_id = #{owId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER} and
+    parent_id = #{parentId,jdbcType=INTEGER} and item_file_number > 0 and is_tc = -1
+  </update>
+
+  <select id="selectByOwId" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" parameterType="Map" >
+    select
+    *
+    from dg_ow_consumer_details
+    where ow_id = #{owId,jdbcType=INTEGER} and item_file_id = #{itemId,jdbcType=INTEGER} and is_tc != -1
+  </select>
+  <select id="selectDetailByServiceIdAndItemFileId"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+      select * from dg_ow_consumer_details where ow_id = #{serviceId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER}
+      and is_tc != -1
+  </select>
+  
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into dg_ow_consumer_details (item_file_id, item_file_number, item_file_zs,
+    production_costs, discount, subtotal,item_final_price,
+    ow_id, guest, notes,
+    serving_type, serving_type_global, expectations_serving_time,
+    serving_case, is_tc , parent_id,back_ow_id,reminder_number,qc_zt,qc_fs,qc_zhsj,qc_sl,is_price_cal,
+    zs_item_final_price,zs_production_costs,zs_subtotal,discount_money,settlement_status,add_by_yxe)
+    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+    (#{item.itemFileId,jdbcType=INTEGER}, #{item.itemFileNumber,jdbcType=DOUBLE}, #{item.itemFileZs,jdbcType=DOUBLE},
+    #{item.productionCosts,jdbcType=DOUBLE}, #{item.discount,jdbcType=DOUBLE}, #{item.subtotal,jdbcType=DOUBLE},#{item.itemFinalPrice,jdbcType=DOUBLE},
+    #{item.owId,jdbcType=INTEGER}, #{item.guest,jdbcType=VARCHAR}, #{item.notes,jdbcType=VARCHAR},
+    #{item.servingType,jdbcType=INTEGER}, #{item.servingTypeGlobal,jdbcType=INTEGER}, #{item.expectationsServingTime,jdbcType=TIMESTAMP},
+    #{item.servingCase,jdbcType=INTEGER}, #{item.isTc,jdbcType=INTEGER}, #{item.parentId,jdbcType=INTEGER}, #{item.backOwId,jdbcType=INTEGER},
+    0,0,#{item.qcFs,jdbcType=INTEGER},#{item.qcZhsj,jdbcType=TIMESTAMP},0,#{item.isPriceCal,jdbcType=INTEGER},
+    #{item.zsItemFinalPrice,jdbcType=DOUBLE},#{item.zsProductionCosts,jdbcType=DOUBLE},#{item.zsSubtotal,jdbcType=DOUBLE},
+      #{item.discountMoney,jdbcType=NUMERIC},#{item.settlementStatus,jdbcType=INTEGER},#{item.addByYxe,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+</mapper>

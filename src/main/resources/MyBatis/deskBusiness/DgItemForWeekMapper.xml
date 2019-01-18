@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemForWeekMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="x1" property="x1" jdbcType="DOUBLE" />
+    <result column="x2" property="x2" jdbcType="DOUBLE" />
+    <result column="x3" property="x3" jdbcType="DOUBLE" />
+    <result column="x4" property="x4" jdbcType="DOUBLE" />
+    <result column="x5" property="x5" jdbcType="DOUBLE" />
+    <result column="x6" property="x6" jdbcType="DOUBLE" />
+    <result column="x7" property="x7" jdbcType="DOUBLE" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="standard_price" property="sPrice" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_code, item_id, x1, x2, x3, x4, x5, x6, x7
+  </sql>
+  
+   <sql id="Next_Column_List">
+    a.id as id, 
+    a.item_id as item_id, 
+    a.item_code as item_code, 
+    a.x1 as x1, 
+    a.x2 as x2,
+    a.x3 as x3,
+    a.x4 as x4,
+    a.x5 as x5,
+    a.x6 as x6,
+    a.x7 as x7,
+    b.name as name,
+    b.standard_price as standard_price
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_for_week
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_for_week
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek" >
+    insert into dg_item_for_week (id, item_code, item_id, 
+      x1, x2, x3, x4, 
+      x5, x6, x7)
+    values (#{id,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}, #{itemId,jdbcType=INTEGER}, 
+      #{x1,jdbcType=DOUBLE}, #{x2,jdbcType=DOUBLE}, #{x3,jdbcType=DOUBLE}, #{x4,jdbcType=DOUBLE}, 
+      #{x5,jdbcType=DOUBLE}, #{x6,jdbcType=DOUBLE}, #{x7,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek" >
+    insert into dg_item_for_week
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="x1 != null" >
+        x1,
+      </if>
+      <if test="x2 != null" >
+        x2,
+      </if>
+      <if test="x3 != null" >
+        x3,
+      </if>
+      <if test="x4 != null" >
+        x4,
+      </if>
+      <if test="x5 != null" >
+        x5,
+      </if>
+      <if test="x6 != null" >
+        x6,
+      </if>
+      <if test="x7 != null" >
+        x7,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="x1 != null" >
+        #{x1,jdbcType=DOUBLE},
+      </if>
+      <if test="x2 != null" >
+        #{x2,jdbcType=DOUBLE},
+      </if>
+      <if test="x3 != null" >
+        #{x3,jdbcType=DOUBLE},
+      </if>
+      <if test="x4 != null" >
+        #{x4,jdbcType=DOUBLE},
+      </if>
+      <if test="x5 != null" >
+        #{x5,jdbcType=DOUBLE},
+      </if>
+      <if test="x6 != null" >
+        #{x6,jdbcType=DOUBLE},
+      </if>
+      <if test="x7 != null" >
+        #{x7,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek" >
+    update dg_item_for_week
+    <set >
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="x1 != null" >
+        x1 = #{x1,jdbcType=DOUBLE},
+      </if>
+      <if test="x2 != null" >
+        x2 = #{x2,jdbcType=DOUBLE},
+      </if>
+      <if test="x3 != null" >
+        x3 = #{x3,jdbcType=DOUBLE},
+      </if>
+      <if test="x4 != null" >
+        x4 = #{x4,jdbcType=DOUBLE},
+      </if>
+      <if test="x5 != null" >
+        x5 = #{x5,jdbcType=DOUBLE},
+      </if>
+      <if test="x6 != null" >
+        x6 = #{x6,jdbcType=DOUBLE},
+      </if>
+      <if test="x7 != null" >
+        x7 = #{x7,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek" >
+    update dg_item_for_week
+    set item_code = #{itemCode,jdbcType=VARCHAR},
+      item_id = #{itemId,jdbcType=INTEGER},
+      x1 = #{x1,jdbcType=DOUBLE},
+      x2 = #{x2,jdbcType=DOUBLE},
+      x3 = #{x3,jdbcType=DOUBLE},
+      x4 = #{x4,jdbcType=DOUBLE},
+      x5 = #{x5,jdbcType=DOUBLE},
+      x6 = #{x6,jdbcType=DOUBLE},
+      x7 = #{x7,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAllData" resultMap="BaseResultMap"  parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_for_week a left join 
+    dg_item_file b on a.item_id = b.id
+    <where>
+        b.delFlag = '0'
+  	    <if test="name != null and name != ''">
+        		b.name like CONCAT(CONCAT('%',#{name,jdbcType=VARCHAR},'%' ))
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND b.num like CONCAT(CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' ))
+        </if>
+        AND b.yxdz = 1 
+        AND b.id not in (select item_id from dg_item_disable where 1=1)
+     </where>
+  </select>
+  
+  
+  <select id="getAllItemId" resultType="java.lang.Integer"  >
+    select item_id
+    from dg_item_for_week where 1=1
+  </select>
+  
+  
+  <select id="selectItemByAdd" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile" parameterType="list">
+     select 
+		*
+	 from dg_item_file 
+	 where delFlag = '0' and yxdz = 1 and id not in (select item_id from dg_item_disable where 1=1) and id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+  <delete id="deleteAll">
+    delete from dg_item_for_week
+    where 1=1
+  </delete>
+  
+  
+    
+  <delete id="deleteNotIn" parameterType="list">
+    delete from dg_item_for_week where item_id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+       <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_for_week where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_for_week
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="selectByItemId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_for_week
+    where item_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+    
+  <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_for_week(item_code, item_id, 
+      x1, x2, x3, x4, 
+      x5, x6, x7)  values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+	( #{item.itemCode,jdbcType=VARCHAR}, #{item.itemId,jdbcType=INTEGER}, 
+      #{item.x1,jdbcType=DOUBLE}, #{item.x2,jdbcType=DOUBLE}, #{item.x3,jdbcType=DOUBLE}, #{item.x4,jdbcType=DOUBLE}, 
+      #{item.x5,jdbcType=DOUBLE}, #{item.x6,jdbcType=DOUBLE}, #{item.x7,jdbcType=DOUBLE})
+    </foreach>  
+  </insert>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_for_week 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_for_week
+	    (
+		    id,item_code,item_id,x1,x2,x3,x4,x5,x6,x7
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemCode">#{im.itemCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x1">#{im.x1},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x2">#{im.x2},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x3">#{im.x3},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x4">#{im.x4},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x5">#{im.x5},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x6">#{im.x6},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.x7">#{im.x7}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

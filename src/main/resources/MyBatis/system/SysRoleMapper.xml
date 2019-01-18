@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysRole" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_sign" property="roleSign" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="VARCHAR" />
+    <result column="bgroup" property="bgroup" jdbcType="VARCHAR" />
+    <result column="the_shop" property="theShop" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, role_name, role_sign, description, create_time, state,bgroup,the_shop
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_role
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysRole" >
+    insert into sys_role ( role_name, role_sign,
+      description,
+      state,bgroup,the_shop)
+    values (#{roleName,jdbcType=VARCHAR}, #{roleSign,jdbcType=VARCHAR},
+      #{description,jdbcType=VARCHAR},
+      #{state,jdbcType=VARCHAR},#{bgroup,jdbcType=INTEGER},#{theShop,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.SysRole" >
+    insert into sys_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="roleName != null" >
+        role_name,
+      </if>
+      <if test="roleSign != null" >
+        role_sign,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="bgroup != null" >
+        bgroup,
+      </if>
+      <if test="theShop != null" >
+        the_shop,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleSign != null" >
+        #{roleSign,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="bgroup != null" >
+        #{bgroup,jdbcType=INTEGER},
+      </if>
+      <if test="theShop != null" >
+        #{theShop,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysRole" >
+    update sys_role
+    <set >
+      <if test="roleName != null" >
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleSign != null" >
+        role_sign = #{roleSign,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=VARCHAR},
+      </if>
+      <if test="bgroup != null" >
+        bgroup = #{bgroup,jdbcType=INTEGER},
+      </if>
+      <if test="theShop != null" >
+        the_shop = #{theShop,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysRole" >
+    update sys_role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      role_sign = #{roleSign,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=VARCHAR},
+      bgroup = #{bgroup,jdbcType=INTEGER},
+      the_shop = #{theShop,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--角色数据分页查询-->
+  <select id="selectByConAndPage" resultType="com.yqsh.diningsys.web.model.SysRole">
+    SELECT * from sys_role
+    <where>
+      <if test="sSearch != null and sSearch != ''">
+        role_name like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or role_sign like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or description like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or state like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or convert(create_time,DATE) like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+    </where>
+    <if test="orderCol != null and orderCol != ''">
+      order by ${orderCol}  ${sSortDir_0}
+    </if>
+  </select>
+
+  <select id="selectRoleMenu" parameterType="integer" resultType="com.yqsh.diningsys.web.model.SysMenu">
+    select m2.*,rm2.checked from  sys_menu m2 left join (
+     select m.*,'checked' checked from sys_role_menu rm LEFT JOIN sys_menu m on rm.menu_id = m.id where rm.role_id = #{id,jdbcType=INTEGER}
+    ) rm2 on m2.id = rm2.id where m2.menu_state = 'enable'
+  </select>
+
+
+  <select id="getPerBusinessByUserId" parameterType="map" resultType="map">
+    select t1.* from sys_per_business t1 left join sys_user t2 on t2.emp_duties = t1.zw_id where t2.id = #{userid}
+  </select>
+
+
+  <select id="selectRoleByUserId" parameterType="map" resultType="SysRole">
+    select r2.*,ru2.selected from  sys_role r2 left join (
+        select DISTINCT r.*,'selected' selected from sys_user_role ur LEFT JOIN sys_role r on ur.role_id = r.id
+        <where>
+          <if test="id != null">
+            ur.user_id = #{id,jdbcType=INTEGER}
+          </if>
+        </where>
+    ) ru2 on r2.id = ru2.id where r2.state = 1
+  </select>
+
+  <select id="selectRoleByLoginUserId" parameterType="map" resultType="SysRole">
+    select r.* from sys_user_role ur LEFT JOIN sys_role r on ur.role_id = r.id where ur.user_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKeys" parameterType="list">
+    DELETE from sys_role where id in
+    <foreach collection="list" open="(" close=")" separator="," item="id">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+  <update id="lockByPrimaryKeys" parameterType="map">
+    UPDATE sys_role set state = #{state,jdbcType=VARCHAR} where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteRoleMenuByRoleId" parameterType="integer">
+    DELETE from sys_role_menu where role_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteRoleMenuByRoleIds" parameterType="list">
+    DELETE from sys_role_menu where role_id IN
+      <foreach collection="list" item="id" open="(" close=")" separator=",">
+        #{id,jdbcType=INTEGER}
+      </foreach>
+  </delete>
+
+  <insert id="insertRoleMenu" parameterType="list">
+    insert INTO sys_role_menu(role_id,menu_id) VALUES
+    <foreach collection="list" item="item" open="(" close=")" separator="),(">
+      #{item.roleId,jdbcType=INTEGER},#{item.menuId,jdbcType=INTEGER}
+    </foreach>
+  </insert>
+
+  <select id="selectAllRole" resultType="SysRole">
+    select sr.*,tbo.org_name as empOrganizationName from sys_role sr LEFT join t_b_org tbo on sr.the_shop = tbo.id
+  </select>
+
+  <delete id="deleteUserRoleByRoleId" parameterType="java.lang.Integer">
+    DELETE from sys_user_role where role_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteUserRoleByUserId" parameterType="java.lang.Integer">
+    DELETE from sys_user_role where user_id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertRoleUser" parameterType="list">
+    insert INTO sys_user_role(user_id,role_id) VALUES
+    <foreach collection="list" item="item" open="(" close=")" separator="),(">
+      #{item.userId,jdbcType=INTEGER},#{item.roleId,jdbcType=INTEGER}
+    </foreach>
+  </insert>
+
+</mapper>

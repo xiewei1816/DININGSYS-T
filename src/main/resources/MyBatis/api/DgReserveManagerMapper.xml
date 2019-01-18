@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.DgReserveManagerMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgReserveManager" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cr_id" property="crId" jdbcType="VARCHAR" />
+    <result column="seat_id" property="seatId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="yd_time" property="ydTime" jdbcType="TIMESTAMP" />
+    <result column="yd_num" property="ydNum" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="yd_resoure" property="ydResoure" jdbcType="VARCHAR" />
+    <result column="xszf" property="xszf" jdbcType="INTEGER" />
+    <result column="xszf_money" property="xszfMoney" jdbcType="DOUBLE" />
+    <result column="xszf_type" property="xszfType" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+    <result column="w_o_w" property="wOw" jdbcType="INTEGER" />
+    <result column="b_s_d" property="bsd" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="selectCols">
+		o.id AS "id",
+		o.number AS "number",
+		o.name AS "name",
+		o.all_name AS "allName",
+<!-- 		o.seat_type AS "seatType", -->
+		dpc.cName AS "seatType",
+		o.allow_number AS "allowNumber",
+		o.default_state AS "defaultState",
+		o.cons_area AS "consArea",
+		o.mnemonic AS "mnemonic",
+		o.create_time AS "createTime",
+		o.explains AS "explains",
+		o.create_user AS "createUserid",
+		o.del_flag AS "delFlag",
+		o.disabled_seat AS "disabledSeat",
+		o.inset_retention_room AS "insetRetentionRoom",
+		o.immediate_settlement AS "immediateSettlement",
+		o.not_statistics_overtaiwan AS "notStatisticsOvertaiwan",
+		o.empty_guest AS "emptyGuest",
+		o.customer_retention AS "customerRetention",
+		o.seat_state As seat_state,
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		ca.id AS "area.id",
+		ca.name AS "area.name",
+		ca.number AS "area.number"
+	</sql>
+	
+  <sql id="Base_Column_List" >
+    id, cr_id, seat_id, number, phone, yd_time, yd_num, state, yd_resoure, xszf, xszf_money, 
+    xszf_type, time ,name,sex,w_o_w,b_s_d
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_reserve_manager
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    update  dg_reserve_manager set state = 2 
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager" >
+    insert into dg_reserve_manager (id, cr_id, seat_id, 
+      number, phone, yd_time, 
+      yd_num, state, yd_resoure, 
+      xszf, xszf_money, xszf_type, 
+      time ,name ,sex,w_o_w,b_s_d)
+    values (#{id,jdbcType=INTEGER}, #{crId,jdbcType=VARCHAR}, #{seatId,jdbcType=INTEGER}, 
+      #{number,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{ydTime,jdbcType=TIMESTAMP}, 
+      #{ydNum,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{ydResoure,jdbcType=VARCHAR}, 
+      #{xszf,jdbcType=INTEGER}, #{xszfMoney,jdbcType=DOUBLE}, #{xszfType,jdbcType=INTEGER}, 
+      #{time,jdbcType=TIMESTAMP},#{name,jdbcType=VARCHAR},#{sex,jdbcType=INTEGER},#{wOw,jdbcType=INTEGER}
+      ,#{bsd,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager" >
+    insert into dg_reserve_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="crId != null" >
+        cr_id,
+      </if>
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="ydTime != null" >
+        yd_time,
+      </if>
+      <if test="ydNum != null" >
+        yd_num,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="ydResoure != null" >
+        yd_resoure,
+      </if>
+      <if test="xszf != null" >
+        xszf,
+      </if>
+      <if test="xszfMoney != null" >
+        xszf_money,
+      </if>
+      <if test="xszfType != null" >
+        xszf_type,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+       <if test="wOw != null" >
+        w_o_w,
+      </if>
+       <if test="bsd != null" >
+        b_s_d,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="crId != null" >
+        #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="ydTime != null" >
+        #{ydTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ydNum != null" >
+        #{ydNum,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="ydResoure != null" >
+        #{ydResoure,jdbcType=VARCHAR},
+      </if>
+      <if test="xszf != null" >
+        #{xszf,jdbcType=INTEGER},
+      </if>
+      <if test="xszfMoney != null" >
+        #{xszfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="xszfType != null" >
+        #{xszfType,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="wOw != null" >
+        #{wOw,jdbcType=INTEGER},
+      </if>
+      <if test="bsd != null" >
+        #{bsd,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager" >
+    update dg_reserve_manager
+    <set >
+      <if test="crId != null" >
+        cr_id = #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null" >
+        seat_id = #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="ydTime != null" >
+        yd_time = #{ydTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ydNum != null" >
+        yd_num = #{ydNum,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="ydResoure != null" >
+        yd_resoure = #{ydResoure,jdbcType=VARCHAR},
+      </if>
+      <if test="xszf != null" >
+        xszf = #{xszf,jdbcType=INTEGER},
+      </if>
+      <if test="xszfMoney != null" >
+        xszf_money = #{xszfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="xszfType != null" >
+        xszf_type = #{xszfType,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+       <if test="wOw != null" >
+        w_o_w = #{wOw,jdbcType=INTEGER},
+      </if>
+       <if test="bsd != null" >
+        b_s_d = #{bsd,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager" >
+    update dg_reserve_manager
+    set cr_id = #{crId,jdbcType=VARCHAR},
+      seat_id = #{seatId,jdbcType=INTEGER},
+      number = #{number,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      yd_time = #{ydTime,jdbcType=TIMESTAMP},
+      yd_num = #{ydNum,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      yd_resoure = #{ydResoure,jdbcType=VARCHAR},
+      xszf = #{xszf,jdbcType=INTEGER},
+      xszf_money = #{xszfMoney,jdbcType=DOUBLE},
+      xszf_type = #{xszfType,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      w_o_w = #{wOw,jdbcType=INTEGER},
+      b_s_d = #{bsd,jdbcType=INTEGER},
+      time = #{time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <insert id="insertBackId" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager" useGeneratedKeys="true" keyProperty="id">
+    insert into dg_reserve_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="crId != null" >
+        cr_id,
+      </if>
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="ydTime != null" >
+        yd_time,
+      </if>
+      <if test="ydNum != null" >
+        yd_num,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="ydResoure != null" >
+        yd_resoure,
+      </if>
+      <if test="xszf != null" >
+        xszf,
+      </if>
+      <if test="xszfMoney != null" >
+        xszf_money,
+      </if>
+      <if test="xszfType != null" >
+        xszf_type,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="wOw != null" >
+        w_o_w,
+      </if>
+      <if test="bsd != null" >
+        b_s_d,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="crId != null" >
+        #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="ydTime != null" >
+        #{ydTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ydNum != null" >
+        #{ydNum,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="ydResoure != null" >
+        #{ydResoure,jdbcType=VARCHAR},
+      </if>
+      <if test="xszf != null" >
+        #{xszf,jdbcType=INTEGER},
+      </if>
+      <if test="xszfMoney != null" >
+        #{xszfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="xszfType != null" >
+        #{xszfType,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="wOw != null" >
+        #{wOw,jdbcType=INTEGER},
+      </if>
+      <if test="bsd != null" >
+        #{bsd,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getListByPage" resultMap="BaseResultMap" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager">
+  	 SELECT o.*,group_concat(d.name separator ';') as seatName
+  	 from dg_reserve_manager o left join dg_reserve_seatids s on o.id = s.reserve_id
+  	 left join dg_consumer_seat d on s.seat_id = d.id 
+  	 <where>
+        <if test="search != null">
+        	(	d.name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+         			   o.name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+         		        o.phone like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+         			   o.yd_num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))
+        </if>
+        <if test="searchTime != null and searchTime != ''">
+        	 and DATE_FORMAT(o.time,'%Y-%m-%d') = DATE_FORMAT(#{searchTime},'%Y-%m-%d')
+        </if>
+        <if test="state != null and state == 2">
+        	 and o.state = 2
+        </if>
+        <if test="state != null and state == 1">
+        	 and o.state != 2
+        </if>
+     </where>
+     group by o.id order by o.id desc limit #{startRow},#{endRow}
+  </select>
+  
+    <select id="getCount" resultType="Integer" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager">
+  	 SELECT count(0)
+  	 from dg_reserve_manager o 
+  	 <where>
+        <if test="search != null">
+         		 ( o.phone like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+         			   #{search} in (select t1.number from dg_reserve_seatids s1 left join dg_consumer_seat t1 on s1.seat_id
+         			    = t1.id) or 
+         			   #{search} in (select t2.name from dg_reserve_seatids s2 left join dg_consumer_seat t2 on s2.seat_id
+         			    = t2.id) or 
+         			   o.name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+         			   o.yd_num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))
+        </if>
+        <if test="searchTime != null and searchTime != ''">
+        	 and DATE_FORMAT(o.time,'%Y-%m-%d') = DATE_FORMAT(#{searchTime},'%Y-%m-%d')
+        </if>
+        <if test="state != null and state == 2">
+        	 and o.state = 2
+        </if>
+        <if test="state != null and state == 1">
+        	 and o.state != 2
+        </if>
+     </where>
+    </select>
+    
+    
+  <!-- 检测客位是否已预定 -->
+  <select id="getYdSeat" resultType="java.lang.String" parameterType="Map">
+	 select c.name from dg_reserve_manager a  left join dg_reserve_seatids b on a.id = b.reserve_id left join
+	  	dg_consumer_seat c on b.seat_id = c.id
+	     <where>
+	     		and a.state != 2
+	    		<if test="time != null">
+	         		and <![CDATA[date_format(date_add(a.yd_time, interval #{interTime} hour),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_sub(a.yd_time, interval #{interTime} hour),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+	         	</if> 
+	         	<if test="id != null">
+	         		and a.id != #{id}
+	         	</if>
+	         	<if test="seats != null">
+	         		and b.seat_id in 
+	         		<foreach collection="seats" item="seat" open="(" close=")" separator=",">
+				      	#{seat.seatId}
+				    </foreach>
+	         	</if>
+	       </where>
+   </select>
+  
+  <update id="deleteByIds" parameterType="java.util.List" >
+    update  dg_reserve_manager set state = 2 
+    where id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <select id="selectByIds" parameterType="java.util.List" resultType="DgReserveManager">
+    select * from dg_reserve_manager
+    where id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  <select id="getAllSeat" resultType="DgConsumerSeat" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager">
+  	  SELECT 
+  	  <include refid="selectCols"></include>  
+  	  from dg_consumer_seat o 
+  	  	left join sys_user su on su.id = o.create_user
+		inner join dg_consumption_area ca on ca.id = o.cons_area
+		left join dg_public_code0 dpc on dpc.id = o.seat_type 
+		<where>
+	        <if test="search != null and search != ''">
+	         		AND  ( o.number like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+	         			   o.name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+	         			   o.allow_number = #{search})
+	        </if>
+	       <if test="time != null and id != null">
+	         		AND  o.id not in <![CDATA[(select b.seat_id from dg_reserve_manager a  left join dg_reserve_seatids b on a.id = b.reserve_id 
+	         	where date_format(date_add(a.yd_time, interval #{interTime} hour),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_sub(a.yd_time, interval #{interTime} hour),'%Y-%m-%d %H:%i:%s') < #{time} 
+	         	and a.id != #{id} and a.state != 2)]]>
+	        </if>
+	        <if test="time != null and id == null">
+	         		AND  o.id not in <![CDATA[(select b.seat_id from dg_reserve_manager a  left join dg_reserve_seatids b on a.id = b.reserve_id 
+	         	where date_format(date_add(a.yd_time, interval #{interTime} hour),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_sub(a.yd_time, interval #{interTime} hour),'%Y-%m-%d %H:%i:%s') < #{time} and a.state != 2)]]>
+	        </if>
+	        <if test="posConsumerIds != null and posConsumerIds.size() > 0">
+		         	AND  ca.id in 
+				    <foreach collection="posConsumerIds" item="pos" close=")" open="(" separator=",">
+				        #{pos}
+				    </foreach>
+	        </if>
+	        <if test="crId == 0 and bjIds!= null">
+	         		AND  ca.id not in 
+					<foreach collection="bjIds" item="bjId" close=")" open="(" separator=",">
+				        #{bjId}
+				    </foreach>
+	        </if>
+	        <if test="crId == 1 and bsd == 0 and bjIds!= null">
+	         		AND  ca.id in 
+					<foreach collection="bjIds" item="bjId" close=")" open="(" separator=",">
+				        #{bjId}
+				    </foreach>
+	        </if>
+	        AND o.del_flag = 0
+	        AND ca.del_flag = 0
+        </where>
+  </select>
+  
+  <!-- 前后3小时刷新预定客位 -->
+  <update id="updateSeatToYd" parameterType="java.lang.String" >
+   	 update dg_consumer_seat s set s.seat_state = 4 where
+		s.id in (select o.seat_id from dg_reserve_manager m left join dg_reserve_seatids o on m.id = o.reserve_id 
+		where <![CDATA[date_format(date_add(m.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(m.yd_time, interval -3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+			and m.state not in (-1,1,2) 
+		    and o.state is null)
+			and s.seat_state = 1
+  </update>
+  
+  
+  <!-- 预定的客位,未到情况,回复初始状态 -->
+  <update id="updateSeatToInit" parameterType="java.lang.String" >
+   	 update dg_consumer_seat s set s.seat_state = 1 where
+		s.id not in (select o.seat_id from dg_reserve_manager m left join dg_reserve_seatids o on m.id = o.reserve_id 
+		where <![CDATA[date_format(date_add(m.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(m.yd_time, interval -3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+			and m.state not in (-1,1,2) 
+			and o.state is null)
+			and s.seat_state = 4
+  </update>
+  
+  
+  <!-- 根据客位id 查询客位预定父表信息 -->
+  <select id="selectYdFromSeatId" parameterType="Map" resultType="com.yqsh.diningsys.web.model.archive.DgReserveManager">
+   	 select a.* from dg_reserve_manager a left join dg_reserve_seatids b on b.reserve_id = a.id left join dg_consumer_seat c
+   	 on c.id = b.seat_id 
+		where
+		    <![CDATA[date_format(date_add(a.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(a.yd_time, interval -3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+			and a.state != 2 and c.id = #{seatId} and b.state is null
+  </select>
+  
+  
+  <update id="updateManagerState" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveManager" >
+   	 update dg_reserve_manager set state = #{state} where id = #{id}
+  </update>
+  
+  
+    <!-- 获取桌位id,前后30分钟刷新预定客位 -->
+  <select id="getSeatToYd30" parameterType="java.lang.String" resultType="DgConsumerSeat">
+   	 select s.* from dg_consumer_seat s  where
+		s.id in (select o.seat_id from dg_reserve_manager m left join dg_reserve_seatids o on m.id = o.reserve_id 
+		where <![CDATA[date_format(date_add(m.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(m.yd_time, interval -3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+			and m.state not in (-1,1,2))
+			and s.seat_state = 1
+  </select>
+  
+  
+    <!-- 预定的客位,未到情况,回复初始状态 -->
+  <select id="getSeatToInit30" parameterType="java.lang.String" resultType="DgConsumerSeat">
+   	 select s.* from dg_consumer_seat s where
+		s.id not in (select o.seat_id from dg_reserve_manager m left join dg_reserve_seatids o on m.id = o.reserve_id 
+		where <![CDATA[date_format(date_add(m.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(m.yd_time, interval -3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+			and m.state not in (-1,1,2) )
+			and s.seat_state = 4
+  </select>
+  
+  
+   <update id="updateNotArriveDgReserve">
+		update dg_reserve_manager m set m.state = -1
+		where <![CDATA[date_format(date_add(m.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+			and m.state not in (-1,1,2) 
+   </update>
+	
+	
+	<select id="selectSeatByIds" parameterType="java.util.List" resultType="DgConsumerSeat">
+		select * from dg_consumer_seat where id in 
+		  <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">  
+		    	#{id.seatId}  
+		  </foreach> 
+	</select>
+	
+	
+  <select id="selectByOrderId" parameterType="String" resultType="DgReserveManager">
+    select * from dg_reserve_manager
+    where yd_resoure = #{orderId}
+  </select>
+  
+  
+  <select id="selectBySeatId" parameterType="Map" resultType="DgReserveManager">
+   	 select m.* from dg_reserve_manager m left join dg_reserve_seatids o on m.id = o.reserve_id 
+		where <![CDATA[date_format(date_add(m.yd_time, interval 3 HOUR),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(m.yd_time, interval -3 HOUR),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+		and m.state != 2 
+		and o.seat_id = #{seatId} limit 1
+  </select>
+  
+  
+  
+  <select id="selectReserverLatelyTenMintues" parameterType="Map" resultType="DgReserveManager">
+   	 select m.* from dg_reserve_manager m 
+		where <![CDATA[date_format(date_sub(m.yd_time, interval 10 MINUTE),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+		and m.state = 0
+  </select>
+
+
+  <update id="updateDgReserveManagerAlreadyNotice" parameterType="java.util.List" >
+    update  dg_reserve_manager set state = 3 
+    where id in 
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item.id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+    <select id="getDgReserveManagerList" resultType="com.yqsh.diningsys.web.model.archive.DgReserveManager">
+        SELECT o.*,group_concat(d.name separator ';') as seatName
+        from dg_reserve_manager o left join dg_reserve_seatids s on o.id = s.reserve_id
+        left join dg_consumer_seat d on s.seat_id = d.id
+        <where>
+            <if test="search != null">
+                (	d.name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+                o.name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+                o.phone like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or
+                o.yd_num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))
+            </if>
+            <if test="searchTime != null and searchTime != ''">
+                and DATE_FORMAT(o.time,'%Y-%m-%d') = DATE_FORMAT(#{searchTime},'%Y-%m-%d')
+            </if>
+            <if test="state != null and state == 2">
+                and o.state = 2
+            </if>
+            <if test="state != null and state == 1">
+                and o.state != 2
+            </if>
+        </where>
+        group by o.id order by o.id desc
+    </select>
+</mapper>

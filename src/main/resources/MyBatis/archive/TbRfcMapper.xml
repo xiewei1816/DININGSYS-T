@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbRfcMapper" >
+    <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbRfc" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="rfc_code" property="rfcCode" jdbcType="VARCHAR" />
+        <result column="rfc_name" property="rfcName" jdbcType="VARCHAR" />
+        <result column="rfc_type" property="rfcType" jdbcType="VARCHAR" />
+        <result column="rfc_zjf" property="rfcZjf" jdbcType="VARCHAR" />
+        <result column="rfc_explain" property="rfcExplain" jdbcType="VARCHAR" />
+        <result column="is_material_loss" property="isMaterialLoss" jdbcType="VARCHAR" />
+        <result column="is_tdsgqpx" property="isTdsgqpx" jdbcType="VARCHAR" />
+        <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,rfc_code,rfc_name,rfc_type,rfc_zjf,rfc_explain,is_material_loss,is_tdsgqpx,is_del,create_time
+    </sql> 
+    <sql id="selectCols">
+        o.id AS "id",
+        o.rfc_code AS "rfcCode",
+        o.rfc_name AS "rfcName",
+        c.rfct_name AS "rfcType",
+        o.rfc_zjf AS "rfcZjf",
+        o.rfc_explain AS "rfcExplain",
+        o.is_material_loss AS "isMaterialLoss",
+        o.is_tdsgqpx AS "isTdsgqpx",
+        o.is_del AS "isDel",
+        o.create_time AS "createTime"
+    </sql>
+    <!-- 分页查询退菜原因信息 -->
+    <select id="getListByPage" resultType="TbRfc" parameterType="TbRfc">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_rfc o
+        left join t_b_rfct c on c.id = o.rfc_type
+        <where>
+            <if test="rfcCode != null and rfcCode != ''">
+                and o.rfc_code like '%${rfcCode}%'
+            </if>
+            <if test="rfcName != null and rfcName != ''">
+                and o.rfc_name like '%${rfcName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{startRow},#{endRow}	
+    </select>
+    <!-- 提供查询页码 -->
+    <select id="countListByPage" resultType="Integer" parameterType="TbRfc">
+        SELECT
+        count(0)
+        from t_b_rfc o
+        left join t_b_rfct c on c.id = o.rfc_type
+        <where>
+            <if test="rfcCode != null and rfcCode != ''">
+                and o.rfc_code like '%${rfcCode}%'
+            </if>
+            <if test="rfcName != null and rfcName != ''">
+                and o.rfc_name like '%${rfcName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+    </select>
+    <!-- 通过退菜原因ID查询退菜原因信息 -->
+    <select id="getRfcById" parameterType="TbRfc" resultType="TbRfc">
+        SELECT 
+        <include refid="Base_Column_List"></include>
+        from t_b_rfc where id = #{id}
+    </select>
+    
+    <select id="getTbRfcByNumber" parameterType="String" resultType="TbRfc">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_rfc o 
+        left join t_b_rfct c on c.id = o.rfc_type
+        where o.rfc_code = #{number}
+    </select>
+	
+    <!-- 添加退菜原因信息 -->
+    <insert id="newInsert" parameterType="TbRfc">
+        insert into t_b_rfc(
+        rfc_code,
+        rfc_name, 
+        rfc_type,
+        rfc_zjf,
+        rfc_explain,
+        is_material_loss,
+        is_tdsgqpx,
+        create_time
+        ) values (
+        #{rfcCode},
+        #{rfcName},
+        #{rfcType},
+        #{rfcZjf},
+        #{rfcExplain},
+        #{isMaterialLoss},
+        #{isTdsgqpx},
+        #{createTime}
+        )
+    </insert>
+    <!-- 根据退菜原因ID修改退菜原因信息 -->
+    <update id="update" parameterType="TbRfc">
+        update t_b_rfc set 
+        rfc_code = #{rfcCode},
+        rfc_name = #{rfcName},
+        rfc_type = #{rfcType},
+        rfc_zjf = #{rfcZjf},
+        rfc_explain = #{rfcExplain},
+        is_material_loss = #{isMaterialLoss},
+        is_tdsgqpx = #{isTdsgqpx}
+        where id = #{id}
+    </update>
+    <!-- 退菜原因信息回收站 -->
+    <update id="deleteTrash" parameterType="TbRfc">
+        update t_b_rfc set is_del = '1' where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </update>
+	
+    <!-- 还原回收站退菜原因信息 -->
+    <update id="replyRfc" parameterType="TbRfc">
+        update t_b_rfc set is_del = '0' where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </update>
+	
+    <!-- 删除退菜原因信息 -->
+    <delete id="delete" parameterType="TbRfc">
+        delete from t_b_rfc where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </delete>
+	
+    <!-- 获取所有退菜原因信息 -->
+    <select id="getAllList" parameterType="TbRfc" resultType="TbRfc">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_rfc o
+        left join t_b_rfct c on c.id = o.rfc_type
+        <where>
+            <if test="rfcCode != null and rfcCode != ''">
+                and o.rfc_code like '%${rfcCode}%'
+            </if>
+            <if test="rfcName != null and rfcName != ''">
+                and o.rfc_name like '%${rfcName}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+            <if test="rfcType != null and rfcType != ''">
+                and o.rfc_type = '${rfcType}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

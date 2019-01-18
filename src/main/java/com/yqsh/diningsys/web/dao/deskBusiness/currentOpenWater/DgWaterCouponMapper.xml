@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgWaterCouponMapper">
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgWaterCoupon">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="owId" jdbcType="INTEGER" property="owid" />
+    <result column="couponVal" jdbcType="VARCHAR" property="couponval" />
+    <result column="yhMoney" jdbcType="DECIMAL" property="yhmoney" />
+    <result column="cwId" jdbcType="INTEGER" property="cwid" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="useTime" jdbcType="TIMESTAMP" property="usetime" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="couponType" jdbcType="INTEGER" property="coupontype" />
+    <result column="pxdzYhSutotal" jdbcType="DECIMAL" property="pxdzYhSutotal" />
+    <result column="zyhdYhSutotal" jdbcType="DECIMAL" property="zyhdYhSutotal" />
+    <result column="hyYhSutotal" jdbcType="DECIMAL" property="hyYhSutotal" />
+    <result column="couponInfo" jdbcType="VARCHAR" property="couponInfo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, owId, couponVal, yhMoney, cwId, createTime, useTime, state, couponType,pxdzYhSutotal,zyhdYhSutotal,hyYhSutotal,couponInfo
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_water_coupon
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from dg_water_coupon
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgWaterCoupon">
+    insert into dg_water_coupon (id, owId, couponVal, 
+      yhMoney, cwId, createTime, 
+      useTime, state, couponType,
+      pxdzYhSutotal,zyhdYhSutotal,hyYhSutotal,couponInfo
+      )
+    values (#{id,jdbcType=INTEGER}, #{owid,jdbcType=INTEGER}, #{couponval,jdbcType=VARCHAR}, 
+      #{yhmoney,jdbcType=DECIMAL}, #{cwid,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{usetime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER}, #{coupontype,jdbcType=INTEGER},
+      #{pxdzYhSutotal,jdbcType=DECIMAL},#{zyhdYhSutotal,jdbcType=DECIMAL},#{hyYhSutotal,jdbcType=DECIMAL}
+      , #{couponInfo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgWaterCoupon">
+    insert into dg_water_coupon
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="owid != null">
+        owId,
+      </if>
+      <if test="couponval != null">
+        couponVal,
+      </if>
+      <if test="yhmoney != null">
+        yhMoney,
+      </if>
+      <if test="cwid != null">
+        cwId,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="usetime != null">
+        useTime,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="coupontype != null">
+        couponType,
+      </if>
+      <if test="pxdzYhSutotal != null">
+        pxdzYhSutotal,
+      </if>
+      <if test="zyhdYhSutotal != null">
+        zyhdYhSutotal,
+      </if>
+      <if test="hyYhSutotal != null">
+        hyYhSutotal,
+      </if>
+      <if test="couponInfo != null">
+        couponInfo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="owid != null">
+        #{owid,jdbcType=INTEGER},
+      </if>
+      <if test="couponval != null">
+        #{couponval,jdbcType=VARCHAR},
+      </if>
+      <if test="yhmoney != null">
+        #{yhmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="cwid != null">
+        #{cwid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="usetime != null">
+        #{usetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="coupontype != null">
+        #{coupontype,jdbcType=INTEGER},
+      </if>
+      <if test="pxdzYhSutotal != null">
+        #{pxdzYhSutotal,jdbcType=DECIMAL},
+      </if>
+      <if test="zyhdYhSutotal != null">
+        #{zyhdYhSutotal,jdbcType=DECIMAL},
+      </if>
+      <if test="hyYhSutotal != null">
+        #{hyYhSutotal,jdbcType=DECIMAL},
+      </if>
+      <if test="couponInfo != null">
+        #{couponInfo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgWaterCoupon">
+    update dg_water_coupon
+    <set>
+      <if test="owid != null">
+        owId = #{owid,jdbcType=INTEGER},
+      </if>
+      <if test="couponval != null">
+        couponVal = #{couponval,jdbcType=VARCHAR},
+      </if>
+      <if test="yhmoney != null">
+        yhMoney = #{yhmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="cwid != null">
+        cwId = #{cwid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="usetime != null">
+        useTime = #{usetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="coupontype != null">
+        couponType = #{coupontype,jdbcType=INTEGER},
+      </if>
+      <if test="pxdzYhSutotal != null">
+        pxdzYhSutotal = #{pxdzYhSutotal,jdbcType=DECIMAL},
+      </if>
+      <if test="zyhdYhSutotal != null">
+        zyhdYhSutotal = #{zyhdYhSutotal,jdbcType=DECIMAL},
+      </if>
+      <if test="hyYhSutotal != null">
+        hyYhSutotal = #{hyYhSutotal,jdbcType=DECIMAL},
+      </if>
+      <if test="couponInfo != null">
+        couponInfo = #{couponInfo,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgWaterCoupon">
+    update dg_water_coupon
+    set owId = #{owid,jdbcType=INTEGER},
+      couponVal = #{couponval,jdbcType=VARCHAR},
+      yhMoney = #{yhmoney,jdbcType=DECIMAL},
+      pxdzYhSutotal = #{pxdzYhSutotal,jdbcType=DECIMAL},
+      zyhdYhSutotal = #{zyhdYhSutotal,jdbcType=DECIMAL},
+      hyYhSutotal = #{hyYhSutotal,jdbcType=DECIMAL},
+      cwId = #{cwid,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      useTime = #{usetime,jdbcType=TIMESTAMP},
+      state = #{state,jdbcType=INTEGER},
+      couponInfo = #{couponInfo,jdbcType=INTEGER},
+      couponType = #{coupontype,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getCouponCountByWatersAndCouponType" parameterType="map" resultType="java.lang.Integer">
+    select
+    count(*)
+    from dg_water_coupon
+    where owId in
+    <foreach collection="dgOpenWaters" item="dgOpenWater" open="(" close=")" separator=",">
+      #{dgOpenWater.id}
+    </foreach> and couponType=#{couponType}
+  </select>
+
+  <select id="getCouponCountByWaters" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgWaterCoupon">
+    select
+    *
+    from dg_water_coupon
+    where owId in
+    <foreach collection="dgOpenWaters" item="dgOpenWater" open="(" close=")" separator=",">
+      #{dgOpenWater.id}
+    </foreach>
+  </select>
+
+  <select id="selectByCouponVal" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from dg_water_coupon
+    where couponVal = #{couponVal,jdbcType=VARCHAR}
+  </select>
+</mapper>

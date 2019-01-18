@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgAreaLimitItemMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgAreaLimitItem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="area_id" property="areaId" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, area_id, item_id, item_code
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.area_id as area_id, 
+    a.item_id as item_id, 
+    a.item_code as item_code,
+    b.name as name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_area_limit_item
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_area_limit_item
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaLimitItem" >
+    insert into dg_area_limit_item (id, area_id, item_id, 
+      item_code)
+    values (#{id,jdbcType=INTEGER}, #{areaId,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, 
+      #{itemCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaLimitItem" >
+    insert into dg_area_limit_item
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="areaId != null" >
+        area_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaLimitItem" >
+    update dg_area_limit_item
+    <set >
+      <if test="areaId != null" >
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaLimitItem" >
+    update dg_area_limit_item
+    set area_id = #{areaId,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=INTEGER},
+      item_code = #{itemCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="getByAreaId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_area_limit_item a left join dg_item_file b on a.item_id = b.id
+    where a.area_id = #{id,jdbcType=INTEGER} and b.delFlag = 0
+  </select>
+  
+   <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_area_limit_item where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+     <!-- 批量删除 -->
+  <delete id="deleteByAreaId" parameterType="java.lang.Integer">
+    delete from dg_area_limit_item where area_id= #{id,jdbcType=INTEGER}
+  </delete>
+</mapper>

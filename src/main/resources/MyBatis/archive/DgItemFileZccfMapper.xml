@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgItemFileZccfMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgItemFileZccf" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="inve_item_id" property="inveItemId" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="counter" property="counter" jdbcType="DOUBLE" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="bName" property="bName" jdbcType="VARCHAR" />
+    <result column="itemNo" property="inveItemCode" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, inve_item_id, item_id, counter
+  </sql>
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.inve_item_id as inve_item_id, 
+    a.item_id as item_id, 
+    a.counter as counter,
+    b.itemNo as itemNo,
+    b.unit as unit,
+    b.itemName as name,
+    c.itemTypeName as bName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_file_zccf
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_file_zccf
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFileZccf" >
+    insert into dg_item_file_zccf (id, inve_item_id, item_id, 
+      counter)
+    values (#{id,jdbcType=INTEGER}, #{inveItemId,jdbcType=VARCHAR}, #{itemId,jdbcType=INTEGER}, 
+      #{counter,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFileZccf" >
+    insert into dg_item_file_zccf
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="inveItemId != null" >
+        inve_item_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="counter != null" >
+        counter,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="inveItemId != null" >
+        #{inveItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="counter != null" >
+        #{counter,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFileZccf" >
+    update dg_item_file_zccf
+    <set >
+      <if test="inveItemId != null" >
+        inve_item_id = #{inveItemId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="counter != null" >
+        counter = #{counter,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFileZccf" >
+    update dg_item_file_zccf
+    set inve_item_id = #{inveItemId,jdbcType=VARCHAR},
+      item_id = #{itemId,jdbcType=INTEGER},
+      counter = #{counter,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getZccfByItemId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+	    from dg_item_file_zccf a left join dg_inve_items b on a.inve_item_id = b.id 
+	    left join dg_inve_itemtype c on b.itemTypeId = c.id where a.item_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  	
+  <select id="selectHaveItem" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileZccf">
+		<include refid="Next_Column_List" />
+	    from dg_item_file_zccf a left join dg_inve_items b on a.inve_item_id = b.id 
+	    left join dg_inve_itemtype c on b.itemTypeId = c.id	   
+		where	a.inve_item_id in
+	    <foreach collection="list" item="id" open="(" close=")" separator=",">
+	      #{id,jdbcType=VARCHAR}
+	    </foreach>
+  </select>
+  
+  <delete id="deleteByItemId" parameterType="java.lang.Integer" >
+    delete from dg_item_file_zccf
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+</mapper>

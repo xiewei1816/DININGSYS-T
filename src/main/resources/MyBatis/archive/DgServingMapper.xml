@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgServingMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgServing" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="scode" property="scode" jdbcType="VARCHAR" />
+    <result column="sname" property="sname" jdbcType="VARCHAR" />
+    <result column="mnemonic" property="mnemonic" jdbcType="VARCHAR" />
+    <result column="sorg" property="sorg" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="delFlag" property="delFlag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, scode, sname, mnemonic, sorg, create_time,delFlag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_serving
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_serving
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgServing" >
+    insert into dg_serving (id, scode, sname, 
+      mnemonic, sorg, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{scode,jdbcType=VARCHAR}, #{sname,jdbcType=VARCHAR}, 
+      #{mnemonic,jdbcType=VARCHAR}, #{sorg,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgServing" >
+    insert into dg_serving
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null and id != ''" >
+        id,
+      </if>
+      <if test="scode != null" >
+        scode,
+      </if>
+      <if test="sname != null" >
+        sname,
+      </if>
+      <if test="mnemonic != null" >
+        mnemonic,
+      </if>
+      <if test="sorg != null" >
+        sorg,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="scode != null" >
+        #{scode,jdbcType=VARCHAR},
+      </if>
+      <if test="sname != null" >
+        #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="mnemonic != null" >
+        #{mnemonic,jdbcType=VARCHAR},
+      </if>
+      <if test="sorg != null" >
+        #{sorg,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgServing" >
+    update dg_serving
+    <set >
+      <if test="scode != null" >
+        scode = #{scode,jdbcType=VARCHAR},
+      </if>
+      <if test="sname != null" >
+        sname = #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="mnemonic != null" >
+        mnemonic = #{mnemonic,jdbcType=VARCHAR},
+      </if>
+      <if test="sorg != null" >
+        sorg = #{sorg,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        delFlag = #{delFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgServing" >
+    update dg_serving
+    set scode = #{scode,jdbcType=VARCHAR},
+      sname = #{sname,jdbcType=VARCHAR},
+      mnemonic = #{mnemonic,jdbcType=VARCHAR},
+      sorg = #{sorg,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delFlag = #{delFlag,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="countAllData" parameterType="DgServing" resultType="integer">
+    SELECT count(id) from dg_serving
+    <where>
+      <if test="scode != null and scode != ''">
+        and scode like CONCAT(CONCAT('%', #{scode,jdbcType=VARCHAR}),'%')
+      </if>
+      <if test="sname != null and sname != ''">
+        and sname like CONCAT(CONCAT('%', #{sname,jdbcType=VARCHAR}),'%')
+      </if>
+      and delFlag !=1 or delFlag is NULL
+    </where>
+  </select>
+
+  <select id="getAllData" parameterType="DgServing" resultMap="BaseResultMap">
+    SELECT 
+		o.id, o.scode, o.sname, o.mnemonic, b.org_name as "sorg", o.create_time, o.delFlag
+ 	from dg_serving o
+ 	    left join t_b_org b on b.id = o.sorg
+    <where>
+      <if test="scode != null and scode != ''">
+        and o.scode like CONCAT(CONCAT('%', #{scode,jdbcType=VARCHAR}),'%')
+      </if>
+      <if test="sname != null and sname != ''">
+        and o.sname like CONCAT(CONCAT('%', #{sname,jdbcType=VARCHAR}),'%')
+      </if>
+      and delFlag !=1 or delFlag is NULL
+    </where>
+    limit #{startRow},#{endRow}
+  </select>
+
+  <update id="deletDataWithLogic" parameterType="list">
+    UPDATE dg_serving set delFlag = 1 where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+  <delete id="deletData" parameterType="list">
+    delete from dg_serving where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+
+  <select id="getAll"  resultMap="BaseResultMap">
+    SELECT 
+		o.id, o.scode, o.sname, o.mnemonic, b.org_name as "sorg", o.create_time, o.delFlag
+ 	from dg_serving o
+ 	    left join t_b_org b on b.id = o.sorg
+ 	    where  o.delFlag !=1 or o.delFlag is NULL
+  </select>
+
+  <select id="selectMaxNum" resultType="java.lang.String">
+    select max(scode) as code from dg_serving
+  </select>
+</mapper>

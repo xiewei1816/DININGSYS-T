@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgItemTimeSetMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgItemTimeSet" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="refresh_hz" property="refreshHz" jdbcType="INTEGER" />
+    <result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, refresh_hz, start_date,create_time, update_time
+  </sql>
+<!-- 新增消费品项显示设置信息 -->
+  <insert id="newInsert" parameterType="DgItemTimeSet">
+  	insert into dg_item_time_set(
+		refresh_hz,
+		start_date,
+		create_time,
+		update_time
+  	) values (
+  		#{refreshHz},
+  		#{startDate},
+  		#{createTime},
+		#{updateTime}
+  	)
+  </insert>
+<!-- 修改消费品项显示设置信息 -->
+  <update id="update" parameterType="DgItemTimeSet">
+  	update dg_item_time_set set 
+		refresh_hz = #{refreshHz},
+		start_date = #{startDate},
+		update_time = #{updateTime}
+	where id = #{id}
+  </update>
+  <!-- 根据多条件查询消费品项显示设置信息 -->
+  <select id="getAllList" parameterType="DgItemTimeSet" resultType="DgItemTimeSet">
+		SELECT 
+  		<include refid="Base_Column_List"></include>
+  		 from dg_item_time_set
+	</select>
+
+</mapper>

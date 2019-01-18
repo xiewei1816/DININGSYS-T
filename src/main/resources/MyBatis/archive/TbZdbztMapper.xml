@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbZdbzMapper" >
+    <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbZdbz" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="zdbz_num" property="zdbzNum" jdbcType="VARCHAR" />
+        <result column="order_remark" property="orderRemark" jdbcType="VARCHAR" />
+        <result column="zdbz_organization" property="zdbzOrganization" jdbcType="VARCHAR" />
+        <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id,zdbz_num,order_remark,zdbz_organization,is_del,create_time
+    </sql> 
+    <sql id="selectCols">
+        o.id AS "id",
+        o.zdbz_num AS "zdbzNum",
+        o.order_remark AS "orderRemark",
+        b.org_name AS "zdbzOrganization",
+        o.is_del AS "isDel",
+        o.create_time AS "createTime"
+    </sql>
+    <!-- 分页查询整单备注信息 -->
+    <select id="getListByPage" resultType="TbZdbz" parameterType="TbZdbz">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_zdbz o
+        left join t_b_org b on b.id = o.zdbz_organization
+        <where>
+            <if test="zdbzNum != null and zdbzNum != ''">
+                and o.zdbz_num like '%${zdbzNum}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+        limit #{startRow},#{endRow}	
+    </select>
+    <!-- 提供查询页码 -->
+    <select id="countListByPage" resultType="Integer" parameterType="TbZdbz">
+        SELECT
+        count(0)
+        from t_b_zdbz o
+        left join t_b_org b on b.id = o.zdbz_organization
+        <where>
+            <if test="zdbzNum != null and zdbzNum != ''">
+                and o.zdbz_num like '%${zdbzNum}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+    </select>
+    <!-- 通过整单备注ID查询整单备注信息 -->
+    <select id="getZdbzById" parameterType="TbZdbz" resultType="TbZdbz">
+        SELECT 
+        <include refid="Base_Column_List"></include>
+        from t_b_zdbz where id = #{id}
+    </select>
+    
+    <select id="getZdbzByNum" parameterType="String" resultType="TbZdbz">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_zdbz o
+        left join t_b_org b on b.id = o.zdbz_organization
+        where o.zdbz_num = #{number}
+    </select>
+	
+    <!-- 添加整单备注信息 -->
+    <insert id="newInsert" parameterType="TbZdbz">
+        insert into t_b_zdbz(
+        zdbz_num,
+        order_remark,
+        zdbz_organization,
+        create_time
+        ) values (
+        #{zdbzNum},
+        #{orderRemark},
+        #{zdbzOrganization},
+        #{createTime}
+        )
+    </insert>
+    <!-- 根据整单备注ID修改整单备注信息 -->
+    <update id="update" parameterType="TbZdbz">
+        update t_b_zdbz set 
+        zdbz_num = #{zdbzNum},
+        order_remark = #{orderRemark},
+        zdbz_organization = #{zdbzOrganization}
+        where id = #{id}
+    </update>
+    <!-- 整单备注信息回收站 -->
+    <update id="deleteTrash" parameterType="TbZdbz">
+        update t_b_zdbz set is_del = '1' where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </update>
+	
+    <!-- 还原回收站整单备注信息 -->
+    <update id="replyZdbz" parameterType="TbZdbz">
+        update t_b_zdbz set is_del = '0' where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </update>
+	
+    <!-- 删除整单备注信息 -->
+    <delete id="delete" parameterType="TbZdbz">
+        delete from t_b_zdbz where id in 
+        <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+            #{ids}  
+        </foreach> 
+    </delete>
+	
+    <!-- 获取所有整单备注信息 -->
+    <select id="getAllList" parameterType="TbZdbz" resultType="TbZdbz">
+        SELECT 
+        <include refid="selectCols"></include>
+        from t_b_zdbz o
+        left join t_b_org b on b.id = o.zdbz_organization
+        <where>
+            <if test="zdbzNum != null and zdbzNum != ''">
+                and o.zdbz_num like '%${zdbzNum}%'
+            </if>
+            <if test="isDel != null and isDel != ''">
+                and o.is_del = '${isDel}'
+            </if>
+        </where>
+        <choose>
+            <otherwise>
+                order by o.create_time desc
+            </otherwise>
+        </choose>
+    </select> 
+    
+</mapper>

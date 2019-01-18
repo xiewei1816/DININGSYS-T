@@ -1,0 +1,26 @@
+/*css reset*/
+
+@charset "utf-8";
+ul {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+
+body{
+	overflow: hidden;
+}
+
+.required{
+	display:inline-block;
+	position:absolute;
+	color: red;
+	right:1px;
+	top:12px;
+	font-size: 25px;
+}
+
+/*css reset*/

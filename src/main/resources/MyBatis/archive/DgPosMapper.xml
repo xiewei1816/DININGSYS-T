@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgPosMapper" >
+
+  <sql id="Base_Column_List" >
+    	o.id AS "id",
+		o.number AS "number",
+		o.name AS "name",
+		o.ip_area AS "ipArea",
+		o.consumer_areas AS "consumerAreas",
+		o.mnemonic AS "mnemonic",
+		o.organization AS "organization",
+		o.create_time AS "createTime",
+		o.create_user AS "createUserid",
+		o.del_flag AS "delFlag",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		o.canJb as "canJb"
+  </sql>
+
+	<sql id="selectCols">
+		o.id AS "id",
+		o.number AS "number",
+		o.name AS "name",
+		o.ip_area AS "ipArea",
+		o.consumer_areas AS "consumerAreas",
+		o.mnemonic AS "mnemonic",
+		b.org_name AS "organization",
+		o.create_time AS "createTime",
+		o.create_user AS "createUserid",
+		o.del_flag AS "delFlag",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		o.canJb as "canJb"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.create_user
+		left join t_b_org b on b.id = o.organization
+	</sql>
+	
+	<sql id="queryCriteria">
+		<if test="delFlag != null and delFlag != ''">
+		  and o.del_flag = #{delFlag}
+        </if>
+  	 	<if test="conditions != null and conditions != ''">
+          and (o.number like '%${conditions}%' or o.name like '%${conditions}%' or o.mnemonic like '%${conditions}%')
+        </if>
+        <if test="number != null and number != ''">
+          and o.number like '%${number}%'
+        </if>
+        <if test="name != null and name != ''">
+         and o.name like '%${name}%'
+        </if>
+        <if test="checkName != null and checkName != ''">
+         and o.name = #{checkName}
+        </if>
+        <if test="mnemonic != null and mnemonic != ''">
+          and o.mnemonic like '%${mnemonic}%'
+        </if>
+        <if test="consumerAreas != null and consumerAreas != ''">
+          and concat(',',o.consumer_areas,',') like '%${consumerAreas}%'
+        </if>
+        <if test="crStartTime != null and crStartTime != ''">
+         and o.create_time >= #{crStartTime}
+        </if>
+        <if test="crEndTime != null and crEndTime != ''">
+         and o.create_time <![CDATA[<]]> #{crEndTime}
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="DgPos" parameterType="DgPos">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_pos o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgPos">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_pos o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getPosByID" parameterType="DgPos" resultType="DgPos">
+		select 
+			<include refid="Base_Column_List"></include>
+		from dg_pos o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="DgPos" resultType="DgPos">
+		select 
+			<include refid="selectCols"></include>
+		from dg_pos o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.create_time desc
+	</select>
+
+
+	<select id="getAllPosList" resultType="java.util.HashMap">
+		select
+			*
+		from dg_pos o where del_flag=0 and number != 'yxe_pos'
+	</select>
+
+	<select id="getposByCode" resultType="com.yqsh.diningsys.web.model.archive.DgPos" parameterType="string">
+		SELECT * from dg_pos where number = #{posCode,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectPosByPosId" parameterType="integer" resultType="com.yqsh.diningsys.web.model.archive.DgPos">
+		SELECT * from dg_pos where id = #{posId,jdbcType=INTEGER}
+	</select>
+
+	<insert id="newInsert" parameterType="DgPos">
+  	insert into dg_pos(
+		number,
+		name,
+		ip_area,
+		mnemonic,
+		consumer_areas,
+		organization,
+		create_time,
+		create_user,
+		del_flag
+  	) values (
+  		#{number},
+		#{name},
+		#{ipArea},
+		#{mnemonic},
+		#{consumerAreas},
+		#{organization},
+		#{createTime},
+		#{createUserid},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="DgPos">
+  	update dg_pos set 
+		number = #{number},
+		name = #{name},
+		ip_area = #{ipArea},
+		mnemonic = #{mnemonic},
+		consumer_areas = #{consumerAreas},
+		organization = #{organization}
+	where id = #{id}
+  </update>
+  
+  <update id="deleteTrash" parameterType="DgPos">
+	update dg_pos set del_flag = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+	
+	
+	<select id="checkHavaYxePos" resultType="java.lang.Integer" parameterType="DgPos">
+	select count(*) from  dg_pos where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	  and number = 'yxe_pos'
+	</select>
+
+    <select id="selectPosByPosNumber" parameterType="string"
+			resultType="com.yqsh.diningsys.web.model.archive.DgPos">
+		SELECT * from dg_pos where number = #{posNum,jdbcType=VARCHAR}
+	</select>
+
+    <update id="replyPos" parameterType="DgPos">
+	update dg_pos set del_flag = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+	
+  <delete id="delete" parameterType="DgPos">
+	delete from dg_pos where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+
+
+
+</mapper>

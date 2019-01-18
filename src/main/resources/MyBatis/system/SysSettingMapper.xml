@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysSetting" >
+    <result column="setting_code" property="settingCode" jdbcType="VARCHAR" />
+    <result column="setting_value" property="settingValue" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <delete id="deleteData">
+    delete from sys_setting
+  </delete>
+
+  <insert id="insertMultiSetting" parameterType="map">
+    insert into sys_setting VALUES ${param}
+  </insert>
+
+  <select id="selectSettingData" resultType="SysSetting">
+    select * from sys_setting
+  </select>
+
+  <select id="selectSystemName" resultType="SysSetting">
+    select * from sys_setting where setting_code = 'name'
+  </select>
+  
+  <select id="selectSystemByCode" resultType="SysSetting">
+    select * from sys_setting where setting_code = #{settingCode,jdbcType=VARCHAR}
+  </select>
+</mapper>

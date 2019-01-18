@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.inve.DgInveItemsMapper">
+<resultMap type="com.yqsh.diningsys.web.model.inve.DgInveItems"
+		   id="DgInveItems">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="itemName" column="itemName" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
+        <result property="itemTypeId" column="itemTypeId" jdbcType="VARCHAR"/>
+        <result property="minStorage" column="minStorage" jdbcType="INTEGER"/>
+        <result property="maxStorage" column="maxStorage" jdbcType="INTEGER"/>
+        <result property="inCode" column="inCode" jdbcType="VARCHAR"/>
+        <result property="spellCode" column="spellCode" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+        <result property="itemNo" column="itemNo" jdbcType="VARCHAR"/>
+		<result property="outWareId" column="outWareId" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_InveItems_Column" >
+    	id, itemName, unit, price, itemTypeId, minStorage, maxStorage, inCode, spellCode, state, 
+    	remark, operUser, createDate,itemNo,outWareId
+  </sql>
+	 <insert id="insert" parameterType="DgInveItems">
+	    insert into dg_inve_items
+	    (
+	    id,itemName,unit,price,
+	    itemTypeId,minStorage,maxStorage,
+	    inCode,spellCode,state,remark,
+	    operUser,createDate,itemNo,outWareId
+	    )
+	    values(
+	    #{id},#{itemName},#{unit},#{price},
+	    #{itemTypeId},#{minStorage},#{maxStorage},
+	    #{inCode},#{spellCode},#{state},#{remark},
+	    #{operUser},#{createDate},#{itemNo},#{outWareId}
+	    )
+	</insert>
+	<update id="update" parameterType="DgInveItems">
+		update dg_inve_items 
+		set 
+			itemName=#{itemName},
+			unit=#{unit},
+			price=#{price},
+			itemTypeId=#{itemTypeId},
+			minStorage=#{minStorage},
+			maxStorage=#{maxStorage},
+			inCode=#{inCode},
+			spellCode=#{spellCode},
+		  	remark=#{remark},
+		  	itemNo=#{itemNo},
+		  	outWareId=#{outWareId}
+	  	where id=#{id}
+	</update>
+	<!-- 逻辑删除处理 -->
+	<update id="delete">
+        update dg_inve_items set
+        itemName=
+        <foreach collection="listMap" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id} then #{item.itemName,jdbcType=VARCHAR}
+        </foreach>
+        ,state=1 where id in
+        <foreach collection="listMap" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+    <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_inve_items 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+     insert into dg_inve_items
+	    (
+		    id,itemName,unit,price,itemTypeId,minStorage,maxStorage,inCode,spellCode,state,
+		    remark,operUser,createDate,itemNo,outWareId
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemName">#{im.itemName},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.unit">#{im.unit},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.price">#{im.price},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemTypeId">#{im.itemTypeId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.minStorage">#{im.minStorage},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.maxStorage">#{im.maxStorage},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.inCode">#{im.inCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.spellCode">#{im.spellCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.state">#{im.state},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.remark">#{im.remark},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.operUser">#{im.operUser},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.createDate">#{im.createDate},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemNo">#{im.itemNo},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.outWareId">#{im.outWareId}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    		
+    	</foreach>
+  </insert>
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="map" parameterType="DgInveItems">
+		SELECT A.id ,A.itemName,A.unit,A.price,A.itemTypeId,A.minStorage,A.maxStorage,A.inCode,A.spellCode,A.state,
+			A.remark,A.operUser,A.createDate,B.itemTypeName,A.itemNo,A.outWareId
+		FROM 
+		(
+			SELECT <include refid="Base_InveItems_Column"/>
+			 FROM dg_inve_items
+			 WHERE 1=1 
+			<if test="itemName!=null and itemName!=''">
+				AND itemName like  concat('%',#{itemName},'%')
+			</if>
+			<if test="itemTypeId!=null and itemTypeId!=''">
+				AND itemTypeId=#{itemTypeId}
+			</if>
+			AND state=0 
+		) A
+		left join (SELECT id,itemTypeName FROM dg_inve_itemtype) B ON A.itemTypeId=B.id
+		ORDER BY createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgInveItems">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from 
+	  	 (
+	  	 	SELECT id,itemTypeId FROM dg_inve_items
+	  	 	<where>
+	  	 		AND state=0 
+	        <if test="itemName!=null and itemName!=''">
+			    AND itemName like concat('%',#{itemName},'%')
+			</if>
+			<if test="itemTypeId!=null and itemTypeId!=''">
+			    AND itemTypeId=#{itemName}
+			</if>
+	      </where>
+	  	 )A
+	      left join (SELECT id,itemTypeName FROM dg_inve_itemtype) B ON A.itemTypeId=B.id
+    </select>
+    <!-- 根据名称检测是否存在 -->
+    <select id="existsName" resultType="java.lang.Integer" parameterType="DgInveItems">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from dg_inve_items
+	  	 	<where>
+	        <if test="itemName!=null and itemName!=''">
+			    AND itemName=#{itemName}
+			</if>
+	      </where>
+	      
+    </select>
+	<select id="get" parameterType="string" resultType="DgInveItems">
+	    SELECT * from dg_inve_items where id = #{id}
+	</select>
+	<!-- 根据条件获取物品信息 ，不分页-->
+    <select id="findListData" resultType="DgInveItems" parameterType="DgInveItems">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_items
+    	<where>
+    		<if test="state!=null and state!=''">
+    		AND state=#{state}
+    	</if>
+    	<if test="itemName!=null and itemName!=''">
+    		AND itemName=#{itemName}
+    	</if>
+    	<if test="itemTypeId!=null and itemTypeId!=''">
+    		AND itemTypeId=#{itemTypeId}
+    	</if>
+    	<if test="itemNo!=null and itemNo!=''">
+    		AND itemNo=#{itemNo}
+    	</if>
+    	</where>
+    </select>
+    
+    <!-- 根据树节点查询-->
+	<select id="getByTreeId" resultType="map" parameterType="map">
+		SELECT A.id ,A.itemName,A.unit,A.price,A.itemTypeId,A.minStorage,A.maxStorage,A.inCode,A.spellCode,A.state,
+			A.remark,A.operUser,A.createDate,B.itemTypeName,A.itemNo,outWareId
+		FROM 
+		(
+			SELECT <include refid="Base_InveItems_Column"/>
+			 FROM dg_inve_items
+			 WHERE 1=1 
+			<if test="search!=null and search!=''">
+				AND itemName like  concat('%',#{search},'%') or itemNo like  concat('%',#{search},'%')
+			</if>
+			<if test="treeId!=null and treeId!=''">
+					AND itemTypeId like  concat('%',#{treeId},'%') 
+			</if>
+			    AND id not in
+		     <foreach collection="ids" item="id" open="(" close=")" separator=",">
+		      #{id,jdbcType=VARCHAR}
+		    </foreach>
+			AND state=0 
+		) A
+		left join (SELECT id,itemTypeName FROM dg_inve_itemtype) B ON A.itemTypeId=B.id
+		ORDER BY createDate DESC 
+	</select>
+	
+	    <!-- 根据树节点查询-->
+	<select id="selectHaveItem" resultType="map" parameterType="list">
+		SELECT A.id ,A.itemName,A.unit,A.price,A.itemTypeId,A.minStorage,A.maxStorage,A.inCode,A.spellCode,A.state,
+			A.remark,A.operUser,A.createDate,B.itemTypeName,A.itemNo,A.outWareId
+		FROM 
+		(
+			SELECT <include refid="Base_InveItems_Column"/>
+			 FROM dg_inve_items
+			 WHERE 1=1
+			    AND id  in
+		     <foreach collection="list" item="id" open="(" close=")" separator=",">
+		      #{id,jdbcType=VARCHAR}
+		    </foreach>
+			AND state=0 
+		) A
+		left join (SELECT id,itemTypeName FROM dg_inve_itemtype) B ON A.itemTypeId=B.id
+		ORDER BY createDate DESC 
+	</select>
+
+    <select id="selectInveItemByCode" resultType="com.yqsh.diningsys.web.model.inve.DgInveItems">
+		select * from dg_inve_items where itemNo = #{code}
+	</select>
+
+	<select id="selectInveItemById" resultType="com.yqsh.diningsys.web.model.inve.DgInveItems">
+		select * from dg_inve_items where id = #{id}
+	</select>
+</mapper>

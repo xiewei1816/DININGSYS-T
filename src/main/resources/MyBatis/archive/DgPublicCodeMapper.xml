@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgPublicCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgPublicCode" >
+    <id column="cGPCID" property="cgpcid" jdbcType="CHAR" />
+    <result column="iLocalSno" property="ilocalsno" jdbcType="INTEGER" />
+    <result column="cGCorpCode" property="cgcorpcode" jdbcType="VARCHAR" />
+    <result column="cCode" property="ccode" jdbcType="VARCHAR" />
+    <result column="cName" property="cname" jdbcType="VARCHAR" />
+    <result column="cKeyWD" property="ckeywd" jdbcType="VARCHAR" />
+    <result column="cParent" property="cparent" jdbcType="VARCHAR" />
+    <result column="iLevel" property="ilevel" jdbcType="INTEGER" />
+    <result column="iSystem" property="isystem" jdbcType="INTEGER" />
+    <result column="iDelFlg" property="idelflg" jdbcType="INTEGER" />
+    <result column="iOrder" property="iorder" jdbcType="INTEGER" />
+    <result column="iUploadFlg" property="iuploadflg" jdbcType="INTEGER" />
+    <result column="iDownLoadFlg" property="idownloadflg" jdbcType="INTEGER" />
+    <result column="cExpID" property="cexpid" jdbcType="VARCHAR" />
+    <result column="parentName" property="parentName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    cGPCID, iLocalSno, cGCorpCode, cCode, cName, cKeyWD, cParent, iLevel, iSystem, iDelFlg, 
+    iOrder, iUploadFlg, iDownLoadFlg, cExpID
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_public_code
+    where cGPCID = #{cgpcid,jdbcType=CHAR}
+  </select>
+  <select id="selectAllData" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from dg_public_code
+    <where>
+      <if test="id != null">
+        cGPCID = #{cgpcid,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+	<select id="findListData" parameterType="DgPublicCode" resultMap="BaseResultMap">
+    select 
+       <include refid="Base_Column_List" />
+    from dg_public_code
+    <where>
+      <if test="cparent != null and cparent!=''">
+        cParent = #{cparent,jdbcType=VARCHAR}
+      </if>
+      <if test="cgpcid != null and cgpcid!=''">
+        cGPCID = #{cgpcid,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from dg_public_code
+    where cGPCID = #{cgpcid,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgPublicCode" >
+    insert into dg_public_code (cGPCID, iLocalSno, cGCorpCode, 
+      cCode, cName, cKeyWD, 
+      cParent, iLevel, iSystem, 
+      iDelFlg, iOrder, iUploadFlg, 
+      iDownLoadFlg, cExpID)
+    values (#{cgpcid,jdbcType=CHAR}, #{ilocalsno,jdbcType=INTEGER}, #{cgcorpcode,jdbcType=VARCHAR}, 
+      #{ccode,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{ckeywd,jdbcType=VARCHAR}, 
+      #{cparent,jdbcType=VARCHAR}, #{ilevel,jdbcType=INTEGER}, #{isystem,jdbcType=INTEGER}, 
+      #{idelflg,jdbcType=INTEGER}, #{iorder,jdbcType=INTEGER}, #{iuploadflg,jdbcType=INTEGER}, 
+      #{idownloadflg,jdbcType=INTEGER}, #{cexpid,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgPublicCode" >
+    insert into dg_public_code
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cgpcid != null" >
+        cGPCID,
+      </if>
+      <if test="ilocalsno != null" >
+        iLocalSno,
+      </if>
+      <if test="cgcorpcode != null" >
+        cGCorpCode,
+      </if>
+      <if test="ccode != null" >
+        cCode,
+      </if>
+      <if test="cname != null" >
+        cName,
+      </if>
+      <if test="ckeywd != null" >
+        cKeyWD,
+      </if>
+      <if test="cparent != null" >
+        cParent,
+      </if>
+      <if test="ilevel != null" >
+        iLevel,
+      </if>
+      <if test="isystem != null" >
+        iSystem,
+      </if>
+      <if test="idelflg != null" >
+        iDelFlg,
+      </if>
+      <if test="iorder != null" >
+        iOrder,
+      </if>
+      <if test="iuploadflg != null" >
+        iUploadFlg,
+      </if>
+      <if test="idownloadflg != null" >
+        iDownLoadFlg,
+      </if>
+      <if test="cexpid != null" >
+        cExpID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cgpcid != null" >
+        #{cgpcid,jdbcType=CHAR},
+      </if>
+      <if test="ilocalsno != null" >
+        #{ilocalsno,jdbcType=INTEGER},
+      </if>
+      <if test="cgcorpcode != null" >
+        #{cgcorpcode,jdbcType=VARCHAR},
+      </if>
+      <if test="ccode != null" >
+        #{ccode,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="ckeywd != null" >
+        #{ckeywd,jdbcType=VARCHAR},
+      </if>
+      <if test="cparent != null" >
+        #{cparent,jdbcType=VARCHAR},
+      </if>
+      <if test="ilevel != null" >
+        #{ilevel,jdbcType=INTEGER},
+      </if>
+      <if test="isystem != null" >
+        #{isystem,jdbcType=INTEGER},
+      </if>
+      <if test="idelflg != null" >
+        #{idelflg,jdbcType=INTEGER},
+      </if>
+      <if test="iorder != null" >
+        #{iorder,jdbcType=INTEGER},
+      </if>
+      <if test="iuploadflg != null" >
+        #{iuploadflg,jdbcType=INTEGER},
+      </if>
+      <if test="idownloadflg != null" >
+        #{idownloadflg,jdbcType=INTEGER},
+      </if>
+      <if test="cexpid != null" >
+        #{cexpid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgPublicCode" >
+    update dg_public_code
+    <set >
+      <if test="ilocalsno != null" >
+        iLocalSno = #{ilocalsno,jdbcType=INTEGER},
+      </if>
+      <if test="cgcorpcode != null" >
+        cGCorpCode = #{cgcorpcode,jdbcType=VARCHAR},
+      </if>
+      <if test="ccode != null" >
+        cCode = #{ccode,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        cName = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="ckeywd != null" >
+        cKeyWD = #{ckeywd,jdbcType=VARCHAR},
+      </if>
+      <if test="cparent != null" >
+        cParent = #{cparent,jdbcType=VARCHAR},
+      </if>
+      <if test="ilevel != null" >
+        iLevel = #{ilevel,jdbcType=INTEGER},
+      </if>
+      <if test="isystem != null" >
+        iSystem = #{isystem,jdbcType=INTEGER},
+      </if>
+      <if test="idelflg != null" >
+        iDelFlg = #{idelflg,jdbcType=INTEGER},
+      </if>
+      <if test="iorder != null" >
+        iOrder = #{iorder,jdbcType=INTEGER},
+      </if>
+      <if test="iuploadflg != null" >
+        iUploadFlg = #{iuploadflg,jdbcType=INTEGER},
+      </if>
+      <if test="idownloadflg != null" >
+        iDownLoadFlg = #{idownloadflg,jdbcType=INTEGER},
+      </if>
+      <if test="cexpid != null" >
+        cExpID = #{cexpid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cGPCID = #{cgpcid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgPublicCode" >
+    update dg_public_code
+    set iLocalSno = #{ilocalsno,jdbcType=INTEGER},
+      cGCorpCode = #{cgcorpcode,jdbcType=VARCHAR},
+      cCode = #{ccode,jdbcType=VARCHAR},
+      cName = #{cname,jdbcType=VARCHAR},
+      cKeyWD = #{ckeywd,jdbcType=VARCHAR},
+      cParent = #{cparent,jdbcType=VARCHAR},
+      iLevel = #{ilevel,jdbcType=INTEGER},
+      iSystem = #{isystem,jdbcType=INTEGER},
+      iDelFlg = #{idelflg,jdbcType=INTEGER},
+      iOrder = #{iorder,jdbcType=INTEGER},
+      iUploadFlg = #{iuploadflg,jdbcType=INTEGER},
+      iDownLoadFlg = #{idownloadflg,jdbcType=INTEGER},
+      cExpID = #{cexpid,jdbcType=VARCHAR}
+    where cGPCID = #{cgpcid,jdbcType=CHAR}
+  </update>
+
+  <update id="deleteDataWithLogic" parameterType="java.lang.String">
+    UPDATE dg_public_code set iDelFlg = 1 where cGPCID = #{cgpcid,jdbcType=VARCHAR}
+  </update>
+
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgPublicCode">
+    select count(cGPCID) from dg_public_code a
+    <where>
+      <choose>
+          <when test="ilocalsno != null and ilocalsno != ''">
+              a.cParent = #{ilocalsno,jdbcType=INTEGER}
+          </when>
+          <otherwise>
+              a.cParent is null or a.cParent = ''
+          </otherwise>
+      </choose>
+    </where>
+  </select>
+
+  <select id="getListByPage" parameterType="DgPublicCode" resultMap="BaseResultMap">
+    select a.*,b.cName as parentName from dg_public_code a LEFT JOIN dg_public_code b on a.cParent = b.iLocalSno
+    <where>
+      <choose>
+          <when test="ilocalsno != null and ilocalsno != ''">
+              a.cParent = #{ilocalsno,jdbcType=INTEGER}
+          </when>
+          <otherwise>
+              a.cParent is null or a.cParent = ''
+          </otherwise>
+      </choose>
+    </where>
+      order by a.iOrder
+     limit #{startRow},#{endRow}
+  </select>
+</mapper>

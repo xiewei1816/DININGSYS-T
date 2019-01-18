@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemSaleLimitSMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="sale_count" property="saleCount" jdbcType="DOUBLE" />
+    <result column="reservation_count" property="reservationCount" jdbcType="DOUBLE" />
+    <result column="front_sale_count" property="frontSaleCount" jdbcType="DOUBLE" />
+    <result column="limit_id" property="limitId" jdbcType="INTEGER" />
+    <result column="is_tc" property="tc" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="bname" property="bName" jdbcType="VARCHAR" />
+    <result column="sname" property="sName" jdbcType="VARCHAR" />
+    <result column="standard_price" property="sPrice" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_id, item_code, sale_count, reservation_count, front_sale_count, limit_id
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.item_id as item_id, 
+    a.item_code as item_code, 
+    a.sale_count as sale_count, 
+    a.reservation_count as reservation_count, 
+    a.front_sale_count as front_sale_count, 
+    a.limit_id as limit_id,
+    b.name as name,
+    b.is_tc as is_tc,
+    b.standard_price as standard_price,
+    c.name as bname,
+    d.name as sname
+  </sql>
+  
+  
+  <sql id="Next2_Column_List">
+    a.num as item_code, 
+    a.id as item_id, 
+    a.name as name,
+    a.standard_price as standard_price,
+    a.is_tc as is_tc,
+    b.name as bname,
+    c.name as sname
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_sale_limit_s
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_sale_limit_s
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS" >
+    insert into dg_item_sale_limit_s (id, item_id, item_code, 
+      sale_count, reservation_count, front_sale_count, 
+      limit_id)
+    values (#{id,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}, 
+      #{saleCount,jdbcType=DOUBLE}, #{reservationCount,jdbcType=DOUBLE}, #{frontSaleCount,jdbcType=DOUBLE}, 
+      #{limitId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS" >
+    insert into dg_item_sale_limit_s
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+      <if test="saleCount != null" >
+        sale_count,
+      </if>
+      <if test="reservationCount != null" >
+        reservation_count,
+      </if>
+      <if test="frontSaleCount != null" >
+        front_sale_count,
+      </if>
+      <if test="limitId != null" >
+        limit_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="saleCount != null" >
+        #{saleCount,jdbcType=DOUBLE},
+      </if>
+      <if test="reservationCount != null" >
+        #{reservationCount,jdbcType=DOUBLE},
+      </if>
+      <if test="frontSaleCount != null" >
+        #{frontSaleCount,jdbcType=DOUBLE},
+      </if>
+      <if test="limitId != null" >
+        #{limitId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS" >
+    update dg_item_sale_limit_s
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="saleCount != null" >
+        sale_count = #{saleCount,jdbcType=DOUBLE},
+      </if>
+      <if test="reservationCount != null" >
+        reservation_count = #{reservationCount,jdbcType=DOUBLE},
+      </if>
+      <if test="frontSaleCount != null" >
+        front_sale_count = #{frontSaleCount,jdbcType=DOUBLE},
+      </if>
+      <if test="limitId != null" >
+        limit_id = #{limitId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS" >
+    update dg_item_sale_limit_s
+    set item_id = #{itemId,jdbcType=INTEGER},
+      item_code = #{itemCode,jdbcType=VARCHAR},
+      sale_count = #{saleCount,jdbcType=DOUBLE},
+      reservation_count = #{reservationCount,jdbcType=DOUBLE},
+      front_sale_count = #{frontSaleCount,jdbcType=DOUBLE},
+      limit_id = #{limitId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAllData" resultMap="BaseResultMap"  parameterType="java.util.Map">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_sale_limit_s a left join 
+    dg_item_file b on a.item_id = b.id left join
+    dg_item_file_type c on b.ppdl_id = c.id left join
+    dg_item_file_type d on b.ppxl_id = d.id
+    <where>
+        b.delFlag = '0'
+  	    <if test="name != null and name != ''">
+        		AND b.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND b.num  like CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' )
+        </if>       
+        <if test="limitId != null and limitId != ''">
+        		AND a.limit_id  = #{limitId,jdbcType=VARCHAR}
+        </if>
+        <if test="itemId != null and itemId != ''">
+        		AND a.item_id  = #{itemId,jdbcType=INTEGER}
+        </if>   
+     </where>
+  </select>
+  
+  
+  <select id="getAllItemId" resultType="java.lang.Integer">
+    select item_id
+    from dg_item_sale_limit_s where 1=1
+  </select>
+  
+  
+  <select id="selectItemByAdd" resultMap="BaseResultMap" parameterType="list">
+     select 
+	 <include refid="Next2_Column_List" />
+	 from dg_item_file a left join
+	 dg_item_file_type b on a.ppdl_id = b.id left join
+     dg_item_file_type c on a.ppxl_id = c.id
+	 where a.delFlag = 0 and a.id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+  <delete id="deleteAll" parameterType="java.lang.Integer">
+    delete from dg_item_sale_limit_s
+    where limit_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteParams" parameterType="map">
+  	delete from dg_item_sale_limit_s
+	  	<where>
+	  		<if test="null!=limitId">
+	  			AND limit_id = #{limitId,jdbcType=INTEGER}
+	  		</if>
+	  		<if test="null!=itemId">
+	  			AND item_id=#{itemId,jdbcType=INTEGER}
+	  		</if>
+	  	</where>
+  </delete>
+  <delete id="deleteNotIn" parameterType="list">
+    delete from dg_item_sale_limit_s where item_id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+       <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_sale_limit_s where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_sale_limit_s
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+   <update id="updateCount" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS" >
+    update dg_item_sale_limit_s
+    set
+      front_sale_count = front_sale_count - #{useCount,jdbcType=INTEGER}
+    where item_id = #{itemId,jdbcType=INTEGER} and limit_id = #{limitId,jdbcType=INTEGER}
+  </update>
+  
+  <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_sale_limit_s(item_id, item_code, 
+      sale_count, reservation_count, front_sale_count, 
+      limit_id)    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+	(#{item.itemId,jdbcType=INTEGER}, #{item.itemCode,jdbcType=VARCHAR}, 
+      #{item.saleCount,jdbcType=DOUBLE}, #{item.reservationCount,jdbcType=DOUBLE}, #{item.frontSaleCount,jdbcType=DOUBLE}, 
+      #{item.limitId,jdbcType=INTEGER})
+    </foreach>  
+  </insert>
+  
+       <!-- 批量更新修改-->
+  <update id="updateCountList" parameterType="java.util.List">
+  	 <foreach close="" collection="list" index="index" item="item" open="" separator=";">
+		update dg_item_sale_limit_s
+	    <set>
+	      <if test="item.useCount != null" >
+	        front_sale_count = front_sale_count - #{item.useCount}
+	      </if>
+	    </set>
+	    where item_id = #{item.itemId} and limit_id = #{item.limitId}
+	 </foreach>
+  </update>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_sale_limit_s 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_sale_limit_s
+        (
+		    id,item_id,item_code,sale_count,reservation_count,front_sale_count,limit_id
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemCode">#{im.itemCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.saleCount">#{im.saleCount},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.reservationCount">#{im.reservationCount},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.frontSaleCount">#{im.frontSaleCount},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.limitId">#{im.limitId}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

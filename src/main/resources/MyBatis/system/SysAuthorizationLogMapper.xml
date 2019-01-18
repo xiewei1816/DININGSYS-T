@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysAuthorizationLogMapper">
+
+    <insert id="insertAuthLog" parameterType="SysAuthorizationLog">
+        insert into
+        sys_authorization_log(id,auth_time, auth_code, auth_op_user, auth_user, auth_remarks)
+         values(uuid(),now(),#{authCode},#{authOpUser},#{authUser},#{authRemarks})
+    </insert>
+
+    <select id="countAllData" resultType="java.lang.Integer">
+        select count(id) from sys_authorization_log
+        <where>
+            <if test="authOpUser != null and authOpUser != ''">
+                auth_op_user like concat('%',#{authOpUser},'%')
+            </if>
+            <if test="authUser != null and authUser != ''">
+                and auth_user like concat('%',#{authUser},'%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and auth_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and auth_time <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllData" resultType="com.yqsh.diningsys.web.model.SysAuthorizationLog">
+        select * from sys_authorization_log
+        <where>
+            <if test="authOpUser != null and authOpUser != ''">
+                auth_op_user like concat('%',#{authOpUser},'%')
+            </if>
+            <if test="authUser != null and authUser != ''">
+                and auth_user like concat('%',#{authUser},'%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and auth_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and auth_time <![CDATA[<=]]> #{endTime}
+            </if>
+        </where>
+        limit #{startRow},#{endRow}
+    </select>
+
+</mapper>

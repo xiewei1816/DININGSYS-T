@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DeskBusinessSettingMapper">
+    <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DeskBusinessSetting">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="seatServ" property="seatServ" jdbcType="VARCHAR"/>
+        <result column="billServ" property="billServ" jdbcType="INTEGER"/>
+        <result column="printerSetting" property="printerSetting" jdbcType="INTEGER"/>
+        <result column="serialRul" property="serialRul" jdbcType="INTEGER"/>
+        <result column="loungeSetting" property="loungeSetting" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, seatServ, billServ , printerSetting, serialRul, loungeSetting
+  </sql>
+    <select id="getDeskBusinessSetting" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from desk_business_setting
+    </select>
+    <insert id="addDeskBusinessSetting" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DeskBusinessSetting">
+        insert into desk_business_setting (id, seatServ, billServ, printerSetting, serialRul, loungeSetting
+        )
+        values (#{id,jdbcType=INTEGER}, #{seatServ,jdbcType=VARCHAR},
+        #{billServ,jdbcType=VARCHAR},
+        #{printerSetting,jdbcType=VARCHAR},
+        #{serialRul,jdbcType=VARCHAR},
+        #{loungeSetting,jdbcType=VARCHAR}
+        )
+    </insert>
+    <update id="updateDeskBusinessSetting"
+            parameterType="com.yqsh.diningsys.web.model.deskBusiness.DeskBusinessSetting">
+        update desk_business_setting
+        set  seatServ = #{seatServ,jdbcType=VARCHAR},
+        billServ = #{billServ,jdbcType=VARCHAR},
+        printerSetting = #{printerSetting,jdbcType=VARCHAR},
+        serialRul = #{serialRul,jdbcType=VARCHAR},
+        loungeSetting = #{loungeSetting,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <delete id="deleteFlowNumber" >
+        delete from desk_business_setting_serialrul
+    </delete>
+
+    <insert id="addFlowNumberOfYY" >
+        INSERT into desk_business_setting_serialrul(maxNum, createTime, flowType) VALUES (0, now(), 'YY')
+    </insert>
+    <insert id="addFlowNumberOfJS" >
+        INSERT into desk_business_setting_serialrul(maxNum, createTime, flowType) VALUES (0, now(), 'JS')
+    </insert>
+    <insert id="addFlowNumberOfJB" >
+        INSERT into desk_business_setting_serialrul(maxNum, createTime, flowType) VALUES (0, now(), 'JB')
+    </insert>
+    <insert id="addFlowNumberOfTDHM" >
+        INSERT into desk_business_setting_serialrul(maxNum, createTime, flowType) VALUES (0, now(), 'TDHM')
+    </insert>
+    <insert id="addFlowNumberOfFW" >
+        INSERT into desk_business_setting_serialrul(maxNum, createTime, flowType) VALUES (0, now(), 'FW')
+    </insert>
+    <insert id="addFlowNumberOfYD" >
+        INSERT into desk_business_setting_serialrul(maxNum, createTime, flowType) VALUES (0, now(), 'YD')
+    </insert>
+
+    <update id="updateSerialRul" parameterType="java.lang.String">
+        update desk_business_setting_serialrul set maxNum = #{maxNum}, createtime=now() where flowType = #{flowType}
+    </update>
+
+    <select id="getSerialRulNumber" parameterType="java.lang.String" resultType="int">
+        <if test='isStartWithOne != "1" ' >
+            select maxNum from desk_business_setting_serialrul where flowType = #{flowType}
+        </if>
+        <if test='isStartWithOne == "1" ' >
+            select (case
+            when date(dbs.createtime)=date(curdate()) then dbs.maxNum
+            else 0 end) from desk_business_setting_serialrul dbs where dbs.flowType = #{flowType}
+        </if>
+    </select>
+    <select id="getSerialRulNumberCount" resultType="int">
+        select count(1) from desk_business_setting_serialrul
+    </select>
+
+
+    <select id="getAutoOwNum" resultType="java.lang.String" parameterType="java.lang.String">
+        select DG_FU_getAutoOwNum(#{owNumber},#{owType},#{isBeginWithOne},#{headStr})
+    </select>
+</mapper>

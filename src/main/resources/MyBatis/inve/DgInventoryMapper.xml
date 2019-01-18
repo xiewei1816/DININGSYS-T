@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.inve.DgInventoryMapper">
+<resultMap type="com.yqsh.diningsys.web.model.inve.DgInventory"
+		   id="DgInventory">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="wareID" column="wareID" jdbcType="VARCHAR"/>
+        <result property="serialNumber" column="serialNumber" jdbcType="VARCHAR"/>
+        <result property="itemId" column="itemId" jdbcType="VARCHAR"/>
+        <result property="itemName" column="itemName" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="number" column="number" jdbcType="DECIMAL"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_InveItems_Column" >
+    	id, wareID, serialNumber,itemId, itemName, unit, number, 
+    	remark, operUser, createDate
+  </sql>
+  <sql id="Base_InveItems_Column_Alias" >
+    	A.id, A.wareID, A.serialNumber,A.itemId, A.itemName, A.unit, A.number, 
+    	A.remark, A.operUser, A.createDate,B.wareName,C.itemName AS joinItemName,
+    	B.wareNo,C.itemNo
+  </sql>
+  <sql id="Base_Ajax_InveItem_Column_Alias" >
+    	A.id as inveId, A.wareID, A.serialNumber,A.itemId, A.itemName, A.unit, A.number, 
+    	A.remark, A.operUser, A.createDate,C.itemName AS joinItemName,
+    	C.itemNo,C.id,C.unit,C.price,C.itemTypeId
+  </sql>
+  <!-- 物品相关列 -->
+  <sql id="Base_Items_Column" >
+    	id, itemName, unit, price, itemTypeId, minStorage, maxStorage, inCode, spellCode, state, 
+    	remark, operUser, createDate,itemNo
+  </sql>
+	 <insert id="insert" parameterType="DgInventory">
+	    insert into dg_inve_inventory
+	    (
+	    id,wareID,serialNumber,itemId,itemName,unit,
+	    number,remark,operUser,createDate
+	    )
+	    values(
+	    #{id},#{wareID},#{serialNumber},#{itemId},#{itemName},#{unit},
+	    #{number},#{remark},#{operUser},#{createDate}
+	    )
+	</insert>
+	<update id="update" parameterType="DgInventory">
+		update dg_inve_inventory 
+		set 
+			wareID=#{wareID},
+			serialNumber=#{serialNumber},
+			itemId=#{itemId},
+			itemName=#{itemName},
+			unit=#{unit},
+			number=#{number},
+		  	remark=#{remark}
+	  	where id=#{id}
+	</update>
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="map" parameterType="DgInventory">
+		SELECT <include refid="Base_InveItems_Column_Alias"/> 
+		FROM 
+		(
+			select <include refid="Base_InveItems_Column"/> FROM dg_inve_inventory
+		WHERE 1=1 
+		<if test="itemName!=null and itemName!=''">
+			AND itemName like  concat('%',#{itemName},'%')
+		</if>
+		<if test="wareID!=null and wareID!=''">
+			AND wareID=#{wareID}
+		</if>
+		) A
+		left join (SELECT id,wareName,wareNo  FROM dg_inve_warehouse) B ON A.wareID=B.id 
+		left join (SELECT id,itemName,itemNo FROM dg_inve_items) C ON A.itemId=C.id
+		ORDER BY A.createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgInventory">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from 
+	  	  (
+	  	  	select id,wareID,itemId FROM dg_inve_inventory
+	  	 	<where>
+	        <if test="itemName!=null and itemName!=''">
+			    AND itemName like concat('%',#{itemName},'%')
+			</if>
+			<if test="wareID!=null and wareID!=''">
+				AND wareID=#{wareID}
+		    </if>
+	      </where>
+	  	  ) A
+	  	   left join (SELECT id,wareName,wareNo FROM dg_inve_warehouse) B ON A.wareID=B.id 
+	  	   left join (SELECT id,itemName,itemNo FROM dg_inve_items) C ON A.itemId=C.id
+    </select>
+	<select id="get" parameterType="string" resultType="DgInventory">
+	    SELECT * from dg_inve_inventory where id = #{id}
+	</select>
+	<!-- 根据条件获取供应商信息 ，不分页-->
+    <select id="selectCount" resultType="int" parameterType="DgInventory">
+    	SELECT count(0)
+    	FROM dg_inve_inventory
+    	WHERE 1=1
+    	<if test="itemId!=null and sitemId!=''">
+    		AND itemId=#{itemId}
+    	</if>
+    	<if test="wareID!=null and wareID!='">
+    	    AND wareID=#{wareID}
+    	</if>
+    </select>
+    <select id="findListData" resultType="DgInventory" parameterType="DgInventory">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_inventory
+    	<where>
+    		<if test="itemName!=null and itemName!=''">
+			    AND itemName like concat('%',#{itemName},'%')
+			</if>
+    		<if test="itemId!=null and itemId!=''">
+    			AND itemId=#{itemId}
+    		</if>
+    		<if test="wareID!=null and wareID!=''">
+    	    	AND wareID=#{wareID}
+    		</if>
+    	</where>
+    </select>
+    <!-- 导出 -->
+	<select id="exportXls" resultType="map" parameterType="DgInventory">
+		SELECT <include refid="Base_InveItems_Column_Alias"/> 
+		FROM 
+		(
+			select <include refid="Base_InveItems_Column"/> FROM dg_inve_inventory
+		WHERE 1=1 
+		<if test="itemName!=null and itemName!=''">
+			AND itemName like  concat('%',#{itemName},'%')
+		</if>
+		<if test="wareID!=null and wareID!=''">
+			AND wareID=#{wareID}
+		</if>
+		) A
+		left join (SELECT id,wareName,wareNo FROM dg_inve_warehouse) B ON A.wareID=B.id 
+		left join (SELECT id,itemName,itemNo FROM dg_inve_items) C ON A.itemId=C.id
+		ORDER BY A.createDate DESC
+	</select>
+	<!-- 根据相关条件获取库存中的物品信息 -->
+	<select id="ajaxInveItems" resultType="map" parameterType="map">
+		SELECT <include refid="Base_Ajax_InveItem_Column_Alias"/> 
+		FROM 
+		(
+			select <include refid="Base_InveItems_Column"/> FROM dg_inve_inventory
+		<where>
+			<if test="inve.wareID!=null and inve.wareID!=''">
+				AND wareID=#{inve.wareID}
+			</if>
+		</where>
+		) A
+		INNER JOIN (
+			SELECT <include refid="Base_Items_Column"/> FROM dg_inve_items 
+			<where>
+				<if test="itemTypeId!=null and itemTypeId!=''">
+					AND itemTypeId=#{itemTypeId}
+				</if>
+			</where>
+			) C ON A.itemId=C.id
+	</select>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.inve.DgProcurementMapper">
+<resultMap type="com.yqsh.diningsys.web.model.inve.DgProcurement"
+		   id="DgProcurement">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="procType" column="procType" jdbcType="VARCHAR"/>
+        <result property="inveId" column="inveId" jdbcType="VARCHAR"/>
+        <result property="wareID" column="wareID" jdbcType="VARCHAR"/>
+        <result property="serialNumber" column="serialNumber" jdbcType="VARCHAR"/>
+        <result property="supplierId" column="supplierId" jdbcType="VARCHAR"/>
+        <result property="sinceNumber" column="sinceNumber" jdbcType="VARCHAR"/>
+        <result property="dateTime" column="dateTime" jdbcType="VARCHAR"/>
+        <result property="itemId" column="itemId" jdbcType="VARCHAR"/>
+        <result property="itemName" column="itemName" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="origPrice" column="origPrice" jdbcType="DECIMAL"/>
+        <result property="presPrice" column="presPrice" jdbcType="DECIMAL"/>
+        <result property="number" column="number" jdbcType="DECIMAL"/>
+        <result property="sumAmount" column="sumAmount" jdbcType="DECIMAL"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_InveItems_Column" >
+    	id, procType, inveId, wareID, serialNumber, supplierId, sinceNumber, dateTime, itemId, 
+    	itemName, unit, origPrice,presPrice,number,sumAmount,remark,operUser,createDate 
+  </sql>
+  <sql id="Base_InveItems_Column_Alias" >
+    	A.id, A.procType, A.inveId, A.wareID, A.serialNumber, A.supplierId, A.sinceNumber, A.dateTime, A.itemId, 
+    	A.itemName, A.unit, A.origPrice,A.presPrice,A.number,A.sumAmount,A.remark,A.operUser,A.createDate,B.wareName,
+    	C.supName,D.itemName AS joinItemName
+  </sql>
+	 <insert id="insert" parameterType="DgProcurement">
+	    insert into dg_inve_procure
+	    (
+	    id,procType,inveId,wareID,
+	    serialNumber,supplierId,sinceNumber,dateTime,
+	    itemId,itemName,unit,origPrice,
+	    presPrice,number,sumAmount,remark,
+	    operUser,createDate
+	    )
+	    values(
+	    #{id},#{procType},#{inveId},#{wareID},
+	    #{serialNumber},#{supplierId},#{sinceNumber},#{dateTime},
+	    #{itemId},#{itemName},#{unit},#{origPrice},
+	    #{presPrice},#{number},#{sumAmount},#{remark},
+	    #{operUser},#{createDate}
+	    )
+	</insert>
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="map" parameterType="DgProcurement">
+		SELECT <include refid="Base_InveItems_Column_Alias"/> 
+		FROM (
+			SELECT <include refid="Base_InveItems_Column"/> FROM dg_inve_procure
+			WHERE 1=1 
+			<if test="itemName!=null and itemName!=''">
+				AND itemName like  concat('%',#{itemName},'%')
+			</if>
+			<if test="wareID!=null and wareID!=''">
+				AND wareID=#{wareID}
+			</if>
+			<if test="supplierId!=null and supplierId!=''">
+				AND supplierId=#{supplierId}
+			</if>
+			<if test="procType!=null and procType!=''">
+				AND procType=#{procType}
+			</if>
+		    <if test="crStartTime != null and crStartTime != '' and crEndTime != null and crEndTime != '' ">
+        	    AND dateTime BETWEEN #{crStartTime} AND #{crEndTime}
+        	</if>
+		)A
+		left join (SELECT id,wareName FROM dg_inve_warehouse) B ON A.wareID=B.id 
+		left join (SELECT id,supName FROM dg_inve_supplier) C ON A.supplierId=C.id 
+		left join (SELECT id,itemName FROM dg_inve_items) D ON A.itemId=D.id
+		ORDER BY createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgProcurement">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from 
+	  	 (
+		  	 	SELECT id,wareID,supplierId,itemId FROM dg_inve_procure
+		  	 	<where>
+		        <if test="itemName!=null and itemName!=''">
+				    AND itemName like concat('%',#{itemName},'%')
+				</if>
+				<if test="wareID!=null and wareID!=''">
+					AND wareID=#{wareID}
+				</if>
+				<if test="supplierId!=null and supplierId!=''">
+					AND supplierId=#{supplierId}
+				</if>
+				<if test="procType!=null and procType!=''">
+					AND procType=#{procType}
+				</if>
+				<if test="crStartTime != null and crStartTime != '' and crEndTime != null and crEndTime != '' ">
+        	   	    AND dateTime BETWEEN #{crStartTime} AND #{crEndTime}
+        		</if>
+		      </where>
+	  	 )A 
+	  	 left join (SELECT id,wareName FROM dg_inve_warehouse) B ON A.wareID=B.id 
+		 left join (SELECT id,supName FROM dg_inve_supplier) C ON A.supplierId=C.id 
+		 left join (SELECT id,itemName FROM dg_inve_items) D ON A.itemId=D.id
+    </select>
+	<select id="get" parameterType="string" resultType="DgProcurement">
+	    SELECT * from dg_inve_procure where id = #{id}
+	</select>
+	<!-- 根据条件排序查询一条数据 -->
+    <select id="findLastOne" resultType="DgProcurement" parameterType="DgProcurement">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_procure
+    	<where>
+    		<if test="procType!=null and procType!=''">
+				AND procType=#{procType}
+			</if>
+			<if test="dateTime!=null and dateTime!=''">
+				AND dateTime=#{dateTime}
+			</if>
+    	</where>
+    	ORDER BY createDate DESC limit 1
+    </select>
+</mapper>

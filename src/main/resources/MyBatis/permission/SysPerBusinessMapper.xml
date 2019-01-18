@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.permission.SysPerBusinessMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.permission.SysPerBusiness" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="yq_qx" property="yqQx" jdbcType="INTEGER" />
+    <result column="pd_px" property="pdPx" jdbcType="INTEGER" />
+    <result column="xyk_qx" property="xykQx" jdbcType="INTEGER" />
+    <result column="zp_qx" property="zpQx" jdbcType="INTEGER" />
+    <result column="q_qx" property="qQx" jdbcType="INTEGER" />
+    <result column="hygz_qx" property="hygzQx" jdbcType="INTEGER" />
+    <result column="fhygz_qx" property="fhygzQx" jdbcType="INTEGER" />
+    <result column="zwz_qx" property="zwzQx" jdbcType="INTEGER" />
+    <result column="qt_one_qx" property="qtOneQx" jdbcType="INTEGER" />
+    <result column="qt_two_qx" property="qtTwoQx" jdbcType="INTEGER" />
+    <result column="wbjsfs" property="wbjsfs" jdbcType="INTEGER" />
+    <result column="hyk_qx" property="hykQx" jdbcType="INTEGER" />
+    <result column="scewmzf_qx" property="scewmzfQx" jdbcType="INTEGER" />
+    <result column="ewmzfhx_qx" property="ewmzfhxQx" jdbcType="INTEGER" />
+    <result column="ghkw_qx" property="ghkwQx" jdbcType="INTEGER" />
+    <result column="ggrs_qx" property="ggrsQx" jdbcType="INTEGER" />
+    <result column="jsrs_qx" property="jsrsQx" jdbcType="INTEGER" />
+    <result column="ghkz_qx" property="ghkzQx" jdbcType="INTEGER" />
+    <result column="xgthtc_qx" property="xgthtcQx" jdbcType="INTEGER" />
+    <result column="xgsl_qx" property="xgslQx" jdbcType="INTEGER" />
+    <result column="dpzt_qx" property="dpztQx" jdbcType="INTEGER" />
+    <result column="qyhydz_qx" property="qyhydzQx" jdbcType="INTEGER" />
+    <result column="zz_qx" property="zzQx" jdbcType="INTEGER" />
+    <result column="cxzz_qx" property="cxzzQx" jdbcType="INTEGER" />
+    <result column="cz_qx" property="czQx" jdbcType="INTEGER" />
+    <result column="jrtd_qx" property="jrtdQx" jdbcType="INTEGER" />
+    <result column="tctd_qx" property="tctdQx" jdbcType="INTEGER" />
+    <result column="cxmd_qx" property="cxmdQx" jdbcType="INTEGER" />
+    <result column="fwjs_qx" property="fwjsQx" jdbcType="INTEGER" />
+    <result column="fkxz_qx" property="fkxzQx" jdbcType="INTEGER" />
+    <result column="bkfp_qx" property="bkfpQx" jdbcType="INTEGER" />
+    <result column="xgyjzd_qx" property="xgyjzdQx" jdbcType="INTEGER" />
+    <result column="yxslwf_qx" property="yxslwfQx" jdbcType="INTEGER" />
+    <result column="qxhc_qx" property="qxhcQx" jdbcType="INTEGER" />
+    <result column="dfpkssbdsj_qx" property="dfpkssbdsjQx" jdbcType="INTEGER" />
+    <result column="jdxglspx_qx" property="jdxglspxQx" jdbcType="INTEGER" />
+    <result column="btpd_qx" property="btpdQx" jdbcType="INTEGER" />
+    <result column="js_qx" property="jsQx" jdbcType="INTEGER" />
+    <result column="ysq_qx" property="ysqQx" jdbcType="INTEGER" />
+    <result column="ckdqyyqk_qx" property="ckdqyyqkQx" jdbcType="INTEGER" />
+    <result column="yjdj_qx" property="yjdjQx" jdbcType="INTEGER" />
+    <result column="pxxl_qx" property="pxxlQx" jdbcType="INTEGER" />
+    <result column="qhfpk_qx" property="qhfpkQx" jdbcType="INTEGER" />
+    <result column="ghcmppos_qx" property="ghcmpposQx" jdbcType="INTEGER" />
+    <result column="jdbcd_qx" property="jdbcdQx" jdbcType="INTEGER" />
+    <result column="tdbcd_qx" property="tdbcdQx" jdbcType="INTEGER" />
+    <result column="tcxt_qx" property="tcxtQx" jdbcType="INTEGER" />
+    <result column="yxjd_qx" property="yxjdQx" jdbcType="INTEGER" />
+    <result column="jb_qx" property="jbQx" jdbcType="INTEGER" />
+    <result column="yhcpxdtd_qx" property="yhcpxdtdQx" jdbcType="INTEGER" />
+    <result column="xsqtzkdhhm_qx" property="xsqtzkdhhmQx" jdbcType="INTEGER" />
+    <result column="zxyd_qx" property="zxydQx" jdbcType="INTEGER" />
+    <result column="sdzsydd_qx" property="sdzsyddQx" jdbcType="INTEGER" />
+    <result column="lxyztgq_qx" property="lxyztgqQx" jdbcType="INTEGER" />
+    <result column="sp_qx" property="spQx" jdbcType="INTEGER" />
+    <result column="zw_code" property="zwCode" jdbcType="VARCHAR" />
+    <result column="td_qx" property="tdQx" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, yq_qx, pd_px, xyk_qx, zp_qx, q_qx, hygz_qx, fhygz_qx, zwz_qx, qt_one_qx, qt_two_qx, 
+    wbjsfs, hyk_qx, scewmzf_qx, ewmzfhx_qx, ghkw_qx, ggrs_qx, jsrs_qx, ghkz_qx, xgthtc_qx, 
+    xgsl_qx, dpzt_qx, qyhydz_qx, zz_qx, cxzz_qx, cz_qx, jrtd_qx, tctd_qx, cxmd_qx, fwjs_qx, 
+    fkxz_qx, bkfp_qx, xgyjzd_qx, yxslwf_qx, qxhc_qx, dfpkssbdsj_qx, jdxglspx_qx, btpd_qx, 
+    js_qx, ysq_qx, ckdqyyqk_qx, yjdj_qx, pxxl_qx, qhfpk_qx, ghcmppos_qx, jdbcd_qx, tdbcd_qx, 
+    tcxt_qx, yxjd_qx, jb_qx, yhcpxdtd_qx, xsqtzkdhhm_qx, zxyd_qx, sdzsydd_qx, lxyztgq_qx, 
+    sp_qx, zw_code,td_qx
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_per_business
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_per_business
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.permission.SysPerBusiness" >
+    insert into sys_per_business (id, yq_qx, pd_px, 
+      xyk_qx, zp_qx, q_qx, hygz_qx, 
+      fhygz_qx, zwz_qx, qt_one_qx, 
+      qt_two_qx, wbjsfs, hyk_qx, 
+      scewmzf_qx, ewmzfhx_qx, ghkw_qx, 
+      ggrs_qx, jsrs_qx, ghkz_qx, 
+      xgthtc_qx, xgsl_qx, dpzt_qx, 
+      qyhydz_qx, zz_qx, cxzz_qx, 
+      cz_qx, jrtd_qx, tctd_qx, 
+      cxmd_qx, fwjs_qx, fkxz_qx, 
+      bkfp_qx, xgyjzd_qx, yxslwf_qx, 
+      qxhc_qx, dfpkssbdsj_qx, jdxglspx_qx, 
+      btpd_qx, js_qx, ysq_qx, 
+      ckdqyyqk_qx, yjdj_qx, pxxl_qx, 
+      qhfpk_qx, ghcmppos_qx, jdbcd_qx, 
+      tdbcd_qx, tcxt_qx, yxjd_qx, 
+      jb_qx, yhcpxdtd_qx, xsqtzkdhhm_qx, 
+      zxyd_qx, sdzsydd_qx, lxyztgq_qx, 
+      sp_qx, zw_code,td_qx)
+    values (#{id,jdbcType=INTEGER}, #{yqQx,jdbcType=INTEGER}, #{pdPx,jdbcType=INTEGER}, 
+      #{xykQx,jdbcType=INTEGER}, #{zpQx,jdbcType=INTEGER}, #{qQx,jdbcType=INTEGER}, #{hygzQx,jdbcType=INTEGER}, 
+      #{fhygzQx,jdbcType=INTEGER}, #{zwzQx,jdbcType=INTEGER}, #{qtOneQx,jdbcType=INTEGER}, 
+      #{qtTwoQx,jdbcType=INTEGER}, #{wbjsfs,jdbcType=INTEGER}, #{hykQx,jdbcType=INTEGER}, 
+      #{scewmzfQx,jdbcType=INTEGER}, #{ewmzfhxQx,jdbcType=INTEGER}, #{ghkwQx,jdbcType=INTEGER}, 
+      #{ggrsQx,jdbcType=INTEGER}, #{jsrsQx,jdbcType=INTEGER}, #{ghkzQx,jdbcType=INTEGER}, 
+      #{xgthtcQx,jdbcType=INTEGER}, #{xgslQx,jdbcType=INTEGER}, #{dpztQx,jdbcType=INTEGER}, 
+      #{qyhydzQx,jdbcType=INTEGER}, #{zzQx,jdbcType=INTEGER}, #{cxzzQx,jdbcType=INTEGER}, 
+      #{czQx,jdbcType=INTEGER}, #{jrtdQx,jdbcType=INTEGER}, #{tctdQx,jdbcType=INTEGER}, 
+      #{cxmdQx,jdbcType=INTEGER}, #{fwjsQx,jdbcType=INTEGER}, #{fkxzQx,jdbcType=INTEGER}, 
+      #{bkfpQx,jdbcType=INTEGER}, #{xgyjzdQx,jdbcType=INTEGER}, #{yxslwfQx,jdbcType=INTEGER}, 
+      #{qxhcQx,jdbcType=INTEGER}, #{dfpkssbdsjQx,jdbcType=INTEGER}, #{jdxglspxQx,jdbcType=INTEGER}, 
+      #{btpdQx,jdbcType=INTEGER}, #{jsQx,jdbcType=INTEGER}, #{ysqQx,jdbcType=INTEGER}, 
+      #{ckdqyyqkQx,jdbcType=INTEGER}, #{yjdjQx,jdbcType=INTEGER}, #{pxxlQx,jdbcType=INTEGER}, 
+      #{qhfpkQx,jdbcType=INTEGER}, #{ghcmpposQx,jdbcType=INTEGER}, #{jdbcdQx,jdbcType=INTEGER}, 
+      #{tdbcdQx,jdbcType=INTEGER}, #{tcxtQx,jdbcType=INTEGER}, #{yxjdQx,jdbcType=INTEGER}, 
+      #{jbQx,jdbcType=INTEGER}, #{yhcpxdtdQx,jdbcType=INTEGER}, #{xsqtzkdhhmQx,jdbcType=INTEGER}, 
+      #{zxydQx,jdbcType=INTEGER}, #{sdzsyddQx,jdbcType=INTEGER}, #{lxyztgqQx,jdbcType=INTEGER}, 
+      #{spQx,jdbcType=INTEGER}, #{zwCode,jdbcType=VARCHAR}, #{tdQx,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.permission.SysPerBusiness" >
+    insert into sys_per_business
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="yqQx != null" >
+        yq_qx,
+      </if>
+      <if test="pdPx != null" >
+        pd_px,
+      </if>
+      <if test="xykQx != null" >
+        xyk_qx,
+      </if>
+      <if test="zpQx != null" >
+        zp_qx,
+      </if>
+      <if test="qQx != null" >
+        q_qx,
+      </if>
+      <if test="hygzQx != null" >
+        hygz_qx,
+      </if>
+      <if test="fhygzQx != null" >
+        fhygz_qx,
+      </if>
+      <if test="zwzQx != null" >
+        zwz_qx,
+      </if>
+      <if test="qtOneQx != null" >
+        qt_one_qx,
+      </if>
+      <if test="qtTwoQx != null" >
+        qt_two_qx,
+      </if>
+      <if test="wbjsfs != null" >
+        wbjsfs,
+      </if>
+      <if test="hykQx != null" >
+        hyk_qx,
+      </if>
+      <if test="scewmzfQx != null" >
+        scewmzf_qx,
+      </if>
+      <if test="ewmzfhxQx != null" >
+        ewmzfhx_qx,
+      </if>
+      <if test="ghkwQx != null" >
+        ghkw_qx,
+      </if>
+      <if test="ggrsQx != null" >
+        ggrs_qx,
+      </if>
+      <if test="jsrsQx != null" >
+        jsrs_qx,
+      </if>
+      <if test="ghkzQx != null" >
+        ghkz_qx,
+      </if>
+      <if test="xgthtcQx != null" >
+        xgthtc_qx,
+      </if>
+      <if test="xgslQx != null" >
+        xgsl_qx,
+      </if>
+      <if test="dpztQx != null" >
+        dpzt_qx,
+      </if>
+      <if test="qyhydzQx != null" >
+        qyhydz_qx,
+      </if>
+      <if test="zzQx != null" >
+        zz_qx,
+      </if>
+      <if test="cxzzQx != null" >
+        cxzz_qx,
+      </if>
+      <if test="czQx != null" >
+        cz_qx,
+      </if>
+      <if test="jrtdQx != null" >
+        jrtd_qx,
+      </if>
+      <if test="tctdQx != null" >
+        tctd_qx,
+      </if>
+      <if test="cxmdQx != null" >
+        cxmd_qx,
+      </if>
+      <if test="fwjsQx != null" >
+        fwjs_qx,
+      </if>
+      <if test="fkxzQx != null" >
+        fkxz_qx,
+      </if>
+      <if test="bkfpQx != null" >
+        bkfp_qx,
+      </if>
+      <if test="xgyjzdQx != null" >
+        xgyjzd_qx,
+      </if>
+      <if test="yxslwfQx != null" >
+        yxslwf_qx,
+      </if>
+      <if test="qxhcQx != null" >
+        qxhc_qx,
+      </if>
+      <if test="dfpkssbdsjQx != null" >
+        dfpkssbdsj_qx,
+      </if>
+      <if test="jdxglspxQx != null" >
+        jdxglspx_qx,
+      </if>
+      <if test="btpdQx != null" >
+        btpd_qx,
+      </if>
+      <if test="jsQx != null" >
+        js_qx,
+      </if>
+      <if test="ysqQx != null" >
+        ysq_qx,
+      </if>
+      <if test="ckdqyyqkQx != null" >
+        ckdqyyqk_qx,
+      </if>
+      <if test="yjdjQx != null" >
+        yjdj_qx,
+      </if>
+      <if test="pxxlQx != null" >
+        pxxl_qx,
+      </if>
+      <if test="qhfpkQx != null" >
+        qhfpk_qx,
+      </if>
+      <if test="ghcmpposQx != null" >
+        ghcmppos_qx,
+      </if>
+      <if test="jdbcdQx != null" >
+        jdbcd_qx,
+      </if>
+      <if test="tdbcdQx != null" >
+        tdbcd_qx,
+      </if>
+      <if test="tcxtQx != null" >
+        tcxt_qx,
+      </if>
+      <if test="yxjdQx != null" >
+        yxjd_qx,
+      </if>
+      <if test="jbQx != null" >
+        jb_qx,
+      </if>
+      <if test="yhcpxdtdQx != null" >
+        yhcpxdtd_qx,
+      </if>
+      <if test="xsqtzkdhhmQx != null" >
+        xsqtzkdhhm_qx,
+      </if>
+      <if test="zxydQx != null" >
+        zxyd_qx,
+      </if>
+      <if test="sdzsyddQx != null" >
+        sdzsydd_qx,
+      </if>
+      <if test="lxyztgqQx != null" >
+        lxyztgq_qx,
+      </if>
+      <if test="spQx != null" >
+        sp_qx,
+      </if>
+      <if test="zwCode != null" >
+        zw_code,
+      </if>
+      <if test="tdQx != null" >
+        td_qx,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="yqQx != null" >
+        #{yqQx,jdbcType=INTEGER},
+      </if>
+      <if test="pdPx != null" >
+        #{pdPx,jdbcType=INTEGER},
+      </if>
+      <if test="xykQx != null" >
+        #{xykQx,jdbcType=INTEGER},
+      </if>
+      <if test="zpQx != null" >
+        #{zpQx,jdbcType=INTEGER},
+      </if>
+      <if test="qQx != null" >
+        #{qQx,jdbcType=INTEGER},
+      </if>
+      <if test="hygzQx != null" >
+        #{hygzQx,jdbcType=INTEGER},
+      </if>
+      <if test="fhygzQx != null" >
+        #{fhygzQx,jdbcType=INTEGER},
+      </if>
+      <if test="zwzQx != null" >
+        #{zwzQx,jdbcType=INTEGER},
+      </if>
+      <if test="qtOneQx != null" >
+        #{qtOneQx,jdbcType=INTEGER},
+      </if>
+      <if test="qtTwoQx != null" >
+        #{qtTwoQx,jdbcType=INTEGER},
+      </if>
+      <if test="wbjsfs != null" >
+        #{wbjsfs,jdbcType=INTEGER},
+      </if>
+      <if test="hykQx != null" >
+        #{hykQx,jdbcType=INTEGER},
+      </if>
+      <if test="scewmzfQx != null" >
+        #{scewmzfQx,jdbcType=INTEGER},
+      </if>
+      <if test="ewmzfhxQx != null" >
+        #{ewmzfhxQx,jdbcType=INTEGER},
+      </if>
+      <if test="ghkwQx != null" >
+        #{ghkwQx,jdbcType=INTEGER},
+      </if>
+      <if test="ggrsQx != null" >
+        #{ggrsQx,jdbcType=INTEGER},
+      </if>
+      <if test="jsrsQx != null" >
+        #{jsrsQx,jdbcType=INTEGER},
+      </if>
+      <if test="ghkzQx != null" >
+        #{ghkzQx,jdbcType=INTEGER},
+      </if>
+      <if test="xgthtcQx != null" >
+        #{xgthtcQx,jdbcType=INTEGER},
+      </if>
+      <if test="xgslQx != null" >
+        #{xgslQx,jdbcType=INTEGER},
+      </if>
+      <if test="dpztQx != null" >
+        #{dpztQx,jdbcType=INTEGER},
+      </if>
+      <if test="qyhydzQx != null" >
+        #{qyhydzQx,jdbcType=INTEGER},
+      </if>
+      <if test="zzQx != null" >
+        #{zzQx,jdbcType=INTEGER},
+      </if>
+      <if test="cxzzQx != null" >
+        #{cxzzQx,jdbcType=INTEGER},
+      </if>
+      <if test="czQx != null" >
+        #{czQx,jdbcType=INTEGER},
+      </if>
+      <if test="jrtdQx != null" >
+        #{jrtdQx,jdbcType=INTEGER},
+      </if>
+      <if test="tctdQx != null" >
+        #{tctdQx,jdbcType=INTEGER},
+      </if>
+      <if test="cxmdQx != null" >
+        #{cxmdQx,jdbcType=INTEGER},
+      </if>
+      <if test="fwjsQx != null" >
+        #{fwjsQx,jdbcType=INTEGER},
+      </if>
+      <if test="fkxzQx != null" >
+        #{fkxzQx,jdbcType=INTEGER},
+      </if>
+      <if test="bkfpQx != null" >
+        #{bkfpQx,jdbcType=INTEGER},
+      </if>
+      <if test="xgyjzdQx != null" >
+        #{xgyjzdQx,jdbcType=INTEGER},
+      </if>
+      <if test="yxslwfQx != null" >
+        #{yxslwfQx,jdbcType=INTEGER},
+      </if>
+      <if test="qxhcQx != null" >
+        #{qxhcQx,jdbcType=INTEGER},
+      </if>
+      <if test="dfpkssbdsjQx != null" >
+        #{dfpkssbdsjQx,jdbcType=INTEGER},
+      </if>
+      <if test="jdxglspxQx != null" >
+        #{jdxglspxQx,jdbcType=INTEGER},
+      </if>
+      <if test="btpdQx != null" >
+        #{btpdQx,jdbcType=INTEGER},
+      </if>
+      <if test="jsQx != null" >
+        #{jsQx,jdbcType=INTEGER},
+      </if>
+      <if test="ysqQx != null" >
+        #{ysqQx,jdbcType=INTEGER},
+      </if>
+      <if test="ckdqyyqkQx != null" >
+        #{ckdqyyqkQx,jdbcType=INTEGER},
+      </if>
+      <if test="yjdjQx != null" >
+        #{yjdjQx,jdbcType=INTEGER},
+      </if>
+      <if test="pxxlQx != null" >
+        #{pxxlQx,jdbcType=INTEGER},
+      </if>
+      <if test="qhfpkQx != null" >
+        #{qhfpkQx,jdbcType=INTEGER},
+      </if>
+      <if test="ghcmpposQx != null" >
+        #{ghcmpposQx,jdbcType=INTEGER},
+      </if>
+      <if test="jdbcdQx != null" >
+        #{jdbcdQx,jdbcType=INTEGER},
+      </if>
+      <if test="tdbcdQx != null" >
+        #{tdbcdQx,jdbcType=INTEGER},
+      </if>
+      <if test="tcxtQx != null" >
+        #{tcxtQx,jdbcType=INTEGER},
+      </if>
+      <if test="yxjdQx != null" >
+        #{yxjdQx,jdbcType=INTEGER},
+      </if>
+      <if test="jbQx != null" >
+        #{jbQx,jdbcType=INTEGER},
+      </if>
+      <if test="yhcpxdtdQx != null" >
+        #{yhcpxdtdQx,jdbcType=INTEGER},
+      </if>
+      <if test="xsqtzkdhhmQx != null" >
+        #{xsqtzkdhhmQx,jdbcType=INTEGER},
+      </if>
+      <if test="zxydQx != null" >
+        #{zxydQx,jdbcType=INTEGER},
+      </if>
+      <if test="sdzsyddQx != null" >
+        #{sdzsyddQx,jdbcType=INTEGER},
+      </if>
+      <if test="lxyztgqQx != null" >
+        #{lxyztgqQx,jdbcType=INTEGER},
+      </if>
+      <if test="spQx != null" >
+        #{spQx,jdbcType=INTEGER},
+      </if>
+      <if test="zwCode != null" >
+        #{zwCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tdQx != null" >
+        #{tdQx,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.permission.SysPerBusiness" >
+    update sys_per_business
+    <set >
+      <if test="yqQx != null" >
+        yq_qx = #{yqQx,jdbcType=INTEGER},
+      </if>
+      <if test="pdPx != null" >
+        pd_px = #{pdPx,jdbcType=INTEGER},
+      </if>
+      <if test="xykQx != null" >
+        xyk_qx = #{xykQx,jdbcType=INTEGER},
+      </if>
+      <if test="zpQx != null" >
+        zp_qx = #{zpQx,jdbcType=INTEGER},
+      </if>
+      <if test="qQx != null" >
+        q_qx = #{qQx,jdbcType=INTEGER},
+      </if>
+      <if test="hygzQx != null" >
+        hygz_qx = #{hygzQx,jdbcType=INTEGER},
+      </if>
+      <if test="fhygzQx != null" >
+        fhygz_qx = #{fhygzQx,jdbcType=INTEGER},
+      </if>
+      <if test="zwzQx != null" >
+        zwz_qx = #{zwzQx,jdbcType=INTEGER},
+      </if>
+      <if test="qtOneQx != null" >
+        qt_one_qx = #{qtOneQx,jdbcType=INTEGER},
+      </if>
+      <if test="qtTwoQx != null" >
+        qt_two_qx = #{qtTwoQx,jdbcType=INTEGER},
+      </if>
+      <if test="wbjsfs != null" >
+        wbjsfs = #{wbjsfs,jdbcType=INTEGER},
+      </if>
+      <if test="hykQx != null" >
+        hyk_qx = #{hykQx,jdbcType=INTEGER},
+      </if>
+      <if test="scewmzfQx != null" >
+        scewmzf_qx = #{scewmzfQx,jdbcType=INTEGER},
+      </if>
+      <if test="ewmzfhxQx != null" >
+        ewmzfhx_qx = #{ewmzfhxQx,jdbcType=INTEGER},
+      </if>
+      <if test="ghkwQx != null" >
+        ghkw_qx = #{ghkwQx,jdbcType=INTEGER},
+      </if>
+      <if test="ggrsQx != null" >
+        ggrs_qx = #{ggrsQx,jdbcType=INTEGER},
+      </if>
+      <if test="jsrsQx != null" >
+        jsrs_qx = #{jsrsQx,jdbcType=INTEGER},
+      </if>
+      <if test="ghkzQx != null" >
+        ghkz_qx = #{ghkzQx,jdbcType=INTEGER},
+      </if>
+      <if test="xgthtcQx != null" >
+        xgthtc_qx = #{xgthtcQx,jdbcType=INTEGER},
+      </if>
+      <if test="xgslQx != null" >
+        xgsl_qx = #{xgslQx,jdbcType=INTEGER},
+      </if>
+      <if test="dpztQx != null" >
+        dpzt_qx = #{dpztQx,jdbcType=INTEGER},
+      </if>
+      <if test="qyhydzQx != null" >
+        qyhydz_qx = #{qyhydzQx,jdbcType=INTEGER},
+      </if>
+      <if test="zzQx != null" >
+        zz_qx = #{zzQx,jdbcType=INTEGER},
+      </if>
+      <if test="cxzzQx != null" >
+        cxzz_qx = #{cxzzQx,jdbcType=INTEGER},
+      </if>
+      <if test="czQx != null" >
+        cz_qx = #{czQx,jdbcType=INTEGER},
+      </if>
+      <if test="jrtdQx != null" >
+        jrtd_qx = #{jrtdQx,jdbcType=INTEGER},
+      </if>
+      <if test="tctdQx != null" >
+        tctd_qx = #{tctdQx,jdbcType=INTEGER},
+      </if>
+      <if test="cxmdQx != null" >
+        cxmd_qx = #{cxmdQx,jdbcType=INTEGER},
+      </if>
+      <if test="fwjsQx != null" >
+        fwjs_qx = #{fwjsQx,jdbcType=INTEGER},
+      </if>
+      <if test="fkxzQx != null" >
+        fkxz_qx = #{fkxzQx,jdbcType=INTEGER},
+      </if>
+      <if test="bkfpQx != null" >
+        bkfp_qx = #{bkfpQx,jdbcType=INTEGER},
+      </if>
+      <if test="xgyjzdQx != null" >
+        xgyjzd_qx = #{xgyjzdQx,jdbcType=INTEGER},
+      </if>
+      <if test="yxslwfQx != null" >
+        yxslwf_qx = #{yxslwfQx,jdbcType=INTEGER},
+      </if>
+      <if test="qxhcQx != null" >
+        qxhc_qx = #{qxhcQx,jdbcType=INTEGER},
+      </if>
+      <if test="dfpkssbdsjQx != null" >
+        dfpkssbdsj_qx = #{dfpkssbdsjQx,jdbcType=INTEGER},
+      </if>
+      <if test="jdxglspxQx != null" >
+        jdxglspx_qx = #{jdxglspxQx,jdbcType=INTEGER},
+      </if>
+      <if test="btpdQx != null" >
+        btpd_qx = #{btpdQx,jdbcType=INTEGER},
+      </if>
+      <if test="jsQx != null" >
+        js_qx = #{jsQx,jdbcType=INTEGER},
+      </if>
+      <if test="ysqQx != null" >
+        ysq_qx = #{ysqQx,jdbcType=INTEGER},
+      </if>
+      <if test="ckdqyyqkQx != null" >
+        ckdqyyqk_qx = #{ckdqyyqkQx,jdbcType=INTEGER},
+      </if>
+      <if test="yjdjQx != null" >
+        yjdj_qx = #{yjdjQx,jdbcType=INTEGER},
+      </if>
+      <if test="pxxlQx != null" >
+        pxxl_qx = #{pxxlQx,jdbcType=INTEGER},
+      </if>
+      <if test="qhfpkQx != null" >
+        qhfpk_qx = #{qhfpkQx,jdbcType=INTEGER},
+      </if>
+      <if test="ghcmpposQx != null" >
+        ghcmppos_qx = #{ghcmpposQx,jdbcType=INTEGER},
+      </if>
+      <if test="jdbcdQx != null" >
+        jdbcd_qx = #{jdbcdQx,jdbcType=INTEGER},
+      </if>
+      <if test="tdbcdQx != null" >
+        tdbcd_qx = #{tdbcdQx,jdbcType=INTEGER},
+      </if>
+      <if test="tcxtQx != null" >
+        tcxt_qx = #{tcxtQx,jdbcType=INTEGER},
+      </if>
+      <if test="yxjdQx != null" >
+        yxjd_qx = #{yxjdQx,jdbcType=INTEGER},
+      </if>
+      <if test="jbQx != null" >
+        jb_qx = #{jbQx,jdbcType=INTEGER},
+      </if>
+      <if test="yhcpxdtdQx != null" >
+        yhcpxdtd_qx = #{yhcpxdtdQx,jdbcType=INTEGER},
+      </if>
+      <if test="xsqtzkdhhmQx != null" >
+        xsqtzkdhhm_qx = #{xsqtzkdhhmQx,jdbcType=INTEGER},
+      </if>
+      <if test="zxydQx != null" >
+        zxyd_qx = #{zxydQx,jdbcType=INTEGER},
+      </if>
+      <if test="sdzsyddQx != null" >
+        sdzsydd_qx = #{sdzsyddQx,jdbcType=INTEGER},
+      </if>
+      <if test="lxyztgqQx != null" >
+        lxyztgq_qx = #{lxyztgqQx,jdbcType=INTEGER},
+      </if>
+      <if test="spQx != null" >
+        sp_qx = #{spQx,jdbcType=INTEGER},
+      </if>
+      <if test="zwCode != null" >
+        zw_code = #{zwCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tdQx != null" >
+        td_qx = #{tdQx,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.permission.SysPerBusiness" >
+    update sys_per_business
+    set yq_qx = #{yqQx,jdbcType=INTEGER},
+      pd_px = #{pdPx,jdbcType=INTEGER},
+      xyk_qx = #{xykQx,jdbcType=INTEGER},
+      zp_qx = #{zpQx,jdbcType=INTEGER},
+      q_qx = #{qQx,jdbcType=INTEGER},
+      hygz_qx = #{hygzQx,jdbcType=INTEGER},
+      fhygz_qx = #{fhygzQx,jdbcType=INTEGER},
+      zwz_qx = #{zwzQx,jdbcType=INTEGER},
+      qt_one_qx = #{qtOneQx,jdbcType=INTEGER},
+      qt_two_qx = #{qtTwoQx,jdbcType=INTEGER},
+      wbjsfs = #{wbjsfs,jdbcType=INTEGER},
+      hyk_qx = #{hykQx,jdbcType=INTEGER},
+      scewmzf_qx = #{scewmzfQx,jdbcType=INTEGER},
+      ewmzfhx_qx = #{ewmzfhxQx,jdbcType=INTEGER},
+      ghkw_qx = #{ghkwQx,jdbcType=INTEGER},
+      ggrs_qx = #{ggrsQx,jdbcType=INTEGER},
+      jsrs_qx = #{jsrsQx,jdbcType=INTEGER},
+      ghkz_qx = #{ghkzQx,jdbcType=INTEGER},
+      xgthtc_qx = #{xgthtcQx,jdbcType=INTEGER},
+      xgsl_qx = #{xgslQx,jdbcType=INTEGER},
+      dpzt_qx = #{dpztQx,jdbcType=INTEGER},
+      qyhydz_qx = #{qyhydzQx,jdbcType=INTEGER},
+      zz_qx = #{zzQx,jdbcType=INTEGER},
+      cxzz_qx = #{cxzzQx,jdbcType=INTEGER},
+      cz_qx = #{czQx,jdbcType=INTEGER},
+      jrtd_qx = #{jrtdQx,jdbcType=INTEGER},
+      tctd_qx = #{tctdQx,jdbcType=INTEGER},
+      cxmd_qx = #{cxmdQx,jdbcType=INTEGER},
+      fwjs_qx = #{fwjsQx,jdbcType=INTEGER},
+      fkxz_qx = #{fkxzQx,jdbcType=INTEGER},
+      bkfp_qx = #{bkfpQx,jdbcType=INTEGER},
+      xgyjzd_qx = #{xgyjzdQx,jdbcType=INTEGER},
+      yxslwf_qx = #{yxslwfQx,jdbcType=INTEGER},
+      qxhc_qx = #{qxhcQx,jdbcType=INTEGER},
+      dfpkssbdsj_qx = #{dfpkssbdsjQx,jdbcType=INTEGER},
+      jdxglspx_qx = #{jdxglspxQx,jdbcType=INTEGER},
+      btpd_qx = #{btpdQx,jdbcType=INTEGER},
+      js_qx = #{jsQx,jdbcType=INTEGER},
+      ysq_qx = #{ysqQx,jdbcType=INTEGER},
+      ckdqyyqk_qx = #{ckdqyyqkQx,jdbcType=INTEGER},
+      yjdj_qx = #{yjdjQx,jdbcType=INTEGER},
+      pxxl_qx = #{pxxlQx,jdbcType=INTEGER},
+      qhfpk_qx = #{qhfpkQx,jdbcType=INTEGER},
+      ghcmppos_qx = #{ghcmpposQx,jdbcType=INTEGER},
+      jdbcd_qx = #{jdbcdQx,jdbcType=INTEGER},
+      tdbcd_qx = #{tdbcdQx,jdbcType=INTEGER},
+      tcxt_qx = #{tcxtQx,jdbcType=INTEGER},
+      yxjd_qx = #{yxjdQx,jdbcType=INTEGER},
+      jb_qx = #{jbQx,jdbcType=INTEGER},
+      yhcpxdtd_qx = #{yhcpxdtdQx,jdbcType=INTEGER},
+      xsqtzkdhhm_qx = #{xsqtzkdhhmQx,jdbcType=INTEGER},
+      zxyd_qx = #{zxydQx,jdbcType=INTEGER},
+      sdzsydd_qx = #{sdzsyddQx,jdbcType=INTEGER},
+      lxyztgq_qx = #{lxyztgqQx,jdbcType=INTEGER},
+      sp_qx = #{spQx,jdbcType=INTEGER},
+      td_qx = #{tdQx,jdbcType=INTEGER},
+      zw_code = #{zwCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectGeneralPerByZwCode" parameterType="map" resultMap="BaseResultMap">
+    select * from sys_per_business where zw_code = #{zwCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectNextDutiesCode" resultType="map">
+    select max(cCode) as maxCode from dg_public_code0 where cParent = 16
+  </select>
+    <select id="selectDiscountPerByZwCode" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.permission.SysPerDiscount">
+        select * from sys_per_discount where zw_code = #{zwCode,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="addNewDuties" parameterType="map">
+    insert into dg_public_code0(cCode,cName,cKeyWD,cParent,cOrder)
+    VALUES (#{dutiesCode,jdbcType=VARCHAR},#{dutiesName,jdbcType=VARCHAR},#{sp,jdbcType=VARCHAR},16,#{dutiesOrder,jdbcType=INTEGER})
+  </insert>
+
+</mapper>

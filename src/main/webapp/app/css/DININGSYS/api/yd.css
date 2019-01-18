@@ -1,0 +1,13 @@
+.seatAdd{
+	float:left;
+	margin-right: 93px;
+}
+.seats li{
+	display:inline-block;
+	float:left;
+	list-style-type:none;
+	margin-right: 30px;
+	margin-top: 7px;
+	margin-bottom: 7px;
+	color:blue;
+}

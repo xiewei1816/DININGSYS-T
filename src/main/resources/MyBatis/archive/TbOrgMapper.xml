@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbOrgMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbOrg" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+    <result column="org_name" property="orgName" jdbcType="VARCHAR" />
+    <result column="org_sjm" property="orgJsm" jdbcType="VARCHAR" />
+    <result column="org_kdsj" property="orgKdsj" jdbcType="TIMESTAMP" />
+    <result column="org_jmgh" property="orgJmgh" jdbcType="VARCHAR" />
+    <result column="org_phone" property="orgPhone" jdbcType="VARCHAR" />
+    <result column="org_glms" property="orgGlms" jdbcType="VARCHAR" />
+    <result column="org_area" property="orgArea" jdbcType="VARCHAR" />
+    <result column="org_brand" property="orgBrand" jdbcType="VARCHAR" />
+    <result column="franchisees" property="franchisees" jdbcType="VARCHAR" />
+    <result column="max_customer" property="maxCustomer" jdbcType="INTEGER" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="is_own_flag" property="isOwnFlag" jdbcType="VARCHAR" />
+    <result column="is_start_flag" property="isStartFlag" jdbcType="VARCHAR" />
+    <result column="is_newstore_flag" property="isNewstoreFlag" jdbcType="VARCHAR" />
+    <result column="is_line_flag" property="isLineFlag" jdbcType="VARCHAR" />
+    <result column="rdc" property="rdc" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="region" property="region" jdbcType="VARCHAR" />
+    <result column="road" property="road" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="rdc_distance" property="rdcDistance" jdbcType="VARCHAR" />
+    <result column="diyFields1" property="diyFields1" jdbcType="VARCHAR" />
+    <result column="diyFields2" property="diyFields2" jdbcType="VARCHAR" />
+    <result column="diyFields3" property="diyFields3" jdbcType="VARCHAR" />
+    <result column="diyFields4" property="diyFields4" jdbcType="VARCHAR" />
+    <result column="diyFields5" property="diyFields5" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,org_code,org_name,org_sjm,org_kdsj,org_jmgh,org_phone,org_glms,org_area,org_brand,
+    franchisees,max_customer,address,remark,is_own_flag,is_start_flag,is_newstore_flag,is_line_flag,
+    rdc,province,city,region,road,area,rdc_distance,diyFields1,diyFields2,diyFields3,diyFields4,diyFields5,create_time
+  </sql>
+  <sql id="Base_Column_List2" >
+    o.id,o.org_code,o.org_name,o.org_sjm,o.org_kdsj,o.org_jmgh,o.org_phone,
+    b.cName AS orgGlms,c.cName AS orgArea,d.cName AS orgBrand,
+    o.franchisees,o.max_customer,o.address,o.remark,o.is_own_flag,o.is_start_flag,o.is_newstore_flag,is_line_flag,
+    o.rdc,o.province,o.city,o.region,o.road,o.area,o.rdc_distance,o.diyFields1,o.diyFields2,o.diyFields3,o.diyFields4,o.diyFields5,o.create_time
+  </sql> 
+	<!-- 分页查询机构信息 -->
+  <select id="getListByPage" resultType="TbOrg" parameterType="TbOrg">
+  	<!-- select * from t_b_org
+	  <where>
+		  <if test="orgCode != null and orgCode != ''">
+			  and org_code like '%${orgCode}%'
+		  </if>
+		  <if test="orgName != null and orgName != ''">
+			  and org_name like '%${orgName}%'
+		  </if>
+	  </where>
+	  order by create_time desc
+	  limit #{startRow},#{endRow} -->
+	  SELECT
+  		<include refid="Base_Column_List2"></include>
+  	 from t_b_org o
+  	 left join dg_public_code0 b on b.id = o.org_glms
+  	 left join dg_public_code0 c on c.id = o.org_area
+  	 left join dg_public_code0 d on d.id = o.org_brand
+  	 <where>
+        <if test="orgCode != null and orgCode != ''">
+          and o.org_code like '%${orgCode}%'
+        </if>
+        <if test="orgName != null and orgName != ''">
+         and o.org_name like '%${orgName}%'
+        </if>
+      </where>
+      <choose>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+		limit #{startRow},#{endRow}
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="TbOrg">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_org o
+  	 <where>
+        <if test="orgCode != null and orgCode != ''">
+          and o.org_code like '%${orgCode}%'
+        </if>
+        <if test="orgName != null and orgName != ''">
+         and o.org_name like '%${orgName}%'
+        </if>
+      </where>
+  </select>
+  <!-- 通过机构ID查询机构信息 -->
+  <select id="getOrgByID" parameterType="TbOrg" resultType="TbOrg">
+		select 
+			<include refid="Base_Column_List"></include>
+		from t_b_org o where o.id = #{id}
+	</select>
+	
+	<!-- 添加机构信息 -->
+	<insert id="newInsert" parameterType="TbOrg">
+  	insert into t_b_org(
+		org_code,
+		org_name, 
+		org_sjm,
+		org_kdsj, 
+		org_jmgh, 
+		org_phone, 
+		org_glms, 
+		org_area, 
+		org_brand, 
+		franchisees, 
+		max_customer, 
+		address, 
+		remark, 
+		is_own_flag,
+		is_start_flag,
+		is_newstore_flag,
+		is_line_flag,
+		rdc,
+		province,
+		city,
+		region,
+		road,
+		area,
+		rdc_distance,
+		diyFields1,
+		diyFields2,
+		diyFields3,
+		diyFields4,
+		diyFields5,
+		create_time
+  	) values (
+  		#{orgCode},
+		#{orgName},
+		#{orgSjm},
+		#{orgKdsj}, 
+		#{orgJmgh}, 
+		#{orgPhone}, 
+		#{orgGlms}, 
+		#{orgArea}, 
+		#{orgBrand}, 
+		#{franchisees}, 
+		#{maxCustomer}, 
+		#{address}, 
+		#{remark}, 
+		#{isOwnFlag}, 
+		#{isStartFlag}, 
+		#{isNewstoreFlag}, 
+		#{isLineFlag},
+		#{rdc}, 
+		#{province}, 
+		#{city}, 
+		#{region}, 
+		#{road}, 
+		#{area}, 
+		#{rdcDistance}, 
+		#{diyFields1}, 
+		#{diyFields2}, 
+		#{diyFields3}, 
+		#{diyFields4}, 
+		#{diyFields5}, 
+		#{createTime}
+  	)
+  </insert>
+  <!-- 根据机构ID修改机构信息 -->
+  <update id="update" parameterType="TbOrg">
+  	update t_b_org set 
+		org_code = #{orgCode},
+		org_name = #{orgName},
+		org_sjm = #{orgSjm},
+		org_kdsj = #{orgKdsj},
+		org_jmgh = #{orgJmgh}, 
+		org_phone = #{orgPhone}, 
+		org_glms = #{orgGlms}, 
+		org_area = #{orgArea}, 
+		org_brand = #{orgBrand}, 
+		franchisees = #{franchisees}, 
+		max_customer = #{maxCustomer}, 
+		address = #{address}, 
+		remark = #{remark},
+		is_own_flag = #{isOwnFlag}, 
+		is_start_flag = #{isStartFlag}, 
+		is_newstore_flag = #{isNewstoreFlag},
+		is_line_flag = #{isLineFlag},
+		rdc = #{rdc}, 
+		province = #{province}, 
+		city = #{city}, 
+		region = #{region}, 
+		road = #{road}, 
+		area = #{area}, 
+		rdc_distance = #{rdcDistance}, 
+		diyFields1 = #{diyFields1}, 
+		diyFields2 = #{diyFields2}, 
+		diyFields3 = #{diyFields3}, 
+		diyFields4 = #{diyFields4}, 
+		diyFields5 = #{diyFields5}
+	where id = #{id}
+  </update>
+
+  <!-- 删除机构信息 -->
+  <delete id="delete" parameterType="TbOrg">
+	delete from t_b_org where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	
+	<!-- 获取所有机构信息 -->
+	<select id="getAllList" parameterType="TbOrg" resultType="TbOrg">
+		SELECT 
+  		<include refid="Base_Column_List2"></include>
+  		 from t_b_org o
+  		 left join dg_public_code0 b on b.id = o.org_glms
+  	 	 left join dg_public_code0 c on c.id = o.org_area
+  	  	 left join dg_public_code0 d on d.id = o.org_brand
+	  	 <where>
+	        <if test="orgCode != null and orgCode != ''">
+	          and o.org_code like '%${orgCode}%'
+	        </if>
+	        <if test="orgName != null and orgName != ''">
+	         and o.org_name like '%${orgName}%'
+	        </if>
+	      </where>
+	      <choose>
+	      	<otherwise>
+	      		order by o.create_time desc
+	      	</otherwise>
+	     </choose>
+	</select>
+
+	<select id="getOwnOrg" resultType="TbOrg">
+		select * from t_b_org where is_own_flag = 1
+	</select>
+
+	<select id="selectAllTbOrg" resultType="TbOrg">
+		select * from t_b_org where is_start_flag = '1' and is_own_flag = '1'
+	</select>
+</mapper>

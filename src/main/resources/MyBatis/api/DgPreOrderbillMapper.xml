@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.DgPreOrderbillMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.api.DgPreOrderbill" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="item_file_id" property="itemFileId" jdbcType="INTEGER" />
+    <result column="item_file_count" property="itemFileCount" jdbcType="INTEGER" />
+    <result column="ow_num" property="owNum" jdbcType="VARCHAR" />
+    <result column="water_id" property="waterId" jdbcType="INTEGER" />
+    <result column="num" property="itemNum" jdbcType="VARCHAR" />
+    <result column="name" property="itemName" jdbcType="VARCHAR" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="standard_price" property="price" jdbcType="DOUBLE" />
+    <result column="ppxl_id" property="pxxlId" jdbcType="INTEGER" />
+    <result column="first_num" property="firstNum" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_file_id, item_file_count, ow_num, water_id,first_num
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_pre_orderbill
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from dg_pre_orderbill
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.api.DgPreOrderbill" >
+    insert into dg_pre_orderbill (id, item_file_id, item_file_count, 
+      ow_num, water_id,first_num)
+    values (#{id,jdbcType=VARCHAR}, #{itemFileId,jdbcType=INTEGER}, #{itemFileCount,jdbcType=INTEGER}, 
+      #{owNum,jdbcType=VARCHAR}, #{waterId,jdbcType=INTEGER}, #{firstNum,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.api.DgPreOrderbill" >
+    insert into dg_pre_orderbill
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemFileId != null" >
+        item_file_id,
+      </if>
+      <if test="itemFileCount != null" >
+        item_file_count,
+      </if>
+      <if test="owNum != null" >
+        ow_num,
+      </if>
+      <if test="waterId != null" >
+        water_id,
+      </if>
+   	  <if test="firstNum != null" >
+        first_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="itemFileId != null" >
+        #{itemFileId,jdbcType=INTEGER},
+      </if>
+      <if test="itemFileCount != null" >
+        #{itemFileCount,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="waterId != null" >
+        #{waterId,jdbcType=INTEGER},
+      </if>
+      <if test="firstNum != null" >
+        #{firstNum,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.api.DgPreOrderbill" >
+    update dg_pre_orderbill
+    <set >
+      <if test="itemFileId != null" >
+        item_file_id = #{itemFileId,jdbcType=INTEGER},
+      </if>
+      <if test="itemFileCount != null" >
+        item_file_count = #{itemFileCount,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        ow_num = #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="waterId != null" >
+        water_id = #{waterId,jdbcType=INTEGER},
+      </if>
+      <if test="firstNum != null" >
+        first_num = #{firstNum,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.api.DgPreOrderbill" >
+    update dg_pre_orderbill
+    set item_file_id = #{itemFileId,jdbcType=INTEGER},
+      item_file_count = #{itemFileCount,jdbcType=INTEGER},
+      ow_num = #{owNum,jdbcType=VARCHAR},
+      first_num = #{firstNum,jdbcType=VARCHAR},
+      water_id = #{waterId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateItemCount" parameterType="com.yqsh.diningsys.web.model.api.DgPreOrderbill" >
+    update dg_pre_orderbill
+    set item_file_count = #{itemFileCount,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <sql id="water_Column_List" >
+    a.id, 
+    a.item_file_id, 
+    sum(a.item_file_count) as item_file_count, 
+    a.ow_num, 
+    a.water_id,
+    a.first_num, 
+    b.num as num,
+    b.ppxl_id as ppxl_id,
+    b.unit as unit,
+    b.standard_price as standard_price,
+    b.name as name
+  </sql>
+  
+  <select id="selectByWaterId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="water_Column_List" />
+    from dg_pre_orderbill a  left join dg_item_file b on a.item_file_id = b.id
+    where a.water_id = #{waterId,jdbcType=INTEGER} group by a.item_file_id
+  </select>
+  
+  <select id="selectByPreNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="water_Column_List" />
+    from dg_pre_orderbill a left join dg_item_file b on a.item_file_id = b.id
+    where a.ow_num = #{owNum,jdbcType=VARCHAR} group by a.item_file_id
+  </select>
+  
+   <select id="selectByWaterIdAndItemFileId" resultMap="BaseResultMap" parameterType="DgPreOrderbill" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_pre_orderbill
+    where water_id = #{waterId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insertBatch" parameterType="list" >
+     insert into dg_pre_orderbill (id, item_file_id, item_file_count, 
+      ow_num, water_id,first_num)
+	 values 
+	 <foreach collection="list" item="item" open="" close="" separator=",">
+    		(#{item.id,jdbcType=VARCHAR}, #{item.itemFileId,jdbcType=INTEGER}, #{item.itemFileCount,jdbcType=INTEGER}, 
+      #{item.owNum,jdbcType=VARCHAR}, #{item.waterId,jdbcType=INTEGER}, #{item.firstNum,jdbcType=VARCHAR})
+	 </foreach>
+  </insert>
+  
+  <delete id="deleteByWaterId" parameterType="java.lang.Integer" >
+    	delete from dg_pre_orderbill where water_id = #{waterId,jdbcType=INTEGER};
+  </delete>
+  
+  <select id="selectWaterInfoByPreNum" resultType="DgOpenWater" parameterType="java.lang.String" >
+    select 
+    a.*,
+    c.number as tableno
+    from dg_open_water a left join dg_consumer_seat c on a.seat_id = c.id 
+    left join dg_pre_orderbill b on a.id = b.water_id
+    where b.first_num = #{firstNum,jdbcType=VARCHAR} group by b.first_num
+  </select>
+  
+  <sql id="Next_Column_List" >
+    id, 
+    item_file_id, 
+    sum(item_file_count) as item_file_count, 
+    ow_num, 
+    water_id,
+    first_num
+  </sql>
+  <select id="selectAccountByItemFileId" resultMap="BaseResultMap" parameterType="DgPreOrderbill" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_pre_orderbill
+    where water_id = #{waterId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER}
+    group by item_file_id
+  </select>
+  
+  <select id="selectCountByWaterId" resultType="Integer" parameterType="Integer" >
+ 	select 
+    ifnull(sum(item_file_count),0) as count
+    from dg_pre_orderbill
+    where water_id = #{waterId,jdbcType=INTEGER}
+  </select>
+</mapper>

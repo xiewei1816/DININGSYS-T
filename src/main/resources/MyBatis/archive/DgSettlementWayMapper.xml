@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgSettlementWayMapper" >
+    <sql id="Base_Column_List" >
+    	o.id AS "id",
+		o.number AS "number",
+		o.name AS "name",
+		c.cName AS "type",
+		o.exchangeRate AS "exchangeRate",
+		o.shortcutKey AS "shortcutKey",
+		o.rollFaceValue AS "rollFaceValue",
+		o.createUserid AS "createUserid",
+		o.createTime AS "createTime",
+		o.explains AS "explains",
+		o.actualIncomeRatio AS "actualIncomeRatio",
+		o.notActualIncomeRatio AS "notActualIncomeRatio",
+		o.isDisabled AS "isDisabled",
+		o.isCommon AS "isCommon",
+		o.isKeepSystem AS "isKeepSystem",
+		o.isMustInformation AS "isMustInformation",
+		o.isAloneUse AS "isAloneUse",
+		o.isCurrency AS "isCurrency",
+		o.isAllowChange AS "isAllowChange",
+		o.delFlag AS "delFlag",
+		o.dklx,
+		o.qyxdksz,
+		o.itemIds,
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName"
+    </sql>
+
+	<sql id="selectCols">
+		o.id AS "id",
+		o.number AS "number",
+		o.name AS "name",
+		o.type AS "type",
+		o.exchangeRate AS "exchangeRate",
+		o.shortcutKey AS "shortcutKey",
+		o.rollFaceValue AS "rollFaceValue",
+		o.createUserid AS "createUserid",
+		o.createTime AS "createTime",
+		o.explains AS "explains",
+		o.actualIncomeRatio AS "actualIncomeRatio",
+		o.notActualIncomeRatio AS "notActualIncomeRatio",
+		o.isDisabled AS "isDisabled",
+		o.isCommon AS "isCommon",
+		o.isKeepSystem AS "isKeepSystem",
+		o.isMustInformation AS "isMustInformation",
+		o.isAloneUse AS "isAloneUse",
+		o.isCurrency AS "isCurrency",
+		o.isAllowChange AS "isAllowChange",
+		o.delFlag AS "delFlag",
+		o.dklx,
+		o.qyxdksz,
+		o.itemIds,
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.createUserid
+		<!-- left join dg_settlement_way_type wt on wt.id = o.type -->
+		left join dg_public_code0 c on c.id = o.type
+		left join dg_settlement_way_rank dswr ON dswr.settlementWayId = o.id
+	</sql>
+	
+	<sql id="queryCriteria">
+		and o.delFlag = 0
+  	 	<if test="conditions != null and conditions != ''">
+          and (o.number like '%${conditions}%' or o.name like '%${conditions}%')
+        </if>
+        <if test="number != null and number != ''">
+          and o.number like '%${number}%'
+        </if>
+        <if test="name != null and name != ''">
+         and o.name like '%${name}%'
+        </if>
+        <if test="checkName != null and checkName != ''">
+         and o.name = #{checkName}
+        </if>
+        <if test="type != null and type != ''">
+          and o.type = #{type}
+        </if>
+		<if test="crStartTime != null and crStartTime != ''">
+			and o.createTime >= #{crStartTime}
+		</if>
+		<if test="crEndTime != null and crEndTime != ''">
+			and o.createTime <![CDATA[<]]> #{crEndTime}
+		</if>
+	</sql>
+	
+  <select id="getListByPage" resultType="DgSettlementWay" parameterType="DgSettlementWay">
+  	SELECT 
+  		<include refid="Base_Column_List"></include>
+  	 from dg_settlement_way o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by dswr.rank asc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgSettlementWay">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_settlement_way o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getSettlementWayByID" parameterType="DgSettlementWay" resultType="DgSettlementWay">
+		select 
+			<include refid="selectCols"></include>
+		from dg_settlement_way o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="DgSettlementWay" resultType="DgSettlementWay">
+		select 
+			<include refid="selectCols"></include>
+		from dg_settlement_way o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.createTime asc
+	</select>
+  
+  <insert id="newInsert" parameterType="DgSettlementWay">
+  	insert into dg_settlement_way(
+		number,
+		name,
+		type,
+		exchangeRate,
+		shortcutKey,
+		rollFaceValue,
+		createTime,
+		explains,
+		actualIncomeRatio,
+		notActualIncomeRatio,
+		isDisabled,
+		isCommon,
+		isKeepSystem,
+		isMustInformation,
+		isAloneUse,
+		isCurrency,
+		isAllowChange,
+		createUserid,
+		delFlag
+  	) values (
+  		#{number},
+		#{name},
+		#{type},
+		#{exchangeRate},
+		#{shortcutKey},
+		#{rollFaceValue},
+		#{createTime},
+		#{explains},
+		#{actualIncomeRatio},
+		#{notActualIncomeRatio},
+		#{isDisabled},
+		#{isCommon},
+		#{isKeepSystem},
+		#{isMustInformation},
+		#{isAloneUse},
+		#{isCurrency},
+		#{isAllowChange},
+		#{createUserid},
+		0
+  	)
+  </insert>
+
+	<update id="update" parameterType="DgSettlementWay">
+  	update dg_settlement_way set 
+		number = #{number},
+		name = #{name},
+		type = #{type},
+		exchangeRate = #{exchangeRate},
+		shortcutKey = #{shortcutKey},
+		rollFaceValue = #{rollFaceValue},
+		explains = #{explains},
+		actualIncomeRatio = #{actualIncomeRatio},
+		notActualIncomeRatio = #{notActualIncomeRatio},
+		isDisabled = #{isDisabled},
+		isCommon = #{isCommon},
+		isKeepSystem = #{isKeepSystem},
+		isMustInformation = #{isMustInformation},
+		isAloneUse = #{isAloneUse},
+		isCurrency = #{isCurrency},
+		isAllowChange = #{isAllowChange}
+	where id = #{id}
+  </update>
+
+	<update id="upateWayItemSet" parameterType="map">
+		update dg_settlement_way set itemIds = #{ids} where id = #{wayId}
+	</update>
+
+	<delete id="delete" parameterType="DgSettlementWay">
+	update dg_settlement_way set delFlag = 1 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	<!-- 结算方式排序管理  start -->
+    <select id="getSettleMentWayRankList" resultType="DgSettlementWay">
+		SELECT o.*
+		FROM dg_settlement_way o
+		LEFT JOIN dg_settlement_way_rank dswr ON dswr.settlementWayId = o.id
+		WHERE o.delFlag = 0
+		ORDER BY dswr.rank ASC
+	</select>
+	<!-- 初始化结算方式排序表 -->
+	<select id="selSettlementWayRank" parameterType="map" resultType="map">
+		SELECT * FROM dg_settlement_way_rank where settlementWayId = #{id}
+	</select>
+
+    <select id="selectDataById" resultType="com.yqsh.diningsys.web.model.archive.DgSettlementWay">
+		select * from 	dg_settlement_way where id = #{id}
+	</select>
+
+    <insert id="addSettlementWayRank" parameterType="map">
+	  	insert into dg_settlement_way_rank(
+			settlementWayId,
+			rank
+	  	) values (
+	  		#{id},
+			#{rank}
+	  	)
+  	</insert>
+  	<update id="updSettlementWayRank" parameterType="map">
+	  	update dg_settlement_way_rank set 
+			isCurrency = #{isCurrency},
+			isAllowChange = #{isAllowChange}
+		where id = #{id}
+    </update>
+    <!-- 结算方式排序 上移 -->
+	<update id="updateSettlementWayRankMoveUp" parameterType="java.lang.Integer">
+	  	update dg_settlement_way_rank set rank = rank-1 where settlementWayId = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 结算方式排序 下移 -->
+	<update id="updateSettlementWayRankMoveDown" parameterType="java.lang.Integer">
+	  	update dg_settlement_way_rank set rank = rank+1 where settlementWayId = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 结算方式排序 置顶-->
+	<select id="selectSettlementWayRankMoveTopper" parameterType="java.lang.Integer" resultType="java.lang.String">
+		select id from dg_settlement_way_rank where rank <![CDATA[<]]> (select rank from dg_settlement_way_rank where settlementWayId = #{id,jdbcType=INTEGER})
+	</select>
+	<update id="updateSettlementWayRankMoveTopper" parameterType="java.util.List" >
+		update dg_settlement_way_rank set rank = rank+1 where id in 
+		<foreach item="ids" index="index" collection="list" open="(" separator="," close=")">  
+		  #{ids}  
+		</foreach> 
+	</update>
+	<!-- 结算方式-排序移动 -->
+	<update id="updateSettlementWayRank" parameterType="map">
+	  	update dg_settlement_way_rank o set o.rank = #{rank} where o.settlementWayId = #{id}
+	</update>
+	<!-- 结算方式排序管理  end -->
+</mapper>

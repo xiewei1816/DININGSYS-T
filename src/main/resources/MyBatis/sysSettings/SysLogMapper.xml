@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.sysSettings.SysLogMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.sysSettings.SysLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="wind" property="wind" jdbcType="VARCHAR" />
+    <result column="open_water" property="openWater" jdbcType="VARCHAR" />
+    <result column="settlement_water" property="settlementWater" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.yqsh.diningsys.web.model.sysSettings.SysLog" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  
+   <resultMap id="BaseResultMapQuery" type="com.yqsh.diningsys.web.model.sysSettings.SysLogQuery" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="oper_id" property="operId" jdbcType="INTEGER" />
+    <result column="emp_name" property="operName" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="wind" property="wind" jdbcType="VARCHAR" />
+    <result column="open_water" property="openWater" jdbcType="VARCHAR" />
+    <result column="settlement_water" property="settlementWater" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBsQuery" type="com.yqsh.diningsys.web.model.sysSettings.SysLogQuery" extends="BaseResultMapQuery" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    o.id as id, 
+    o.type as type,
+    o.oper_id as oper_id, 
+    o.time as time,
+    o.wind as wind,
+    o.open_water as open_water,
+    o.settlement_water as settlement_water,
+    t.emp_name as emp_name
+  </sql>
+  <sql id="Blob_Column_List" >
+    o.content as content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBsQuery" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from sys_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  	<!-- 分页查询日志 or t.emp_name like CONCAT('%',#{query_content,jdbcType=VARCHAR},'%' ) -->
+  <select id="getListByPage" resultMap="ResultMapWithBLOBsQuery" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLogQuery">
+  	 SELECT 
+  	 <include refid="Base_Column_List"></include>
+  	 ,
+  	 <include refid="Blob_Column_List" />
+  	 from sys_log o left join sys_user t on t.id = o.oper_id
+  	 <where>
+  	    <if test="query_type == 1 and query_content != null and query_content !=''">
+        		AND oper_id = #{query_content,jdbcType=VARCHAR} or emp_name like CONCAT('%',#{query_content,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="query_type == 2 and query_content != null and query_content !=''">
+        		AND o.content like CONCAT('%',#{query_content,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="query_time_type != null and query_time_type == 1">
+        		AND DATE_FORMAT(time,'%Y-%m-%d')= #{query_time,jdbcType=VARCHAR} 
+        </if>
+        <if test="query_time_type != null and query_time_type == 2">
+        		AND DATE_FORMAT(time,'%Y-%m')= #{query_time,jdbcType=VARCHAR} 
+        </if>
+        <if test="query_time_type != null and query_time_type == 3">
+        		AND DATE_FORMAT(time,'%Y')= #{query_time,jdbcType=VARCHAR} 
+        </if>
+        <if test="type != null and type != 0">
+         		AND  o.type = #{type,jdbcType=INTEGER}
+        </if>
+     </where>
+     order by id desc 
+	 limit #{startRow},#{endRow}	
+  </select>
+  
+    <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLogQuery">
+    SELECT 
+  	 count(0) 
+  	 from sys_log o left join sys_user t on t.id = o.oper_id
+  	 <where>
+  	    <if test="query_type == 1">
+        		AND oper_id = #{query_content,jdbcType=VARCHAR} or emp_name like CONCAT('%',#{query_content,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="query_type == 2">
+        		AND o.content like CONCAT('%',#{query_content,jdbcType=VARCHAR},'%' )
+        </if>
+ 		<if test="query_time_type != null and query_time_type == 1">
+        		AND DATE_FORMAT(time,'%Y-%m-%d')= #{query_time,jdbcType=VARCHAR} 
+        </if>
+        <if test="query_time_type != null and query_time_type == 2">
+        		AND DATE_FORMAT(time,'%Y-%m')= #{query_time,jdbcType=VARCHAR} 
+        </if>
+        <if test="query_time_type != null and query_time_type == 3">
+        		AND DATE_FORMAT(time,'%Y')= #{query_time,jdbcType=VARCHAR} 
+        </if>
+        <if test=" type != null and type != 0">
+         		AND  o.type = #{type,jdbcType=INTEGER}
+        </if>
+     </where>
+  </select>
+  
+  <select id="selectYearByType" resultType="Map" parameterType="java.lang.Integer" >
+    select distinct YEAR(time) as time  from sys_log 
+    where type = #{type,jdbcType=INTEGER}
+  </select>
+  
+  
+   <select id="selectMonthByTypeAndYear" resultType="Map" parameterType="java.util.Map" >
+    select distinct YEAR(time) as year,MONTH(time) as month  from sys_log 
+    where type = #{type,jdbcType=INTEGER} and YEAR(time) = #{year,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="selectDayByTypeAndYearAndMonth" resultType="Map" parameterType="java.util.Map" >
+    select distinct YEAR(time) as year,MONTH(time) as month,DAY(time) as day  from sys_log 
+    where type = #{type,jdbcType=INTEGER} and YEAR(time) = #{year,jdbcType=VARCHAR} and MONTH(time) = #{month,jdbcType=VARCHAR}
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLog" >
+    insert into sys_log (id, type, time, oper_id,open_water,settlement_water,
+      wind, content)
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, #{operId,jdbcType=INTEGER}, 
+		#{openWater,jdbcType=VARCHAR}, #{settlementWater,jdbcType=VARCHAR}, 
+      #{wind,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLog" >
+    insert into sys_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="operId != null" >
+        oper_id,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="wind != null" >
+        wind,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+       <if test="openWater != null" >
+        open_water,
+      </if>
+      <if test="settlementWater != null" >
+        settlement_water,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="operId != null" >
+        #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="wind != null" >
+        #{wind,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="openWater != null" >
+        #{openWater,jdbcType=VARCHAR},
+      </if>
+      <if test="settlementWater != null" >
+        #{settlementWater,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLog" >
+    update sys_log
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+     <if test="operId != null" >
+        oper_id = #{operId,jdbcType=INTEGER},
+      </if>
+      <if test="wind != null" >
+        wind = #{wind,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="openWater != null" >
+       open_water = #{openWater,jdbcType=VARCHAR},
+      </if>
+      <if test="settlementWater != null" >
+       settlement_water =  #{settlementWater,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLog" >
+    update sys_log
+    set type = #{type,jdbcType=INTEGER},
+      oper_id = #{operId,jdbcType=INTEGER},
+      time = #{time,jdbcType=TIMESTAMP},
+      wind = #{wind,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR},
+      open_water = #{openWater,jdbcType=VARCHAR},
+      settlement_water =  #{settlementWater,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysLog" >
+    update sys_log
+    set type = #{type,jdbcType=INTEGER},
+      oper_id = #{operId,jdbcType=INTEGER},
+      time = #{time,jdbcType=TIMESTAMP},
+      wind = #{wind,jdbcType=VARCHAR},
+      open_water = #{openWater,jdbcType=VARCHAR},
+      settlement_water =  #{settlementWater,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

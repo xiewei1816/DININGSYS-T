@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgOwModifySeatMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwModifySeat" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ow_num" property="owNum" jdbcType="VARCHAR" />
+    <result column="org_seat_id" property="orgSeatId" jdbcType="INTEGER" />
+    <result column="now_seat_id" property="nowSeatId" jdbcType="INTEGER" />
+    <result column="org_fwf" property="orgFwf" jdbcType="DOUBLE" />
+    <result column="org_bff" property="orgBff" jdbcType="DOUBLE" />
+    <result column="is_ggbff" property="isGgbff" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="is_jsbffpx" property="isJsbffpx" jdbcType="INTEGER" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ow_num, org_seat_id, now_seat_id, org_fwf, org_bff, is_ggbff,time,is_jsbffpx
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.ow_num as ow_num, 
+    a.org_seat_id as org_seat_id, 
+    a.now_seat_id as now_seat_id, 
+    a.org_fwf as org_fwf, 
+    a.org_bff as org_bff, 
+    a.is_ggbff as is_ggbff,
+    a.time as time,
+    a.is_jsbffpx as is_jsbffpx,
+    b.name as seatName
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_ow_modify_seat
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_ow_modify_seat
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwModifySeat" >
+    insert into dg_ow_modify_seat (id, ow_num, org_seat_id, 
+      now_seat_id, org_fwf, org_bff, 
+      is_ggbff,time,is_jsbffpx)
+    values (#{id,jdbcType=INTEGER}, #{owNum,jdbcType=VARCHAR}, #{orgSeatId,jdbcType=INTEGER}, 
+      #{nowSeatId,jdbcType=INTEGER}, #{orgFwf,jdbcType=DOUBLE}, #{orgBff,jdbcType=DOUBLE}, 
+      #{isGgbff,jdbcType=INTEGER},#{time,jdbcType=TIMESTAMP},#{isJsbffpx,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwModifySeat" >
+    insert into dg_ow_modify_seat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="owNum != null" >
+        ow_num,
+      </if>
+      <if test="orgSeatId != null" >
+        org_seat_id,
+      </if>
+      <if test="nowSeatId != null" >
+        now_seat_id,
+      </if>
+      <if test="orgFwf != null" >
+        org_fwf,
+      </if>
+      <if test="orgBff != null" >
+        org_bff,
+      </if>
+      <if test="isGgbff != null" >
+        is_ggbff,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="isJsbffpx != null" >
+        is_jsbffpx,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="owNum != null" >
+        #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="orgSeatId != null" >
+        #{orgSeatId,jdbcType=INTEGER},
+      </if>
+      <if test="nowSeatId != null" >
+        #{nowSeatId,jdbcType=INTEGER},
+      </if>
+      <if test="orgFwf != null" >
+        #{orgFwf,jdbcType=DOUBLE},
+      </if>
+      <if test="orgBff != null" >
+        #{orgBff,jdbcType=DOUBLE},
+      </if>
+      <if test="isGgbff != null" >
+        #{isGgbff,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isJsbffpx != null" >
+        #{isJsbffpx,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwModifySeat" >
+    update dg_ow_modify_seat
+    <set >
+      <if test="owNum != null" >
+        ow_num = #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="orgSeatId != null" >
+        org_seat_id = #{orgSeatId,jdbcType=INTEGER},
+      </if>
+      <if test="nowSeatId != null" >
+        now_seat_id = #{nowSeatId,jdbcType=INTEGER},
+      </if>
+      <if test="orgFwf != null" >
+        org_fwf = #{orgFwf,jdbcType=DOUBLE},
+      </if>
+      <if test="orgBff != null" >
+        org_bff = #{orgBff,jdbcType=DOUBLE},
+      </if>
+      <if test="isGgbff != null" >
+        is_ggbff = #{isGgbff,jdbcType=INTEGER},
+      </if>
+      <if test="isGgbff != null" >
+        is_ggbff = #{isGgbff,jdbcType=INTEGER},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isJsbffpx != null" >
+        is_jsbffpx = #{isJsbffpx,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwModifySeat" >
+    update dg_ow_modify_seat
+    set ow_num = #{owNum,jdbcType=VARCHAR},
+      org_seat_id = #{orgSeatId,jdbcType=INTEGER},
+      now_seat_id = #{nowSeatId,jdbcType=INTEGER},
+      org_fwf = #{orgFwf,jdbcType=DOUBLE},
+      org_bff = #{orgBff,jdbcType=DOUBLE},
+      is_ggbff = #{isGgbff,jdbcType=INTEGER},
+      time = #{time,jdbcType=TIMESTAMP},
+      is_jsbffpx = #{isJsbffpx,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectByOwNum" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_ow_modify_seat a left join dg_consumer_seat b on a.org_seat_id = b.id 
+    where a.ow_num = #{owNum,jdbcType=VARCHAR} order by a.time desc
+  </select>
+</mapper>

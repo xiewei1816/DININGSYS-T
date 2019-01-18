@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgPlacePriceMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="standard_price" property="sPrice" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_id, item_code
+  </sql>
+  
+  <sql id="Next_Column_List">
+    a.id as id, 
+    a.item_id as item_id, 
+    a.item_code as item_code, 
+    b.name as name,
+    b.standard_price as standard_price
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_place_price
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_place_price
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice" >
+    insert into dg_place_price (id, item_id, item_code
+      )
+    values (#{id,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice" >
+    insert into dg_place_price
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice" >
+    update dg_place_price
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice" >
+    update dg_place_price
+    set item_id = #{itemId,jdbcType=INTEGER},
+      item_code = #{itemCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  
+  <select id="getAllData" resultMap="BaseResultMap"  parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_place_price a left join 
+    dg_item_file b on a.item_id = b.id
+    <where>
+        b.delFlag = '0'
+  	    <if test="name != null and name != ''">
+        		AND b.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND b.num like CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' ) 
+        </if>
+        AND b.yxdz = 1 
+        AND b.id not in (select item_id from dg_item_disable where 1=1)
+     </where>
+  </select>
+  
+  
+         <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_place_price where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+    <delete id="deleteAll">
+    delete from dg_place_price
+    where 1=1
+  </delete>
+  
+   <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice" >
+    insert into dg_place_price (id, item_id, item_code
+      )
+    values (#{id,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  	<delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_place_price
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_place_price(item_id, item_code
+      )  values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+	 (#{item.itemId,jdbcType=INTEGER}, #{item.itemCode,jdbcType=VARCHAR})
+    </foreach>  
+  </insert>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_place_price 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_place_price
+        (
+		    id,item_id,item_code
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemCode">#{im.itemCode}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

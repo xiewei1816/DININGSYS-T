@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgFlavorMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgFlavor" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="zjf" property="zjf" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="px" property="px" jdbcType="INTEGER" />
+    <result column="parentid" property="parentid" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="VARCHAR" />
+    <result column="isonly" property="isonly" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, number, zjf, name, px, parentid,createtime,isonly
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_flavor
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  
+  <select id="getTreeBean" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_flavor
+        where parentid=1 or parentid =2 or parentid=-1
+  </select>
+  
+  <select id="getAllBeans" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_flavor
+  </select>
+  
+  <select id="getAllBeansWithOutRoot" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_flavor where parentId != -1 and (parentid=1 or parentid =2)
+  </select>
+  
+   <select id="getFlavorByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_flavor where parentId = #{id} order by px asc
+  </select>
+  
+   <select id="getFlavorByNumber" resultMap="BaseResultMap" parameterType="string">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_flavor where number = #{number}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_flavor
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgFlavor" >
+    insert into dg_flavor (id, number, zjf, 
+      name, px, parentid,createtime,isonly)
+    values (#{id,jdbcType=INTEGER}, #{number,jdbcType=VARCHAR}, #{zjf,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{px,jdbcType=INTEGER}, #{parentid,jdbcType=INTEGER}, #{createtime,jdbcType=VARCHAR}, #{isonly,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgFlavor" >
+    insert into dg_flavor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="number != null" >
+        number,
+      </if>
+      <if test="zjf != null" >
+        zjf,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="px != null" >
+        px,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="parentid != null" >
+        createtime,
+      </if>
+      <if test="parentid != null" >
+        isonly,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="zjf != null" >
+        #{zjf,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="px != null" >
+        #{px,jdbcType=INTEGER},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=VARCHAR},
+      </if>
+      <if test="isonly != null" >
+        #{isonly,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgFlavor" >
+    update dg_flavor
+    <set >
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="zjf != null" >
+        zjf = #{zjf,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="px != null" >
+        px = #{px,jdbcType=INTEGER},
+      </if>
+      <if test="parentid != null" >
+        parentid = #{parentid,jdbcType=INTEGER},
+      </if>
+       <if test="createtime != null" >
+        createtime = #{createtime,jdbcType=VARCHAR},
+      </if>
+       <if test="isonly != null" >
+        isonly = #{isonly,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgFlavor" >
+    update dg_flavor
+    set number = #{number,jdbcType=VARCHAR},
+      zjf = #{zjf,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      px = #{px,jdbcType=INTEGER},
+      parentid = #{parentid,jdbcType=INTEGER},
+      createtime = #{createtime,jdbcType=VARCHAR},
+      isonly = #{isonly,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

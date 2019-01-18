@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgCardMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgCard" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="cardnum" property="cardnum" jdbcType="VARCHAR" />
+    <result column="consumerid" property="consumerid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cardnum, consumerid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_card
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgCard">
+    SELECT
+    count(*)
+    from dg_card o
+    <where>
+      consumerid = #{consumerid}
+    </where>
+  </select>
+
+  <select id="getCardsByConsumerSeatId" resultMap="BaseResultMap" parameterType="com.yqsh.diningsys.web.model.archive.DgCard" >
+    select
+    <include refid="Base_Column_List" />
+    from dg_card
+    where consumerid = #{consumerid}
+    limit #{startRow},#{endRow}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from dg_card
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgCard" >
+    insert into dg_card (id, cardnum, consumerid
+      )
+    values (#{id,jdbcType=BIGINT}, #{cardnum,jdbcType=VARCHAR}, #{consumerid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgCard" >
+    insert into dg_card
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cardnum != null" >
+        cardnum,
+      </if>
+      <if test="consumerid != null" >
+        consumerid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="cardnum != null" >
+        #{cardnum,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerid != null" >
+        #{consumerid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgCard" >
+    update dg_card
+    <set >
+      <if test="cardnum != null" >
+        cardnum = #{cardnum,jdbcType=VARCHAR},
+      </if>
+      <if test="consumerid != null" >
+        consumerid = #{consumerid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgCard" >
+    update dg_card
+    set cardnum = #{cardnum,jdbcType=VARCHAR},
+      consumerid = #{consumerid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="countBySeatIdAndCardNum" resultType="java.lang.Integer" parameterType="DgCard">
+    SELECT
+    count(*)
+    from dg_card o
+    <where>
+	      <if test="cardnum != null" >
+	        and cardnum = #{cardnum,jdbcType=VARCHAR}
+	      </if>
+	      <if test="consumerid != null" >
+	        and consumerid = #{consumerid,jdbcType=VARCHAR}
+	      </if>
+    </where>
+  </select>
+</mapper>

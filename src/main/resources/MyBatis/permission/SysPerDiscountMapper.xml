@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.permission.SysPerDiscountMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.permission.SysPerDiscount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cgyhzdbl" property="cgyhzdbl" jdbcType="INTEGER" />
+    <result column="qdblyhzdbl" property="qdblyhzdbl" jdbcType="INTEGER" />
+    <result column="deyh" property="deyh" jdbcType="INTEGER" />
+    <result column="mddeyh_one" property="mddeyhOne" jdbcType="INTEGER" />
+    <result column="mddeyh_two" property="mddeyhTwo" jdbcType="INTEGER" />
+    <result column="pcceqx" property="pcceqx" jdbcType="INTEGER" />
+    <result column="mdpccexz_one" property="mdpccexzOne" jdbcType="INTEGER" />
+    <result column="mdpccexz_two" property="mdpccexzTwo" jdbcType="INTEGER" />
+    <result column="yqzged" property="yqzged" jdbcType="INTEGER" />
+    <result column="yqzgednum" property="yqzgednum" jdbcType="INTEGER" />
+    <result column="mfwf" property="mfwf" jdbcType="INTEGER" />
+    <result column="xglbyh" property="xglbyh" jdbcType="INTEGER" />
+    <result column="mbff" property="mbff" jdbcType="INTEGER" />
+    <result column="gbff" property="gbff" jdbcType="INTEGER" />
+    <result column="xgdpyh" property="xgdpyh" jdbcType="INTEGER" />
+    <result column="mzdxf" property="mzdxf" jdbcType="INTEGER" />
+    <result column="gfwf" property="gfwf" jdbcType="INTEGER" />
+    <result column="zq" property="zq" jdbcType="INTEGER" />
+    <result column="xgzqje" property="xgzqje" jdbcType="INTEGER" />
+    <result column="zw_code" property="zwCode" jdbcType="VARCHAR" />
+    <result column="deyh_type" property="deyhType" jdbcType="INTEGER" />
+    <result column="pcce_type" property="pcceType" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cgyhzdbl, qdblyhzdbl, deyh, mddeyh_one, mddeyh_two, pcceqx, mdpccexz_one, mdpccexz_two, 
+    yqzged, yqzgednum, mfwf, xglbyh, mbff, gbff, xgdpyh, mzdxf, gfwf, zq, xgzqje, zw_code,deyh_type,pcce_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_per_discount
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_per_discount
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.permission.SysPerDiscount" >
+    insert into sys_per_discount (id, cgyhzdbl, qdblyhzdbl, 
+      deyh, mddeyh_one, mddeyh_two, 
+      pcceqx, mdpccexz_one, mdpccexz_two, 
+      yqzged, yqzgednum, mfwf, 
+      xglbyh, mbff, gbff, 
+      xgdpyh, mzdxf, gfwf, 
+      zq, xgzqje, zw_code,deyh_type,pcce_type)
+    values (#{id,jdbcType=INTEGER}, #{cgyhzdbl,jdbcType=INTEGER}, #{qdblyhzdbl,jdbcType=INTEGER}, 
+      #{deyh,jdbcType=INTEGER}, #{mddeyhOne,jdbcType=INTEGER}, #{mddeyhTwo,jdbcType=INTEGER}, 
+      #{pcceqx,jdbcType=INTEGER}, #{mdpccexzOne,jdbcType=INTEGER}, #{mdpccexzTwo,jdbcType=INTEGER}, 
+      #{yqzged,jdbcType=INTEGER}, #{yqzgednum,jdbcType=INTEGER}, #{mfwf,jdbcType=INTEGER}, 
+      #{xglbyh,jdbcType=INTEGER}, #{mbff,jdbcType=INTEGER}, #{gbff,jdbcType=INTEGER}, 
+      #{xgdpyh,jdbcType=INTEGER}, #{mzdxf,jdbcType=INTEGER}, #{gfwf,jdbcType=INTEGER}, 
+      #{zq,jdbcType=INTEGER}, #{xgzqje,jdbcType=INTEGER}, #{zwCode,jdbcType=VARCHAR},#{deyhType,jdbcType=INTEGER},#{pcceType,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.permission.SysPerDiscount" >
+    insert into sys_per_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cgyhzdbl != null" >
+        cgyhzdbl,
+      </if>
+      <if test="qdblyhzdbl != null" >
+        qdblyhzdbl,
+      </if>
+      <if test="deyh != null" >
+        deyh,
+      </if>
+      <if test="mddeyhOne != null" >
+        mddeyh_one,
+      </if>
+      <if test="mddeyhTwo != null" >
+        mddeyh_two,
+      </if>
+      <if test="pcceqx != null" >
+        pcceqx,
+      </if>
+      <if test="mdpccexzOne != null" >
+        mdpccexz_one,
+      </if>
+      <if test="mdpccexzTwo != null" >
+        mdpccexz_two,
+      </if>
+      <if test="yqzged != null" >
+        yqzged,
+      </if>
+      <if test="yqzgednum != null" >
+        yqzgednum,
+      </if>
+      <if test="mfwf != null" >
+        mfwf,
+      </if>
+      <if test="xglbyh != null" >
+        xglbyh,
+      </if>
+      <if test="mbff != null" >
+        mbff,
+      </if>
+      <if test="gbff != null" >
+        gbff,
+      </if>
+      <if test="xgdpyh != null" >
+        xgdpyh,
+      </if>
+      <if test="mzdxf != null" >
+        mzdxf,
+      </if>
+      <if test="gfwf != null" >
+        gfwf,
+      </if>
+      <if test="zq != null" >
+        zq,
+      </if>
+      <if test="xgzqje != null" >
+        xgzqje,
+      </if>
+      <if test="zwCode != null" >
+        zw_code,
+      </if>
+      <if test="deyhType != null" >
+        deyh_type,
+      </if>
+      <if test="pcceType != null" >
+        pcce_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cgyhzdbl != null" >
+        #{cgyhzdbl,jdbcType=INTEGER},
+      </if>
+      <if test="qdblyhzdbl != null" >
+        #{qdblyhzdbl,jdbcType=INTEGER},
+      </if>
+      <if test="deyh != null" >
+        #{deyh,jdbcType=INTEGER},
+      </if>
+      <if test="mddeyhOne != null" >
+        #{mddeyhOne,jdbcType=INTEGER},
+      </if>
+      <if test="mddeyhTwo != null" >
+        #{mddeyhTwo,jdbcType=INTEGER},
+      </if>
+      <if test="pcceqx != null" >
+        #{pcceqx,jdbcType=INTEGER},
+      </if>
+      <if test="mdpccexzOne != null" >
+        #{mdpccexzOne,jdbcType=INTEGER},
+      </if>
+      <if test="mdpccexzTwo != null" >
+        #{mdpccexzTwo,jdbcType=INTEGER},
+      </if>
+      <if test="yqzged != null" >
+        #{yqzged,jdbcType=INTEGER},
+      </if>
+      <if test="yqzgednum != null" >
+        #{yqzgednum,jdbcType=INTEGER},
+      </if>
+      <if test="mfwf != null" >
+        #{mfwf,jdbcType=INTEGER},
+      </if>
+      <if test="xglbyh != null" >
+        #{xglbyh,jdbcType=INTEGER},
+      </if>
+      <if test="mbff != null" >
+        #{mbff,jdbcType=INTEGER},
+      </if>
+      <if test="gbff != null" >
+        #{gbff,jdbcType=INTEGER},
+      </if>
+      <if test="xgdpyh != null" >
+        #{xgdpyh,jdbcType=INTEGER},
+      </if>
+      <if test="mzdxf != null" >
+        #{mzdxf,jdbcType=INTEGER},
+      </if>
+      <if test="gfwf != null" >
+        #{gfwf,jdbcType=INTEGER},
+      </if>
+      <if test="zq != null" >
+        #{zq,jdbcType=INTEGER},
+      </if>
+      <if test="xgzqje != null" >
+        #{xgzqje,jdbcType=INTEGER},
+      </if>
+      <if test="zwCode != null" >
+        #{zwCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deyhType != null" >
+        #{deyhType,jdbcType=INTEGER},
+      </if>
+      <if test="pcceType != null" >
+        #{pcceType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.permission.SysPerDiscount" >
+    update sys_per_discount
+    <set >
+      <if test="cgyhzdbl != null" >
+        cgyhzdbl = #{cgyhzdbl,jdbcType=INTEGER},
+      </if>
+      <if test="qdblyhzdbl != null" >
+        qdblyhzdbl = #{qdblyhzdbl,jdbcType=INTEGER},
+      </if>
+      <if test="deyh != null" >
+        deyh = #{deyh,jdbcType=INTEGER},
+      </if>
+      <if test="mddeyhOne != null" >
+        mddeyh_one = #{mddeyhOne,jdbcType=INTEGER},
+      </if>
+      <if test="mddeyhTwo != null" >
+        mddeyh_two = #{mddeyhTwo,jdbcType=INTEGER},
+      </if>
+      <if test="pcceqx != null" >
+        pcceqx = #{pcceqx,jdbcType=INTEGER},
+      </if>
+      <if test="mdpccexzOne != null" >
+        mdpccexz_one = #{mdpccexzOne,jdbcType=INTEGER},
+      </if>
+      <if test="mdpccexzTwo != null" >
+        mdpccexz_two = #{mdpccexzTwo,jdbcType=INTEGER},
+      </if>
+      <if test="yqzged != null" >
+        yqzged = #{yqzged,jdbcType=INTEGER},
+      </if>
+      <if test="yqzgednum != null" >
+        yqzgednum = #{yqzgednum,jdbcType=INTEGER},
+      </if>
+      <if test="mfwf != null" >
+        mfwf = #{mfwf,jdbcType=INTEGER},
+      </if>
+      <if test="xglbyh != null" >
+        xglbyh = #{xglbyh,jdbcType=INTEGER},
+      </if>
+      <if test="mbff != null" >
+        mbff = #{mbff,jdbcType=INTEGER},
+      </if>
+      <if test="gbff != null" >
+        gbff = #{gbff,jdbcType=INTEGER},
+      </if>
+      <if test="xgdpyh != null" >
+        xgdpyh = #{xgdpyh,jdbcType=INTEGER},
+      </if>
+      <if test="mzdxf != null" >
+        mzdxf = #{mzdxf,jdbcType=INTEGER},
+      </if>
+      <if test="gfwf != null" >
+        gfwf = #{gfwf,jdbcType=INTEGER},
+      </if>
+      <if test="zq != null" >
+        zq = #{zq,jdbcType=INTEGER},
+      </if>
+      <if test="xgzqje != null" >
+        xgzqje = #{xgzqje,jdbcType=INTEGER},
+      </if>
+      <if test="zwCode != null" >
+        zw_code = #{zwCode,jdbcType=VARCHAR},
+      </if>
+      <if test="deyhType != null" >
+        deyh_type = #{deyhType,jdbcType=INTEGER},
+      </if>
+      <if test="pcceType != null" >
+        pcce_type = #{pcceType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.permission.SysPerDiscount" >
+    update sys_per_discount
+    set cgyhzdbl = #{cgyhzdbl,jdbcType=INTEGER},
+      qdblyhzdbl = #{qdblyhzdbl,jdbcType=INTEGER},
+      deyh = #{deyh,jdbcType=INTEGER},
+      mddeyh_one = #{mddeyhOne,jdbcType=INTEGER},
+      mddeyh_two = #{mddeyhTwo,jdbcType=INTEGER},
+      pcceqx = #{pcceqx,jdbcType=INTEGER},
+      mdpccexz_one = #{mdpccexzOne,jdbcType=INTEGER},
+      mdpccexz_two = #{mdpccexzTwo,jdbcType=INTEGER},
+      yqzged = #{yqzged,jdbcType=INTEGER},
+      yqzgednum = #{yqzgednum,jdbcType=INTEGER},
+      mfwf = #{mfwf,jdbcType=INTEGER},
+      xglbyh = #{xglbyh,jdbcType=INTEGER},
+      mbff = #{mbff,jdbcType=INTEGER},
+      gbff = #{gbff,jdbcType=INTEGER},
+      xgdpyh = #{xgdpyh,jdbcType=INTEGER},
+      mzdxf = #{mzdxf,jdbcType=INTEGER},
+      gfwf = #{gfwf,jdbcType=INTEGER},
+      zq = #{zq,jdbcType=INTEGER},
+      xgzqje = #{xgzqje,jdbcType=INTEGER},
+      zw_code = #{zwCode,jdbcType=VARCHAR},
+      deyh_type = #{deyhType,jdbcType=INTEGER},
+      pcce_type = #{pcceType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectDiscountPerByZwCode" parameterType="map" resultMap="BaseResultMap">
+    select * from sys_per_discount where zw_code = #{zwCode,jdbcType=VARCHAR}
+  </select>
+
+</mapper>

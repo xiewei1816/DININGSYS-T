@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbEmpMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbEmp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="emp_code" property="empCode" jdbcType="VARCHAR" />
+    <result column="emp_name" property="empName" jdbcType="VARCHAR" />
+    <result column="emp_organization" property="empOrganization" jdbcType="VARCHAR" />
+    <result column="emp_department" property="empDepartment" jdbcType="VARCHAR" />
+    <result column="emp_duties" property="empDuties" jdbcType="VARCHAR" />
+    <result column="emp_dob" property="empDob" jdbcType="TIMESTAMP" />
+    <result column="emp_cardno" property="empCardno" jdbcType="VARCHAR" />
+    <result column="emp_sex" property="empSex" jdbcType="VARCHAR" />
+    <result column="is_marry" property="isMarry" jdbcType="VARCHAR" />
+    <result column="emp_cardid" property="empCardid" jdbcType="VARCHAR" />
+    <result column="sqh_no1" property="sqhNo1" jdbcType="VARCHAR" />
+    <result column="sqh_no2" property="sqhNo2" jdbcType="VARCHAR" />
+    <result column="is_orguser_flag" property="isOrguserFlag" jdbcType="VARCHAR" />
+    <result column="is_manager_flag" property="isManagerFlag" jdbcType="VARCHAR" />
+    <result column="is_start_flag" property="isStartFlag" jdbcType="VARCHAR" />  
+    <!-- 扩展信息 -->
+    <result column="natives" property="natives" jdbcType="VARCHAR" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="height" property="height" jdbcType="VARCHAR" />
+    <result column="nation" property="nation" jdbcType="VARCHAR" />
+    <result column="mobile" property="mobile" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="photo" property="photo" jdbcType="VARCHAR" />     
+    <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,emp_code,emp_name,emp_organization,emp_department,emp_duties,emp_dob,emp_cardno,emp_sex,is_marry,emp_cardid,sqh_no1,sqh_no2,is_orguser_flag,is_manager_flag,is_start_flag,
+    natives,place,phone,email,height,nation,mobile,address,photo,is_del,create_time
+  </sql> 
+
+  <sql id="selectCols">
+		o.id AS "id",
+		o.emp_code AS "empCode",
+		o.emp_name AS "empName",
+		a.dep_name AS "empDepartment",
+		b.org_name AS "empOrganization",
+		o.emp_duties AS "empDuties",
+		o.emp_dob AS "empDob",
+		o.emp_cardno AS "empCardno",
+		o.emp_sex AS "empSex",
+		o.is_Marry AS "isMarry",
+		o.emp_cardid AS "empCardid",
+		o.sqh_no1 AS "sqhNo1",
+		o.sqh_no2 AS "sqhNo2",
+		o.is_orguser_flag AS "isOrguserFlag",
+		o.is_manager_flag AS "isManagerFlag",
+		o.is_start_flag AS "isStartFlag",
+		o.natives AS "natives",
+		o.place AS "place",
+		o.phone AS "phone",
+		o.email AS "email",
+		o.height AS "height",
+		o.nation AS "nation",
+		o.mobile AS "mobile",
+		o.address AS "address",
+		o.photo AS "photo",
+		o.is_del AS "isDel",
+		o.create_time AS "createTime"
+	</sql>
+	<!-- 分页查询员工信息 -->
+  <select id="getListByPage" resultType="TbEmp" parameterType="TbEmp">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from t_b_emp o 
+  	 left join t_b_dep a on a.id = o.emp_department
+	 left join t_b_org b on b.id = o.emp_organization
+  	 <where>
+       <if test="empCode != null and empCode != ''">
+	          and o.emp_code like '%${empCode}%'
+	        </if>
+	        <if test="empName != null and empName != ''">
+	         and o.emp_name like '%${empName}%'
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and o.is_del = '${isDel}'
+	        </if>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+		limit #{startRow},#{endRow}	
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="integer" parameterType="TbEmp">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_emp o
+  	 <where>
+       <if test="empCode != null and empCode != ''">
+          and o.emp_code like '%${empCode}%'
+        </if>
+        <if test="empName != null and empName != ''">
+         and o.emp_name like '%${empName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = '${isDel}'
+        </if>
+      </where>
+  </select>
+  <!-- 通过员工ID查询员工信息 -->
+  <select id="getEmpById" parameterType="TbEmp" resultType="TbEmp">
+		select 
+		<include refid="Base_Column_List"></include>
+		from t_b_emp
+		where id = #{id}
+	</select>
+	
+	<!-- 添加员工信息 -->
+	<insert id="newInsert" parameterType="TbEmp">
+  	insert into t_b_emp(
+		emp_code,
+		emp_name, 
+		emp_organization, 
+		emp_department, 
+		emp_duties, 
+		emp_dob, 
+		emp_cardno, 
+		emp_sex, 
+		is_marry, 
+		emp_cardid,
+		sqh_no1,
+		sqh_no2,
+		is_orguser_flag,
+		is_manager_flag,
+		is_start_flag,
+		natives,
+		place,
+		phone,
+		email,
+		height,
+		nation,
+		mobile,
+		address,
+		photo,
+		create_time 
+  	) values (
+  		#{empCode},
+		#{empName},
+		#{empOrganization},
+		#{empDepartment},
+		#{empDuties},
+		#{empDob},
+		#{empCardno},
+		#{empSex},
+		#{isMarry},
+		#{empCardid},
+		#{sqhNo1},
+		#{sqhNo2},
+		#{isOrguserFlag},
+		#{isManagerFlag},
+		#{isStartFlag},
+		#{natives},
+		#{place},
+		#{phone},
+		#{email},
+		#{height},
+		#{nation},
+		#{mobile},
+		#{address},
+		#{photo},
+		#{create_time}
+  	)
+  </insert>
+  <!-- 根据员工ID修改员工信息 -->
+  <update id="update" parameterType="TbEmp">
+  	update t_b_emp set 
+		emp_code = #{empCode},
+		emp_name = #{empName},
+		emp_organization = #{empOrganization},
+		emp_department = #{empDepartment},
+		emp_duties = #{empDuties},
+		emp_dob = #{empDob},
+		emp_cardno = #{empCardno},
+		emp_sex = #{empSex},
+		is_marry = #{isMarry},
+		emp_cardid = #{empCardid},
+		sqh_no1 = #{sqhNo1},
+		sqh_no2 = #{sqhNo2},
+		is_orguser_flag = #{isOrguserFlag},
+		is_manager_flag = #{isManagerFlag},
+		is_start_flag = #{isStartFlag},
+		natives = #{natives},
+		place = #{place},
+		phone = #{phone},
+		email = #{email},
+		height = #{height},
+		nation = #{nation},
+		mobile = #{mobile},
+		address = #{address},
+		photo = #{photo}
+	where id = #{id}
+  </update>
+  <!-- 员工信息回收站 -->
+  <update id="deleteTrash" parameterType="TbEmp">
+	update t_b_emp set is_del = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+	
+  <!-- 还原回收站员工信息 -->
+  <update id="replyEmp" parameterType="TbEmp">
+	update t_b_emp set is_del = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+	
+  <!-- 删除员工信息 -->
+  <delete id="delete" parameterType="TbEmp">
+	delete from t_b_emp where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	
+	<!-- 获取所有员工信息 -->
+	<select id="getAllList" parameterType="TbEmp" resultType="TbEmp">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from t_b_emp o 
+  		 left join t_b_dep a on a.id = o.emp_department 
+		 left join t_b_org b on b.id = o.emp_organization
+	  	 <where>
+	        <if test="empCode != null and empCode != ''">
+	          and o.emp_code like '%${empCode}%'
+	        </if>
+	        <if test="empName != null and empName != ''">
+	         and o.emp_name like '%${empName}%'
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and o.is_del = '${isDel}'
+	        </if>
+	      </where>
+	      <choose>
+	      	<when test="sidx != null and sidx != ''">
+	      		order by o.${sidx}  ${sord}
+	      	</when>
+	      	<otherwise>
+	      		order by o.create_time desc
+	      	</otherwise>
+	     </choose>
+	</select>
+</mapper>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemDiscountProgrammeSMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgrammeS" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="discount" property="discount" jdbcType="INTEGER" />
+    <result column="disable" property="disable" jdbcType="INTEGER" />
+    <result column="num" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="is_tc" property="tc" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, p_id, item_id, discount, disable
+  </sql>
+  
+   <sql id="Next_Column_List" >
+    o.id as id, 
+    o.p_id as p_id, 
+    o.item_id as item_id, 
+    o.discount as discount, 
+    o.disable as disable,
+    t.name as name,
+    t.num as num,
+    t.is_tc as is_tc
+  </sql>
+  
+  
+   <sql id="Next2_Column_List" >
+    o.id as id, 
+    o.p_id as p_id, 
+    o.item_id as item_id, 
+    o.discount as discount, 
+    o.disable as disable,
+    t.name as name,
+    t.num as num
+  </sql>
+  
+  <sql id="Item_Column_List" >
+    a.discount as discount, 
+    a.disable as disable,
+    b.standard_price as standard_price
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_discount_programme_s
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_discount_programme_s
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgrammeS" >
+    insert into dg_item_discount_programme_s (id, p_id, item_id, 
+      discount, disable)
+    values (#{id,jdbcType=INTEGER}, #{pId,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, 
+      #{discount,jdbcType=INTEGER}, #{disable,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgrammeS" >
+    insert into dg_item_discount_programme_s
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pId != null" >
+        p_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="disable != null" >
+        disable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        #{disable,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgrammeS" >
+    update dg_item_discount_programme_s
+    <set >
+      <if test="pId != null" >
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        disable = #{disable,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgrammeS" >
+    update dg_item_discount_programme_s
+    set p_id = #{pId,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=INTEGER},
+      discount = #{discount,jdbcType=INTEGER},
+      disable = #{disable,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+   <select id="selectItemByPid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_discount_programme_s o left join 
+    dg_item_file t on o.item_id = t.id
+    where t.delFlag = '0' and o.p_id = #{id,jdbcType=INTEGER} and t.yxdz = 1 and t.id not in (select item_id from dg_item_disable where 1=1)
+  </select>
+  
+  
+    
+   <select id="selectItemTypeByPid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next2_Column_List" />
+    from dg_item_discount_programme_s o left join 
+    dg_item_file_type t on o.item_id = t.id
+    where o.p_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  
+  <select id="selectItemByAdd" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile" parameterType="list">
+    select * from dg_item_file  where delFlag = '0' and yxdz = 1 and id not in (select item_id from dg_item_disable where 1=1) and id  in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+    <select id="selectItemTypeByAdd" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType" parameterType="list">
+    select * from dg_item_file_type  where id  in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+     <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_discount_programme_s where p_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+   <delete id="deleteByItemId"  parameterType="java.util.Map">
+    delete from dg_item_discount_programme_s
+    where item_id = #{id,jdbcType=INTEGER}  and p_id in (select id from dg_item_discount_programme where type = #{type,jdbcType=INTEGER})
+  </delete>
+  
+  
+   <select id="selectByPIdAndItemIdType1" resultType="Map" parameterType="Map" >
+    select 
+    <include refid="Item_Column_List" />
+    from dg_item_discount_programme_s a 
+    left join dg_item_file b on a.item_id = b.id
+    where b.delFlag = '0' and a.item_id = #{itemId,jdbcType=INTEGER} and a.disable = 0 and a.p_id = #{pId,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByPIdAndItemIdType2" resultType="Map" parameterType="Map" >
+    select 
+    <include refid="Item_Column_List" />
+    from dg_item_discount_programme_s a 
+    left join dg_item_file_type c on a.item_id = c.id
+    left join dg_item_file b on b.ppxl_id = c.id
+    where b.delFlag = '0' and b.id = #{itemId,jdbcType=INTEGER} and a.disable = 0 and a.p_id = #{pId,jdbcType=INTEGER} and b.yxdz = 1
+  </select>
+  
+   <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_discount_programme_s(p_id, item_id, 
+      discount, disable)    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.pId,jdbcType=INTEGER}, #{item.itemId,jdbcType=INTEGER}, 
+      #{item.discount,jdbcType=INTEGER}, #{item.disable,jdbcType=INTEGER})
+    </foreach>  
+  </insert>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_discount_programme_s 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_discount_programme_s
+	    (
+		    id,p_id,item_id,discount,disable
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.p_id">#{im.p_id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.item_id">#{im.item_id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.discount">#{im.discount},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.disable">#{im.disable}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

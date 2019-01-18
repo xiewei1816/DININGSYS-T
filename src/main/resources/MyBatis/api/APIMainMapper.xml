@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.APIMainMapper" >
+
+  <select id="selectLastOpenClassInfo" resultType="map" parameterType="integer">
+    select * from dg_open_class_water where login_pos = #{id} ORDER BY id desc limit 0,1
+  </select>
+
+  <insert id="updateOpenClass" parameterType="map">
+    insert into dg_open_class_water(login_user,login_user_name,login_pos,petty_cash,login_time)
+    VALUES(#{userCode,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR},#{posId,jdbcType=INTEGER},#{pettyCash,jdbcType=DOUBLE},#{loginTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <select id="selectItemFileTypeByItemId" resultType="map" parameterType="java.lang.Integer">
+    select a.id,a.num,a.name from dg_item_file_type a left join dg_item_file b on a.id = b.ppdl_id
+    where b.id = #{itemId,jdbcType=INTEGER} and b.delFlag = '0'
+  </select>
+
+  <select id="selectItemOrderByService" resultType="map" parameterType="java.lang.Integer">
+    select a.*,c.unit as unit,c.num as itemNum,c.name as itemName 
+	from dg_ow_consumer_details a left join 
+    dg_ow_service_form b on a.ow_id = b.id left join
+    dg_item_file c on a.item_file_id = c.id 
+    where c.delFlag = '0' and b.ow_id = #{owId,jdbcType=INTEGER} and a.is_tc != -1 and (a.settlement_status is null or a.settlement_status = 0) order by b.id
+  </select>
+  
+  <select id="selectTeamByTeamMember" resultType="map" parameterType="java.lang.String">
+    select a.number,a.name from dg_consumer_seat a left join dg_open_water b on a.id = b.seat_id
+    where b.team_members = #{teamMembers,jdbcType=VARCHAR} and b.ow_state in (1,3,4,5,8,9) group by number,name
+  </select>
+  
+  <select id="selectSeatInfoBySeatId" resultType="map" parameterType="java.lang.Integer">
+    select a.number,a.name,a.seat_label as seatLabel,b.name as consName from dg_consumer_seat a left join dg_consumption_area b on a.cons_area = b.id
+    where a.id= #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="selectTcSumByWaterTcId" resultType="map" parameterType="map">
+	select sum(a.item_file_number) as item_file_number,a.item_file_id,d.name as itemFileName,d.unit as unit,
+		d.num as itemNum,d.name as itemName 
+	from dg_ow_consumer_details a left join
+	dg_ow_service_form b on a.ow_id = b.id left join  dg_open_water c on 
+	b.ow_id = c.id left join dg_item_file d on a.item_file_id = d.id
+	where c.id=#{owId,jdbcType=INTEGER}  and a.parent_id = #{itemFileId,jdbcType=INTEGER} 
+	and a.is_tc = -1  group by a.item_file_id,a.parent_id  and d.delFlag = '0'
+  </select>
+  
+   <select id="selectTcSumByServiceTcId" resultType="map" parameterType="map">
+	select sum(a.item_file_number) as item_file_number,a.item_file_id,d.name as itemFileName,d.unit as unit,
+		d.num as itemNum,d.name as itemName 
+	from dg_ow_consumer_details a left join
+	dg_ow_service_form b on a.ow_id = b.id left join  dg_open_water c on 
+	b.ow_id = c.id left join dg_item_file d on a.item_file_id = d.id
+	where b.id=#{owId,jdbcType=INTEGER}  and a.parent_id = #{itemFileId,jdbcType=INTEGER} 
+	and a.is_tc = -1  group by a.item_file_id,a.parent_id  and d.delFlag = '0'
+  </select>
+  
+  
+  <select id="selectTcSumByIncreaServiceTcId" resultType="map" parameterType="map">
+	select sum(a.item_file_number) as item_file_number,a.item_file_id,d.name as itemFileName,d.unit as unit,
+		d.num as itemNum,d.name as itemName 
+	from dg_ow_consumer_details a left join
+	dg_ow_service_form b on a.ow_id = b.id left join  dg_open_water c on 
+	b.ow_id = c.id left join dg_item_file d on a.item_file_id = d.id
+	where (a.ow_id=#{owId,jdbcType=INTEGER} or a.back_ow_id=#{owId,jdbcType=INTEGER}) and a.parent_id = #{itemFileId,jdbcType=INTEGER} 
+	and a.is_tc = -1  group by a.item_file_id,a.parent_id and d.delFlag = '0'
+  </select>
+
+	<sql id="timeAndPosCondition">
+		where a.first_time > #{time,jdbcType=TIMESTAMP}
+		and a.seat_id in (
+			select dcs.id as seatId from dg_consumer_seat dcs
+			where dcs.del_flag = 0 
+			<!-- and dcs.cons_area in (select consumer_areas from dg_pos where id = #{posId,jdbcType=INTEGER}) -->
+			and FIND_IN_SET (dcs.cons_area ,(select consumer_areas from dg_pos where id = #{posId,jdbcType=INTEGER}))
+			union
+			select seatId from dg_seat_doorinfo)
+	</sql>
+	<sql id="timeAndPosCondition2">
+		where (c.clearing_time > #{time,jdbcType=TIMESTAMP} or (a.clearing_water_id is null and a.first_time > #{time,jdbcType=TIMESTAMP}))
+		and a.seat_id in (
+			select dcs.id as seatId from dg_consumer_seat dcs
+			where dcs.del_flag = 0 
+			<!-- and dcs.cons_area in (select consumer_areas from dg_pos where id = #{posId,jdbcType=INTEGER}) -->
+			and FIND_IN_SET (dcs.cons_area ,(select consumer_areas from dg_pos where id = #{posId,jdbcType=INTEGER}))
+			union
+			select seatId from dg_seat_doorinfo)
+	</sql>
+	<sql id="timeRangeAndPosCondition">
+		WHERE a.first_time BETWEEN #{startTime,jdbcType=TIMESTAMP} AND #{endTime,jdbcType=TIMESTAMP}
+		and a.seat_id in (
+			select dcs.id as seatId from dg_consumer_seat dcs
+			where dcs.del_flag = 0 
+			<!-- and dcs.cons_area in (select consumer_areas from dg_pos where id = #{posId,jdbcType=INTEGER}) -->
+			and FIND_IN_SET (dcs.cons_area ,(select consumer_areas from dg_pos where id = #{posId,jdbcType=INTEGER}))
+			union
+			select seatId from dg_seat_doorinfo)
+	</sql>
+
+    <select id="selectCountCurrentFrequency" parameterType="map" resultType="map">
+		SELECT A.*, B.*, C.*
+		FROM (SELECT COUNT(a.id) AS allOpenWater
+		FROM dg_open_water a
+	  	LEFT JOIN dg_pos b on a.open_pos = b.id
+		<include refid="timeAndPosCondition"/>
+	) A, (SELECT COUNT(a.id) AS closedOpenWater
+		FROM dg_open_water a
+		LEFT JOIN dg_pos b on a.open_pos = b.id
+		LEFT JOIN dg_reception_clearing_water c ON a.clearing_water_id = c.id
+		<include refid="timeAndPosCondition2"/>
+		AND a.ow_state IN (2,6,7)
+		) B, (SELECT COUNT(a.id) AS openingWater
+			FROM dg_open_water a
+			LEFT JOIN dg_pos b on a.open_pos = b.id
+			<include refid="timeAndPosCondition"/>
+			AND a.ow_state NOT IN (2,6,7,-1)
+			) C
+    </select>
+    
+	<select id="selectCountBis" parameterType="map" resultType="map">
+		SELECT A.*, B.*, C.*
+		FROM (SELECT COUNT(a.id) AS allOpenWater
+		FROM dg_open_water a
+	  	LEFT JOIN dg_pos b on a.open_pos = b.id
+		<include refid="timeRangeAndPosCondition"/>
+	) A, (SELECT COUNT(a.id) AS closedOpenWater
+		FROM dg_open_water a
+		LEFT JOIN dg_pos b on a.open_pos = b.id
+		<include refid="timeRangeAndPosCondition"/>
+		AND a.ow_state IN (2, 6,7)
+		) B, (SELECT COUNT(a.id) AS openingWater
+			FROM dg_open_water a
+			LEFT JOIN dg_pos b on a.open_pos = b.id
+			<include refid="timeRangeAndPosCondition"/>
+			AND a.ow_state NOT IN (2, 6,7,-1)
+			) C
+    </select>
+
+    <select id="selectUserLastLoginPos" resultType="map" parameterType="map">
+      select login_time from dg_open_class_water where login_user = #{userCode,jdbcType=VARCHAR} and login_pos = #{id,jdbcType=INTEGER} and open_class_state = 0 order by login_time LIMIT 0,1
+    </select>
+
+    <select id="selectLoginUserLast" parameterType="java.lang.String" resultType="java.util.Map">
+        select * from dg_open_class_water where login_user = #{userCode,jdbcType=VARCHAR} order by login_time desc limit 0,1
+    </select>
+    
+    
+    <select id="selectOpenWaterTop200" resultType="DgOpenWater" >
+		select M.*,count(*) as waterCount from (
+		      select
+		      *
+		      from dg_open_water where <![CDATA[date_sub(now(), interval 12 hour) < first_time]]>
+		      order by id desc 
+				) M left join (
+					select * from dg_open_water where ow_state in (1,3,4,5,8,9) and <![CDATA[date_sub(now(), interval 12 hour) < first_time]]>
+				) B on (M.ow_num = B.ow_num or B.transfer_target = M.ow_num or (B.is_team = 1 and B.team_members = M.team_members))
+				 group by M.id order by M.id desc
+    </select>
+    
+    
+    <select id="selectOpenWaterByOwNumConCount" resultType="DgOpenWater" >
+		select M.*,count(*) as waterCount from (
+		      select
+		      *
+		      from dg_open_water where ow_num = #{owNum}
+		      order by id desc 
+				) M left join (
+					select * from dg_open_water where ow_state in (1,3,4,5,8,9) and <![CDATA[date_sub(now(), interval 12 hour) < first_time]]>
+				) B on (M.ow_num = B.ow_num or B.transfer_target = M.ow_num or (B.is_team = 1 and B.team_members = M.team_members))
+				 group by M.id order by M.id desc
+    </select>
+    
+    <sql id="selectCols">
+		o.id AS "id",
+		o.allow_number_id as allowNumberId,
+		o.number AS "number",
+		o.name AS "name",
+		o.all_name AS "allName",
+		o.allow_number AS "allowNumber",
+		o.default_state AS "defaultState",
+		o.cons_area AS "consArea",
+		o.mnemonic AS "mnemonic",
+		o.create_time AS "createTime",
+		o.explains AS "explains",
+		o.create_user AS "createUserid",
+		o.del_flag AS "delFlag",
+		o.disabled_seat AS "disabledSeat",
+		o.inset_retention_room AS "insetRetentionRoom",
+		o.immediate_settlement AS "immediateSettlement",
+		o.not_statistics_overtaiwan AS "notStatisticsOvertaiwan",
+		o.empty_guest AS "emptyGuest",
+		o.customer_retention AS "customerRetention",
+		o.seat_state As seatState,
+		o.vip_identify As vipIdentify,
+		o.seat_label As seatLabel,
+		o.last_open_time As lastOpenTime,
+		B.number AS "drm.number",
+		B.phone AS "drm.phone",
+		B.yd_time AS "drm.ydTime",
+		B.sex AS "drm.sex",
+		B.name AS "drm.name"
+	</sql>
+    <select id="selectAllTableConReserve" resultType="DgConsumerSeat" >
+		select 
+		<include refid="selectCols"></include> 
+		from dg_consumer_seat o left join (
+			select a.*,c.id as seatId from dg_reserve_manager a left join dg_reserve_seatids b on b.reserve_id = a.id left join dg_consumer_seat c
+		   	 	on c.id = b.seat_id 
+				where <![CDATA[date_format(date_add(a.yd_time, interval 30 MINUTE),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(a.yd_time, interval -30 MINUTE),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+				and	b.state is null) B on o.id = B.seatId 
+    </select>
+    
+     <select id="selectTableConReserveByseatId" resultType="DgConsumerSeat" >
+		select 
+		<include refid="selectCols"></include> 
+		from dg_consumer_seat o left join (
+			select a.*,c.id as seatId from dg_reserve_manager a left join dg_reserve_seatids b on b.reserve_id = a.id left join dg_consumer_seat c
+		   	 	on c.id = b.seat_id 
+				where <![CDATA[date_format(date_add(a.yd_time, interval 30 MINUTE),'%Y-%m-%d %H:%i:%s') > #{time} and  date_format(date_add(a.yd_time, interval -30 MINUTE),'%Y-%m-%d %H:%i:%s') < #{time}]]>
+				and	b.state is null) B on o.id = B.seatId where o.id = #{seatId}
+    </select>
+    
+</mapper>

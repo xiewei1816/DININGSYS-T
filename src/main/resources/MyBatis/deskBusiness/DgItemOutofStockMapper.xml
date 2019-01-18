@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemOutofStockMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="m_type" property="mType" jdbcType="INTEGER" />
+    <result column="is_tc" property="tc" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="bname" property="bName" jdbcType="VARCHAR" />
+    <result column="sname" property="sName" jdbcType="VARCHAR" />
+    <result column="standard_price" property="sPrice" jdbcType="DOUBLE" />
+    <result column="m_bis" property="mBis" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="DATE" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="sm" property="sm" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_code, item_id, m_type,m_bis,date
+  </sql>
+  
+  <sql id="Next_Column_List">
+    a.id as id, 
+    a.item_code as item_code, 
+    a.item_id as item_id, 
+    a.m_type as m_type,
+    a.m_bis as m_bis,
+    a.date as date,
+    b.name as name,
+    b.standard_price as standard_price,
+    b.is_tc as is_tc,
+    b.unit as unit,
+    b.sm as sm,
+    c.name as bname,
+    d.name as sname
+  </sql>
+  
+  
+  <sql id="Next2_Column_List">
+    a.num as item_code, 
+    a.id as item_id, 
+    a.name as name,
+    a.standard_price as standard_price,
+    a.is_tc as is_tc,
+    b.name as bname,
+    c.name as sname
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_outof_stock
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_outof_stock
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock" >
+    insert into dg_item_outof_stock (id, item_code, item_id, 
+      m_type,m_bis,date,uuid_key)
+    values (#{id,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}, #{itemId,jdbcType=INTEGER}, 
+      #{mType,jdbcType=INTEGER},#{mBis,jdbcType=INTEGER},#{date,jdbcType=DATE}, #{uuidKey,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock" >
+    insert into dg_item_outof_stock
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="mType != null" >
+        m_type,
+      </if>
+      <if test="mBis != null" >
+        m_bis,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="mType != null" >
+        #{mType,jdbcType=INTEGER},
+      </if>
+      <if test="mBis != null" >
+        #{mBis,jdbcType=INTEGER},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock" >
+    update dg_item_outof_stock
+    <set >
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="mType != null" >
+        m_type = #{mType,jdbcType=INTEGER},
+      </if>
+      <if test="mBis != null" >
+        m_bis = #{mBis,jdbcType=INTEGER},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock" >
+    update dg_item_outof_stock
+    set item_code = #{itemCode,jdbcType=VARCHAR},
+      item_id = #{itemId,jdbcType=INTEGER},
+      m_type = #{mType,jdbcType=INTEGER},
+      m_bis = #{mBis,jdbcType=INTEGER},
+      date = #{date,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAllData" resultMap="BaseResultMap"  parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_outof_stock a left join 
+    dg_item_file b on a.item_id = b.id left join
+    dg_item_file_type c on b.ppdl_id = c.id left join
+    dg_item_file_type d on b.ppxl_id = d.id
+    <where>
+        b.delFlag = '0'
+  	    <if test="name != null and name != ''">
+        		AND b.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND b.num  like CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' )
+        </if>       
+        <if test="mType != null and mType != ''">
+        		AND a.m_type  = #{mType,jdbcType=VARCHAR}
+        </if>
+     </where>
+  </select>
+  
+  
+  <select id="getAllItemId" resultType="java.lang.Integer"  >
+    select item_id
+    from dg_item_outof_stock where 1=1
+  </select>
+  
+  
+  <select id="selectItemByAdd" resultMap="BaseResultMap" parameterType="list">
+     select 
+	 <include refid="Next2_Column_List" />
+	 from dg_item_file a left join
+	 dg_item_file_type b on a.ppdl_id = b.id left join
+     dg_item_file_type c on a.ppxl_id = c.id
+	 where a.delFlag = '0' and a.id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+  <delete id="deleteAll" parameterType="java.lang.Integer">
+    delete from dg_item_outof_stock
+    where m_type = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+    
+  <delete id="deleteNotIn" parameterType="list">
+    delete from dg_item_outof_stock where item_id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+       <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_outof_stock where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_outof_stock
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <delete id="deleteByType"  parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock">
+    delete from dg_item_outof_stock 
+      <where>
+        <if test="mType != null and mType != ''">
+        		AND m_type  = #{mType,jdbcType=INTEGER}
+        </if>       
+        <if test="mBis != null and mBis != ''">
+        		AND m_bis  != #{mBis,jdbcType=INTEGER}
+        </if>
+        <if test="date != null and date != ''">
+        		AND date  != #{date,jdbcType=DATE}
+        </if>
+        <if test="null!=itemId">
+        	AND item_id=#{itemId}
+        </if>
+     </where>
+  </delete>
+  
+  
+  
+  <select id="selectByItemId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+   	count(*)
+    from dg_item_outof_stock
+    where item_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+    <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_outof_stock(item_code, item_id, 
+      m_type,m_bis,date,uuid_key)   values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+	 (#{item.itemCode,jdbcType=VARCHAR}, #{item.itemId,jdbcType=INTEGER}, 
+      #{item.mType,jdbcType=INTEGER},#{item.mBis,jdbcType=INTEGER},#{item.date,jdbcType=DATE},#{item.uuidKey,jdbcType=VARCHAR})
+    </foreach>  
+  </insert>
+  
+   <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_outof_stock 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_outof_stock
+        (
+		    id,item_code,item_id,m_type,m_bis,date
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemCode">#{im.itemCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.mType">#{im.mType},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.mBis">#{im.mBis},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.date">#{im.date}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

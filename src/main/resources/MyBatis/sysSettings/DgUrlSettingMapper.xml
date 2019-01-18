@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.sysSettings.DgUrlSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting" >
+    insert into dg_url_setting (id,code, value ,name)
+    values (#{id,jdbcType=INTEGER},#{code,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting" >
+    insert into dg_url_setting
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="value != null" >
+        value,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null" >
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="selectByPrimaryKey" resultType="DgUrlSetting" parameterType="java.lang.Integer" >
+    select 
+    *
+    from dg_url_setting
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByCode" resultType="DgUrlSetting" parameterType="java.lang.String" >
+    select 
+    *
+    from dg_url_setting
+    where code = #{code,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCountByCodeOrName" resultType="java.lang.Integer" parameterType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting" >
+    select 
+    count(*)
+    from dg_url_setting
+    <where>
+  	    <if test="code != null and code != ''">
+        		AND code  = #{code,jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and name != ''">
+        		AND name = #{name,jdbcType=VARCHAR}
+        </if>
+     </where>
+  </select>
+  
+  <select id="getListByPage" resultType="DgUrlSetting" parameterType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting">
+  	 SELECT 
+  	 *
+  	 from dg_url_setting s
+  	 <where>
+  	    <if test="code != null and code != ''">
+        		AND s.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="name != null and name != ''">
+        		AND s.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+     </where>
+     order by id desc 
+	 limit #{startRow},#{endRow}	
+  </select>
+  
+    <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting">
+    SELECT 
+  	 count(0) 
+  	 from dg_url_setting s
+  	  <where>
+  	    <if test="code != null and code != ''">
+        		AND s.code like CONCAT('%',#{code,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="name != null and name != ''">
+        		AND s.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+     </where>
+  </select>
+
+  <select id="selectAllData" resultType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting">
+    select * from dg_url_setting
+  </select>
+
+
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.sysSettings.DgUrlSetting" >
+    update dg_url_setting
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      value = #{value,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>

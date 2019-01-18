@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgPublicCode0Mapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgPublicCode0" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cCode" property="cCode" jdbcType="VARCHAR" />
+    <result column="cName" property="cName" jdbcType="VARCHAR" />
+    <result column="cKeyWD" property="cKeyWD" jdbcType="VARCHAR" />
+    <result column="cOrder" property="cOrder" jdbcType="VARCHAR" />
+    <result column="cParent" property="cParent" jdbcType="VARCHAR" />
+    <result column="iSystem" property="iSystem" jdbcType="VARCHAR" />
+    <result column="iDelFlg" property="iDelFlg" jdbcType="VARCHAR" />
+    
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cCode, cName, cKeyWD, cOrder, cParent, iSystem, iDelFlg
+  </sql> 
+  <sql id="selectCols">
+		o.id,o.cCode,o.cName,o.cKeyWD,o.cOrder,(select cName from dg_public_code0 c where c.id = o.cParent)  AS cParent,
+		o.iSystem,o.iDelFlg
+	</sql>
+	<!-- 分页查询公共代码 -->
+  <select id="getListByPage" resultType="DgPublicCode0" parameterType="DgPublicCode0">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_public_code0 o
+  	 <where>
+        <if test="cCode != null and cCode != ''">
+          and o.cCode = #{cCode}
+        </if>
+        <if test="cName != null and cName != ''">
+         and o.cName = #{cName}
+        </if>
+        <if test="cParent != null and cParent != ''">
+         and o.cParent = '${cParent}'
+        </if>
+        <if test="iDelFlg != null and iDelFlg != ''">
+         and o.iDelFlg = '${iDelFlg}'
+        </if>
+      </where>
+		order by o.cOrder ASC
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="DgPublicCode0">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_public_code0 o
+  	 <where>
+        <if test="cCode != null and cCode != ''">
+          and o.cCode = #{cCode}
+        </if>
+        <if test="cName != null and cName != ''">
+         and o.cName = #{cName}
+        </if>
+        <if test="iDelFlg != null and iDelFlg != ''">
+         and o.iDelFlg = '${iDelFlg}'
+        </if>
+      </where>
+  </select>
+  <!-- 通过公共代码ID查询公共代码 -->
+  <select id="getDpcById" parameterType="DgPublicCode0" resultType="DgPublicCode0">
+		select 
+		<include refid="Base_Column_List"></include>
+		from dg_public_code0 where id = #{id}
+	</select>
+  <!-- 通过公共代码ID查询关联的公共代码 -->
+  <select id="getDpcParentNameById" parameterType="DgPublicCode0" resultType="DgPublicCode0">
+		select 
+		<include refid="selectCols"></include>
+		from dg_public_code0 o where id = #{id}
+	</select>
+	<!-- 添加公共代码 -->
+	<insert id="newInsert" parameterType="DgPublicCode0">
+  	insert into dg_public_code0(
+		cCode,
+		cName,
+		cKeyWD,
+		cOrder,
+		cParent,
+		iSystem
+  	) values (
+  		#{cCode},
+		#{cName},
+		#{cKeyWD},
+		#{cOrder},
+		#{cParent},
+		#{iSystem}
+  	)
+  </insert>
+  <!-- 根据公共代码ID修改公共代码 -->
+  <update id="update" parameterType="DgPublicCode0">
+  	update dg_public_code0 set 
+		cCode = #{cCode},
+		cName = #{cName},
+		cKeyWD = #{cKeyWD},
+		cOrder = #{cOrder},
+		cParent = #{cParent}
+	where id = #{id}
+  </update>
+  <!-- 通过上级代码查询最后一条记录获取代码进行叠加算法 -->
+  <select id="getLastcCode" parameterType="DgPublicCode0" resultType="DgPublicCode0">
+		select 
+		<include refid="Base_Column_List"></include>
+		from dg_public_code0 where cParent = #{cParent}
+		ORDER BY cCode DESC LIMIT 0,1
+	</select>  
+  <!-- 公共代码回收站 -->
+  <update id="deleteTrash" parameterType="DgPublicCode0">
+	update dg_public_code0 set iDelFlg = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 还原回收站公共代码 -->
+  <update id="replyDpc" parameterType="DgPublicCode0">
+	update dg_public_code0 set iDelFlg = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 删除公共代码 -->
+  <delete id="delete" parameterType="DgPublicCode0">
+	delete from dg_public_code0 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	<!-- 获取所有公共代码 -->
+	<select id="getAllList" parameterType="DgPublicCode0" resultType="DgPublicCode0">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from dg_public_code0 o
+	  	 <where>
+	  	    <if test="id != null and id != ''">
+	          and o.id = #{id}
+	        </if>
+	        <if test="cCode != null and cCode != ''">
+	          and o.cCode = #{cCode}
+	        </if>
+	        <if test="cName != null and cName != ''">
+	         and o.cName = #{cName}
+	        </if>
+	        <if test="cParent != null and cParent != ''">
+	         and o.cParent = #{cParent}
+	        </if>
+	        <if test="cKeyWD != null and cKeyWD != ''">
+	         and o.cKeyWD = #{cKeyWD}
+       	 	</if>
+	        <if test="iDelFlg != null and iDelFlg != ''">
+	         and o.iDelFlg = #{iDelFlg}
+       	 	</if>
+	      </where>
+	      <choose>
+	      	<otherwise>
+	      		order by o.cOrder ASC
+	      	</otherwise>
+	     </choose>
+	</select>
+	 <select id="selectSmallDpc" resultMap="BaseResultMap" parameterType="map">
+        select 
+		<include refid="selectCols"></include>
+  		 from dg_public_code0 o 
+ 		 <where>
+			<if test="id != null and id != ''">
+	         and o.id = #{id}
+	        </if>
+	        <if test="cParent != null and cParent != ''">
+	         and o.cParent = #{cParent}
+	        </if>
+	        <if test="iDelFlg != null and iDelFlg != ''">
+	         and o.iDelFlg = '${iDelFlg}'
+       	 	</if>
+       	 	order by o.cOrder
+	      </where>
+    </select>
+	<select id="selectAllDpc" resultMap="BaseResultMap" parameterType="map">
+		select 
+		<include refid="Base_Column_List"></include>
+ 		from dg_public_code0 o 
+		<where>
+			<if test="id != null and id != ''">
+	         and o.id = #{id}
+	        </if>
+	        <if test="cParent != null and cParent != ''">
+	         and o.cParent = #{cParent}
+	        </if>
+	        <if test="iDelFlg != null and iDelFlg != ''">
+	         and o.iDelFlg = '${iDelFlg}'
+       	 	</if>
+	      </where>
+	</select>
+	<select id="selectSmallByParentName" resultMap="BaseResultMap" parameterType="map">
+        select 
+		<include refid="selectCols"></include>
+  		 from dg_public_code0 o left join dg_public_code0 b on o.cParent = b.id
+ 		 <where>
+	        <if test="name != null and name != ''">
+	         and b.cName = #{name}
+	        </if>
+	        <if test="iDelFlg != null and iDelFlg != ''">
+	         and o.iDelFlg = '${iDelFlg}'
+       	 	</if>
+	      </where>
+    </select>
+    <!-- 修改同步状态：  0表示未同步，1表示正在同步数据 -->
+    <update id="updatePubCode" parameterType="DgPublicCode0">
+    	update dg_public_code0 set 
+		cKeyWD = #{cKeyWD}
+		<where>
+			AND cParent=(SELECT A.id FROM 
+					(SELECT id FROM dg_public_code0 where cParent=1 AND cCode=#{cCode}  limit 1)A
+				)
+		</where>
+    </update>
+    <!-- 检测是否正在数据同步：  0表示未同步，1表示正在同步数据 -->
+    <select id="isExists" parameterType="map" resultType="Integer">
+   		SELECT COUNT(0) FROM dg_public_code0
+   		<where>
+   			cParent=(SELECT ID FROM dg_public_code0 where cParent=1 AND cCode=#{cCode}  limit 1)
+   			AND cKeyWD=0
+   		</where>
+    </select>
+
+	<select id="selectPublicCodeByKey" parameterType="string"
+			resultType="com.yqsh.diningsys.web.model.archive.DgPublicCode0">
+		select * from dg_public_code0 where cParent = (
+			select id from dg_public_code0 where cParent = 1 and cKeyWD = #{key,jdbcType=VARCHAR}
+		)
+	</select>
+
+</mapper>

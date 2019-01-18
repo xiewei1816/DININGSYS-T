@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.sysSettings.SysBackupDatabaseMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="product_number" property="productNumber" jdbcType="VARCHAR" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+    <result column="backup_file_name" property="backupFileName" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="LONGVARCHAR" />
+    <result column="backup_name" property="backupName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_number, product_name, time, backup_file_name, path,backup_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_backup_database
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+     <!-- 批量获取-->
+   <select id="selectFromIds"  resultMap="BaseResultMap" parameterType="list">
+   	select 
+    <include refid="Base_Column_List" />
+    from sys_backup_database where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_backup_database
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase" >
+    insert into sys_backup_database (id, product_number, product_name, 
+      time, backup_file_name, path,backup_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{productNumber,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, 
+      #{time,jdbcType=TIMESTAMP}, #{backupFileName,jdbcType=VARCHAR}, #{path,jdbcType=LONGVARCHAR}, #{backupName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase" >
+    insert into sys_backup_database
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="productNumber != null" >
+        product_number,
+      </if>
+      <if test="productName != null" >
+        product_name,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+      <if test="backupFileName != null" >
+        backup_file_name,
+      </if>
+      <if test="path != null" >
+        path,
+      </if>
+       <if test="backupName != null" >
+        backup_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="productNumber != null" >
+        #{productNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="backupFileName != null" >
+        #{backupFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=LONGVARCHAR},
+      </if>
+        <if test="backupName != null" >
+        #{backupName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  	<!-- 分页查询日志 or t.emp_name like CONCAT('%',#{query_content,jdbcType=VARCHAR},'%' ) -->
+  <select id="getListByPage" resultMap="BaseResultMap" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase">
+  	 SELECT 
+  	 <include refid="Base_Column_List"></include>
+  	 from sys_backup_database s
+  	 <where>
+  	    <if test="backupName != null and backupName != ''">
+        		AND s.backup_name like CONCAT('%',#{backupName,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="backupFileName != null and backupFileName != ''">
+        		AND s.backup_file_name like CONCAT('%',#{backupFileName,jdbcType=VARCHAR},'%' )
+        </if>
+     </where>
+     order by id desc 
+	 limit #{startRow},#{endRow}	
+  </select>
+  
+    <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase">
+    SELECT 
+  	 count(0) 
+  	 from sys_log s
+  	  <where>
+  	    <if test="backupName != null and backupName != ''">
+        		AND s.backup_name like CONCAT('%',#{backupName,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="backupFileName != null and backupFileName != ''">
+        		AND s.backup_file_name like CONCAT('%',#{backupFileName,jdbcType=VARCHAR},'%' )
+        </if>
+     </where>
+  </select>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase" >
+    update sys_backup_database
+    <set >
+      <if test="productNumber != null" >
+        product_number = #{productNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="backupFileName != null" >
+        backup_file_name = #{backupFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null" >
+        path = #{path,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="backupName != null" >
+        backup_name = #{backupName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.sysSettings.SysBackupDatabase" >
+    update sys_backup_database
+    set product_number = #{productNumber,jdbcType=VARCHAR},
+      product_name = #{productName,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP},
+      backup_file_name = #{backupFileName,jdbcType=VARCHAR},
+      path = #{path,jdbcType=LONGVARCHAR},
+      backup_name = #{backupName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+   <!-- 批量删除 -->
+   <delete id="deletData" parameterType="list">
+    delete from sys_backup_database where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+</mapper>

@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemGiftPlanMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="recycle" property="recycle" jdbcType="INTEGER" />
+ 	<result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
+    <result column="start_time" property="startTime" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="end_time" property="endTime" jdbcType="VARCHAR" />
+    <result column="week1" property="week1" jdbcType="INTEGER" />
+    <result column="week2" property="week2" jdbcType="INTEGER" />
+    <result column="week3" property="week3" jdbcType="INTEGER" />
+    <result column="week4" property="week4" jdbcType="INTEGER" />
+    <result column="week5" property="week5" jdbcType="INTEGER" />
+    <result column="week6" property="week6" jdbcType="INTEGER" />
+    <result column="week7" property="week7" jdbcType="INTEGER" />
+    <result column="explains" property="explains" jdbcType="VARCHAR" />
+    <result column="item_name" property="itemName" jdbcType="VARCHAR" />
+    <result column="gift_amount" property="giftAmount" jdbcType="INTEGER" />
+    <result column="gift_frequency_limit" property="giftFrequencyLimit" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, recycle, name,item_id, item_code, start_date, end_date, start_time, enable, end_time, 
+    week1, week2, week3, week4, week5, week6, week7, explains, gift_amount, gift_frequency_limit
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.recycle as recycle, 
+    a.name as name,
+    a.item_id as item_id, 
+    a.item_code as item_code, 
+    a.start_date as start_date, 
+    a.end_date as end_date, 
+    a.start_time as start_time, 
+    a.enable as enable, 
+    a.end_time as end_time, 
+    a.week1 as week1, 
+    a.week2 as week2, 
+    a.week3 as week3, 
+    a.week4 as week4, 
+    a.week5 as week5, 
+    a.week6 as week6, 
+    a.week7 as week7, 
+    a.explains as explains, 
+    a.gift_amount as gift_amount, 
+    a.gift_frequency_limit as gift_frequency_limit,
+    b.name as item_name
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_gift_plan
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_gift_plan
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" >
+    insert into dg_item_gift_plan (id, recycle, item_id, 
+      item_code, start_date, end_date, 
+      start_time, enable, end_time, 
+      week1, week2, week3, 
+      week4, week5, week6, 
+      week7, explains, gift_amount, 
+      gift_frequency_limit,name)
+    values (#{id,jdbcType=INTEGER}, #{recycle,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, 
+      #{itemCode,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, 
+      #{startTime,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{endTime,jdbcType=VARCHAR}, 
+      #{week1,jdbcType=INTEGER}, #{week2,jdbcType=INTEGER}, #{week3,jdbcType=INTEGER}, 
+      #{week4,jdbcType=INTEGER}, #{week5,jdbcType=INTEGER}, #{week6,jdbcType=INTEGER}, 
+      #{week7,jdbcType=INTEGER}, #{explains,jdbcType=VARCHAR}, #{giftAmount,jdbcType=INTEGER}, 
+      #{giftFrequencyLimit,jdbcType=INTEGER},#{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" >
+    insert into dg_item_gift_plan
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="recycle != null" >
+        recycle,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+      <if test="startDate != null" >
+        start_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="week1 != null" >
+        week1,
+      </if>
+      <if test="week2 != null" >
+        week2,
+      </if>
+      <if test="week3 != null" >
+        week3,
+      </if>
+      <if test="week4 != null" >
+        week4,
+      </if>
+      <if test="week5 != null" >
+        week5,
+      </if>
+      <if test="week6 != null" >
+        week6,
+      </if>
+      <if test="week7 != null" >
+        week7,
+      </if>
+      <if test="explains != null" >
+        explains,
+      </if>
+      <if test="giftAmount != null" >
+        gift_amount,
+      </if>
+      <if test="giftFrequencyLimit != null" >
+        gift_frequency_limit,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="recycle != null" >
+        #{recycle,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="week1 != null" >
+        #{week1,jdbcType=INTEGER},
+      </if>
+      <if test="week2 != null" >
+        #{week2,jdbcType=INTEGER},
+      </if>
+      <if test="week3 != null" >
+        #{week3,jdbcType=INTEGER},
+      </if>
+      <if test="week4 != null" >
+        #{week4,jdbcType=INTEGER},
+      </if>
+      <if test="week5 != null" >
+        #{week5,jdbcType=INTEGER},
+      </if>
+      <if test="week6 != null" >
+        #{week6,jdbcType=INTEGER},
+      </if>
+      <if test="week7 != null" >
+        #{week7,jdbcType=INTEGER},
+      </if>
+      <if test="explains != null" >
+        #{explains,jdbcType=VARCHAR},
+      </if>
+      <if test="giftAmount != null" >
+        #{giftAmount,jdbcType=INTEGER},
+      </if>
+      <if test="giftFrequencyLimit != null" >
+        #{giftFrequencyLimit,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" >
+    update dg_item_gift_plan
+    <set >
+      <if test="recycle != null" >
+        recycle = #{recycle,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        start_date = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="week1 != null" >
+        week1 = #{week1,jdbcType=INTEGER},
+      </if>
+      <if test="week2 != null" >
+        week2 = #{week2,jdbcType=INTEGER},
+      </if>
+      <if test="week3 != null" >
+        week3 = #{week3,jdbcType=INTEGER},
+      </if>
+      <if test="week4 != null" >
+        week4 = #{week4,jdbcType=INTEGER},
+      </if>
+      <if test="week5 != null" >
+        week5 = #{week5,jdbcType=INTEGER},
+      </if>
+      <if test="week6 != null" >
+        week6 = #{week6,jdbcType=INTEGER},
+      </if>
+      <if test="week7 != null" >
+        week7 = #{week7,jdbcType=INTEGER},
+      </if>
+      <if test="explains != null" >
+        explains = #{explains,jdbcType=VARCHAR},
+      </if>
+      <if test="giftAmount != null" >
+        gift_amount = #{giftAmount,jdbcType=INTEGER},
+      </if>
+      <if test="giftFrequencyLimit != null" >
+        gift_frequency_limit = #{giftFrequencyLimit,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" >
+    update dg_item_gift_plan
+    set recycle = #{recycle,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=INTEGER},
+      item_code = #{itemCode,jdbcType=VARCHAR},
+      start_date = #{startDate,jdbcType=DATE},
+      end_date = #{endDate,jdbcType=DATE},
+      start_time = #{startTime,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      end_time = #{endTime,jdbcType=VARCHAR},
+      week1 = #{week1,jdbcType=INTEGER},
+      week2 = #{week2,jdbcType=INTEGER},
+      week3 = #{week3,jdbcType=INTEGER},
+      week4 = #{week4,jdbcType=INTEGER},
+      week5 = #{week5,jdbcType=INTEGER},
+      week6 = #{week6,jdbcType=INTEGER},
+      week7 = #{week7,jdbcType=INTEGER},
+      explains = #{explains,jdbcType=VARCHAR},
+      gift_amount = #{giftAmount,jdbcType=INTEGER},
+      gift_frequency_limit = #{giftFrequencyLimit,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 分页 -->
+  <select id="countAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" resultType="java.lang.Integer">
+    select count(id) from dg_item_gift_plan
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+         AND recycle = #{recycle,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="getAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" resultMap="BaseResultMap">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_gift_plan a left join dg_item_file b on a.item_id = b.id
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND a.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+         AND a.recycle = #{recycle,jdbcType=INTEGER}
+         AND b.yxdz = 1 
+         AND b.delFlag = 0 
+         AND b.id not in (select item_id from dg_item_disable where 1=1)
+     </where>
+    limit #{startRow},#{endRow}
+  </select>
+  
+  
+   <select id="getDataByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_gift_plan a left join dg_item_file b on a.item_id = b.id
+	where b.delFlag = 0 and b.yxdz = 1 and b.id not in (select item_id from dg_item_disable where 1=1) and a.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+   <select id="selectAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_gift_plan a left join dg_item_file b on a.item_id = b.id
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND a.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        AND a.recycle = #{recycle,jdbcType=INTEGER}
+        AND b.yxdz = 1 
+        AND b.delFlag = 0
+        AND b.id not in (select item_id from dg_item_disable where 1=1)
+     </where>
+  </select>
+  
+    <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" >
+    insert into dg_item_gift_plan (id, recycle, item_id, 
+      item_code, start_date, end_date, 
+      start_time, enable, end_time, 
+      week1, week2, week3, 
+      week4, week5, week6, 
+      week7, explains, gift_amount, 
+      gift_frequency_limit,name)
+    values (#{id,jdbcType=INTEGER}, #{recycle,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, 
+      #{itemCode,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, 
+      #{startTime,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, #{endTime,jdbcType=VARCHAR}, 
+      #{week1,jdbcType=INTEGER}, #{week2,jdbcType=INTEGER}, #{week3,jdbcType=INTEGER}, 
+      #{week4,jdbcType=INTEGER}, #{week5,jdbcType=INTEGER}, #{week6,jdbcType=INTEGER}, 
+      #{week7,jdbcType=INTEGER}, #{explains,jdbcType=VARCHAR}, #{giftAmount,jdbcType=INTEGER}, 
+      #{giftFrequencyLimit,jdbcType=INTEGER},#{name,jdbcType=VARCHAR})
+   </insert>
+  
+  
+  
+      <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_gift_plan where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+   <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_gift_plan
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+    <update id="trash" parameterType="list" >
+    update dg_item_gift_plan
+    set  recycle = 1
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="restore" parameterType="list" >
+    update dg_item_gift_plan
+    set  recycle = 0
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <select id="reminder" resultType="Map">
+  	select a.id,a.name,TIMESTAMPDIFF(DAY,curdate(),a.end_date) as timeDiff
+  	from dg_item_gift_plan a where recycle = 0
+  </select>
+  
+  
+  <select id="seleNameCode" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from dg_item_gift_plan
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name = #{name}
+        </if>
+        <if test="id != null">
+        		AND id != #{id}
+        </if>
+     </where>
+  </select>
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_gift_plan 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_gift_plan
+        (
+		    id,recycle,item_id,item_code,start_date,end_date,start_time,enable,end_time,
+		    week1,week2,week3,week4,week5,week6,week7,explains,gift_amount,gift_frequency_limit,name
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.recycle">#{im.recycle},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemCode">#{im.itemCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.startDate">#{im.startDate},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.endDate">#{im.endDate},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.startTime">#{im.startTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.enable">#{im.enable},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.endTime">#{im.endTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week1">#{im.week1},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week2">#{im.week2},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week3">#{im.week3},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week4">#{im.week4},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week5">#{im.week5},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week6">#{im.week6},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week7">#{im.week7},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.explains">#{im.explains},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.giftAmount">#{im.giftAmount},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.giftFrequencyLimit">#{im.giftFrequencyLimit},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.name">#{im.name}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

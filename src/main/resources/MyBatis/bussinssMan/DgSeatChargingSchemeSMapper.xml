@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgSeatChargingSchemeSMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingSchemeS" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="t_long" property="tLong" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="DOUBLE" />
+    <result column="sd" property="sd" jdbcType="INTEGER" />
+    <result column="discount" property="discount" jdbcType="INTEGER" />
+    <result column="cname" property="sdName" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, p_id, t_long, money, sd, discount
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.p_id as p_id, 
+    a.t_long as t_long, 
+    a.money as money, 
+    a.sd as sd, 
+    a.discount as discount,
+    b.cname as cname
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_seat_charging_scheme_s
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_seat_charging_scheme_s
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingSchemeS" >
+    insert into dg_seat_charging_scheme_s (id, p_id, t_long, 
+      money, sd, discount)
+    values (#{id,jdbcType=INTEGER}, #{pId,jdbcType=INTEGER}, #{tLong,jdbcType=INTEGER}, 
+      #{money,jdbcType=DOUBLE}, #{sd,jdbcType=INTEGER}, #{discount,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingSchemeS" >
+    insert into dg_seat_charging_scheme_s
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="pId != null" >
+        p_id,
+      </if>
+      <if test="tLong != null" >
+        t_long,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="sd != null" >
+        sd,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="tLong != null" >
+        #{tLong,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="sd != null" >
+        #{sd,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingSchemeS" >
+    update dg_seat_charging_scheme_s
+    <set >
+      <if test="pId != null" >
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="tLong != null" >
+        t_long = #{tLong,jdbcType=INTEGER},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DOUBLE},
+      </if>
+      <if test="sd != null" >
+        sd = #{sd,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingSchemeS" >
+    update dg_seat_charging_scheme_s
+    set p_id = #{pId,jdbcType=INTEGER},
+      t_long = #{tLong,jdbcType=INTEGER},
+      money = #{money,jdbcType=DOUBLE},
+      sd = #{sd,jdbcType=INTEGER},
+      discount = #{discount,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+        <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_seat_charging_scheme_s where p_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+  
+  
+   <delete id="deleteAllByPid" parameterType="java.lang.Integer">
+    delete from dg_seat_charging_scheme_s 
+    where p_id = #{id,jdbcType=INTEGER}
+  </delete> 
+  
+   <select id="seleByPid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_seat_charging_scheme_s a left join dg_public_code0 b on a.sd = b.id
+    where a.p_id = #{id,jdbcType=INTEGER} order by a.sd
+  </select>
+  
+  
+     <select id="seleByPidNoSd" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_seat_charging_scheme_s 
+    where p_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+</mapper>

@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.BillMapper" >
+  <select id="selectAllTeamMember" resultType="map" parameterType="list">
+    select a.*,b.name as seat_name,b.number as seat_code from dg_open_water a left join dg_consumer_seat b on a.seat_id = b.id
+    where 
+    a.ow_state in (1,3,8,9) and b.del_flag = 0 and b.cons_area in 
+    <foreach collection="list" item="pos" close=")" open="(" separator=",">
+        #{pos}
+    </foreach>
+  </select>
+  
+    <select id="selectAllTeamMemberToZt" resultType="map" parameterType="list">
+    select a.*,b.name as seat_name,b.number as seat_code from dg_open_water a left join dg_consumer_seat b on a.seat_id = b.id
+    where 
+    a.ow_state in (1) and b.del_flag = 0 and b.cons_area in 
+    <foreach collection="list" item="pos" close=")" open="(" separator=",">
+        #{pos}
+    </foreach>
+  </select>
+  
+   <select id="selectTeamSeatMember" resultType="DgConsumerSeat" parameterType="java.lang.String" >
+    select b.* from dg_open_water a left join dg_consumer_seat b on a.seat_id = b.id
+     where a.team_members = #{teamMember,jdbcType=VARCHAR} and a.ow_state = 1
+  </select>
+  
+  <insert id="insertOpenWater" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" useGeneratedKeys="true" keyProperty="id">
+    insert into dg_open_water
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+        ow_num,
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+      <if test="peopleCount != null" >
+        people_count,
+      </if>
+      <if test="openBis != null" >
+        open_bis,
+      </if>
+      <if test="itemCostsSum != null" >
+        item_costs_sum,
+      </if>
+      <if test="discountCosts != null" >
+        discount_costs,
+      </if>
+      <if test="serviceCharge != null" >
+        service_charge,
+      </if>
+      <if test="privateRoomCost != null" >
+        private_room_cost,
+      </if>
+      <if test="minimumConsumption != null" >
+        minimum_consumption,
+      </if>
+      <if test="minimumChargeComplete != null" >
+        minimum_charge_complete,
+      </if>
+      <if test="subtotal != null" >
+        subtotal,
+      </if>
+      <if test="clearingWaterId != null" >
+        clearing_water_id,
+      </if>
+      <if test="firstTime != null" >
+        first_time,
+      </if>
+      <if test="seatLabel != null and seatLabel != ''" >
+        seat_label,
+      </if>
+      <if test="openPos != null" >
+        open_pos,
+      </if>
+      <if test="waiter != null and waiter != ''" >
+       waiter,
+      </if>
+      <if test="crId != null and crId != ''" >
+        cr_id,
+      </if>
+      <if test="documents != null" >
+        documents,
+      </if>
+      <if test="owNotes != null" >
+        owNotes,
+      </if>
+      <if test="closedTime!= null" >
+        closed_time,
+      </if>
+      <if test="teamMembers != null" >
+        team_members,
+      </if>
+      <if test="OwState != null" >
+        ow_state,
+      </if>
+      <if test="teamMainSeat != null" >
+        team_main_seat,
+      </if>
+      <if test="isTeam != null" >
+        is_team,
+      </if>
+      <if test="seatAmount != null" >
+        seat_amount,
+      </if>
+      <if test="transferTarget != null" >
+        transfer_target,
+      </if>
+      <if test="joinTeamNotes != null" >
+        join_team_notes,
+      </if>
+      <if test="joinTeamTime != null" >
+        join_team_time,
+      </if>
+      <if test="splitOpenWater != null" >
+        split_open_water,
+      </if>
+      <if test="splitOpenWaterNum != null" >
+        split_open_water_num,
+      </if>
+      <if test="splitTime != null" >
+        split_time,
+      </if>
+      <if test="privateRoomType != null" >
+        private_room_type,
+      </if>
+      <if test="isIncreasingItem != null" >
+        is_increasing_item,
+      </if>
+      <if test="marketingStaff != null" >
+        marketing_staff,
+      </if>
+      <if test="ydId != null" >
+        yd_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+       DG_FU_getAutoOwNum('YY',#{isBeginWithOne},#{headStr}),
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="peopleCount != null" >
+        #{peopleCount,jdbcType=INTEGER},
+      </if>
+      <if test="openBis != null" >
+        #{openBis,jdbcType=VARCHAR},
+      </if>
+      <if test="itemCostsSum != null" >
+        #{itemCostsSum,jdbcType=DOUBLE},
+      </if>
+      <if test="discountCosts != null" >
+        #{discountCosts,jdbcType=DOUBLE},
+      </if>
+      <if test="serviceCharge != null" >
+        #{serviceCharge,jdbcType=DOUBLE},
+      </if>
+      <if test="privateRoomCost != null" >
+        #{privateRoomCost,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        #{minimumConsumption,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumChargeComplete != null" >
+        #{minimumChargeComplete,jdbcType=DOUBLE},
+      </if>
+      <if test="subtotal != null" >
+        #{subtotal,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingWaterId != null" >
+        #{clearingWaterId,jdbcType=INTEGER},
+      </if>
+      <if test="firstTime != null" >
+        #{firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="seatLabel != null and seatLabel != ''" >
+        #{seatLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="openPos != null" >
+        #{openPos,jdbcType=INTEGER},
+      </if>
+      <if test="waiter != null and waiter != ''" >
+        #{waiter,jdbcType=INTEGER},
+      </if>
+      <if test="crId != null and crId != ''" >
+        #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="documents != null" >
+        #{documents,jdbcType=VARCHAR},
+      </if>
+      <if test="owNotes != null" >
+        #{owNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="closedTime != null" >
+        #{closedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="teamMembers != null" >
+        #{teamMembers,jdbcType=VARCHAR},
+      </if>
+      <if test="OwState != null" >
+        #{OwState,jdbcType=VARCHAR},
+      </if>
+      <if test="teamMainSeat != null" >
+        #{teamMainSeat,jdbcType=INTEGER},
+      </if>
+      <if test="isTeam != null" >
+        #{isTeam,jdbcType=INTEGER},
+      </if>
+      <if test="seatAmount != null" >
+        #{seatAmount,jdbcType=INTEGER},
+      </if>
+      <if test="transferTarget != null" >
+        #{transferTarget,jdbcType=VARCHAR},
+      </if>
+      <if test="joinTeamNotes != null" >
+        #{joinTeamNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="joinTeamTime != null" >
+        #{joinTeamTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="splitOpenWater != null" >
+        #{splitOpenWater,jdbcType=INTEGER},
+      </if>
+      <if test="splitOpenWaterNum != null" >
+        #{splitOpenWaterNum,jdbcType=VARCHAR},
+      </if>
+      <if test="splitTime != null" >
+        #{splitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="privateRoomType != null" >
+        #{privateRoomType,jdbcType=INTEGER},
+      </if>
+      <if test="isIncreasingItem != null" >
+        #{isIncreasingItem,jdbcType=INTEGER},
+      </if>
+      <if test="marketingStaff != null" >
+        #{marketingStaff,jdbcType=INTEGER},
+      </if>
+      <if test="ydId != null" >
+        #{ydId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="insertOwServiceWater" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+    insert into dg_ow_service_form
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="owId != null" >
+        ow_id,
+      </if>
+      <if test="waiterId != null" >
+        waiter_id,
+      </if>
+      <if test="serviceTime != null" >
+        service_time,
+      </if>
+      <if test="serviceType != null" >
+        service_type,
+      </if>
+      <if test="serviceNum != null" >
+        service_num,
+      </if>
+      <if test="zdbz != null" >
+        zdbz,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="owId != null" >
+        #{owId,jdbcType=INTEGER},
+      </if>
+      <if test="waiterId != null" >
+        #{waiterId,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceTime != null" >
+        #{serviceTime,jdbcType=INTEGER},
+      </if>
+      <if test="serviceType != null" >
+        #{serviceType,jdbcType=INTEGER},
+      </if>
+      <if test="serviceNum != null" >
+        #{serviceNum,jdbcType=VARCHAR},
+      </if>
+      <if test="zdbz != null" >
+        #{zdbz,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateOpenWaterPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater" >
+    update dg_open_water
+    <set >
+      <if test="owNum != null" >
+        ow_num = #{owNum,jdbcType=VARCHAR},
+      </if>
+      <if test="seatId != null" >
+        seat_id = #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="peopleCount != null" >
+        people_count = #{peopleCount,jdbcType=INTEGER},
+      </if>
+      <if test="itemCostsSum != null" >
+        item_costs_sum = #{itemCostsSum,jdbcType=DOUBLE},
+      </if>
+      <if test="discountCosts != null" >
+        discount_costs = #{discountCosts,jdbcType=DOUBLE},
+      </if>
+      <if test="serviceCharge != null" >
+        service_charge = #{serviceCharge,jdbcType=DOUBLE},
+      </if>
+      <if test="privateRoomCost != null" >
+        private_room_cost = #{privateRoomCost,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumConsumption != null" >
+        minimum_consumption = #{minimumConsumption,jdbcType=DOUBLE},
+      </if>
+      <if test="minimumChargeComplete != null" >
+        minimum_charge_complete = #{minimumChargeComplete,jdbcType=DOUBLE},
+      </if>
+      <if test="subtotal != null" >
+        subtotal = #{subtotal,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingWaterId != null" >
+        clearing_water_id = #{clearingWaterId,jdbcType=INTEGER},
+      </if>
+      <if test="firstTime != null" >
+        first_time = #{firstTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="owState != null" >
+        ow_state = #{owState,jdbcType=INTEGER},
+      </if>
+      <if test="seatLabel != null" >
+        seat_label = #{seatLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="openPos != null" >
+        open_pos = #{openPos,jdbcType=INTEGER},
+      </if>
+      <if test="waiter != null" >
+        waiter = #{waiter,jdbcType=INTEGER},
+      </if>
+      <if test="crId != null" >
+        cr_id = #{crId,jdbcType=VARCHAR},
+      </if>
+      <if test="documents != null" >
+        documents = #{documents,jdbcType=VARCHAR},
+      </if>
+      <if test="owNotes != null" >
+        ow_notes = #{owNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="closedTime != null" >
+        closed_time = #{closedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="teamMembers != null" >
+        team_members = #{teamMembers,jdbcType=VARCHAR},
+      </if>
+      <if test="isIncreasingItem != null" >
+        is_increasing_item = #{isIncreasingItem,jdbcType=INTEGER},
+      </if>
+      <if test="marketingStaff != null" >
+        marketing_staff = #{marketingStaff,jdbcType=INTEGER},
+      </if>
+      <if test="ydId != null" >
+        yd_id = #{ydId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectAllItem" resultType="map" parameterType="java.lang.Integer">
+		select 
+		a.id,a.num,a.name,a.unit,a.standard_price,a.is_tc,a.sptm,a.lspx,a.ppxl_id,a.pxdt,a.pxxt,b.item_id,d.front_sale_count,g.name as xlName,a.zjf,difr.rank pxRank,difr2.rank pxxlRank
+		from dg_item_file a left join 
+		dg_item_outof_stock b on b.item_id = a.id left join 
+		dg_item_sale_limit c on  date(c.today) = curdate() left join
+		dg_item_sale_limit_s d on  (c.id = d.limit_id and a.id = d.item_id) left join
+		dg_item_file_type g on a.ppxl_id = g.id left join
+		dg_item_file_rank difr on (a.id = difr.itemFileId and difr.itemFileType=1) left join
+		dg_item_file_rank difr2 on (g.id = difr2.itemFileId and difr2.itemFileType=2)
+		where a.id not in (select item_id from dg_item_disable)  and
+		a.id not in (select item_id from dg_area_limit_item e left join 
+		dg_consumer_seat f on e.area_id = f.cons_area where f.id = #{seatId,jdbcType=INTEGER} group by e.item_id)
+		
+		<!-- 添加品项显示设置开关条件（过滤前台显示品项） begin-->
+		and a.id not in (select px_id from dg_item_show_rank h where h.is_show = 1 and h.pxlx = 0)
+		<!-- end -->
+		and a.delFlag ='0'
+		and (difr.itemFileType = 1 or difr.itemFileType is null)
+		and (difr2.itemFileType = 2 or difr2.itemFileType is null)
+		order by difr2.rank,difr.rank
+  </select>
+  
+  <select id="selectAllItemCXsqg" resultType="map" parameterType="java.lang.Integer">
+		select 
+		a.id,a.num,a.name,a.unit,a.standard_price,a.is_tc,a.lspx,a.ppxl_id,a.pxdt,a.pxxt,b.item_id,d.front_sale_count,g.name as xlName,a.sm,
+		k.item_id as xsqg
+		from dg_item_file a left join 
+		dg_item_outof_stock b on b.item_id = a.id left join 
+		dg_item_sale_limit c on  date(c.today) = curdate() left join
+		dg_item_sale_limit_s d on  (c.id = d.limit_id and a.id = d.item_id) left join
+		dg_item_file_rank rk on (rk.itemFileId = a.id and rk.itemFileType =1) left join 
+		dg_item_file_type g on a.ppxl_id = g.id left join 
+		dg_item_file_rank rtk on (rtk.itemFileId = g.id and rtk.itemFileType =2) left join 
+		(
+		select h.* from
+		dg_item_time_limit h  left join
+		dg_item_time_limit_p j on h.p_id = j.id	where
+		<![CDATA[NOW() > j.start_time and NOW() < j.end_time]]>  and h.surplus_limit >0
+		) k on k.item_id = a.id 
+		where a.delFlag = '0' and a.id not in (select item_id from dg_item_disable)  and
+		a.id not in (select item_id from dg_item_outof_stock) and
+		a.id not in (select item_id from dg_area_limit_item e left join 
+		dg_consumer_seat f on e.area_id = f.cons_area where f.id = #{seatId,jdbcType=INTEGER} group by e.item_id) and
+		a.id in (select item_id from dg_yxe_cons_item_show e left join 
+		dg_consumer_seat f on e.cons_id = f.cons_area where f.id = #{seatId,jdbcType=INTEGER} group by e.item_id) and
+		a.id not in (select j.item_id from dg_item_sale_limit i left join
+		dg_item_sale_limit_s j on  i.id = j.limit_id  where 
+		j.front_sale_count <![CDATA[<= ]]> 0 and date(i.today) = curdate()) and a.yxe = 1 
+		order by rtk.rank asc,rk.rank asc
+  </select>
+  
+  
+  <select id="selectYxeAllItem" resultType="map" parameterType="java.lang.Integer">
+		select 
+		a.id,a.num,a.name,a.unit,a.standard_price,a.is_tc,a.lspx,a.ppxl_id,a.pxdt,a.pxxt,b.item_id,d.front_sale_count,g.name as xlName
+		from dg_item_file a left join 
+		dg_item_outof_stock b on b.item_id = a.id left join 
+		dg_item_sale_limit c on  date(c.today) = curdate() left join
+		dg_item_sale_limit_s d on  (c.id = d.limit_id and a.id = d.item_id) left join
+		dg_item_file_type g on a.ppxl_id = g.id 
+		where a.id not in (select item_id from dg_item_disable)  and
+		a.id not in (select item_id from dg_area_limit_item e left join 
+		dg_consumer_seat f on e.area_id = f.cons_area where f.id = #{seatId,jdbcType=INTEGER} group by e.item_id) and 
+		g.yxe = 1 and a.yxe = 1 and a.delFlag = '0'
+		order by a.id
+  </select>
+  
+  <select id="selectAllFlavorInfo" resultType="map">
+    select a.*,b.name as bName from dg_flavor a left join 
+    dg_flavor b on a.parentid = b.id
+    where a.parentid in (select id from dg_flavor where parentid = 1)
+  </select>
+  
+  <!-- 剔除停用品项/沽清品项/已选品项-->
+  <select id="selectTcAddItemFile" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file  
+    <where>
+        delFlag = '0'
+  	    <if test="bId != null and bId != ''">
+        		AND ppdl_id = #{bId,jdbcType=INTEGER}
+        </if>
+        <if test="sId != null and sId != ''">
+        		AND ppxl_id  = #{sId,jdbcType=INTEGER}
+        </if>        
+        <if test="search != null and search != ''">
+				AND (num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))
+        </if>
+	    <if test="ids != null and ids.size() != 0 ">
+			    AND id not in
+			    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+			      #{id,jdbcType=INTEGER}
+			    </foreach> 
+	    </if>
+	    AND id not in (select item_id from dg_item_disable where 1=1)   
+	    AND id not in (select item_id from dg_item_outof_stock where 1=1)   
+     </where>
+  </select>
+  
+  
+    <select id="selectQcItemByWater" resultType="map" parameterType="string">
+		select 
+		a.*,d.name as itemFileName,d.unit as unit,f.num as bigNum,
+		f.name as bigName,g.num as smallNum,g.name as smallName,
+		d.num as itemNum,f.id as bId,g.id as sId 
+		from dg_ow_consumer_details a left join
+		dg_ow_service_form b on a.ow_id = b.id left join 
+		dg_item_file d on a.item_file_id = d.id left join
+		dg_item_file_type f on d.ppdl_id = f.id left join
+		dg_item_file_type g on d.ppxl_id = g.id left join
+		dg_open_water e on b.ow_id = e.id 
+		where d.delFlag = '0' and e.ow_num = #{num,jdbcType=VARCHAR} and a.is_tc != -1 and b.service_type != 7 and a.item_file_number > 0
+  	</select>
+  	
+  	<select id="selectItemByWater" resultType="map">
+		select
+		a.*,d.name as itemFileName,d.pxdt,d.pxxt,f.name as seatName,d.unit as unit,
+		d.num as itemNum,d.name as itemName,d.zjf
+		from dg_ow_consumer_details a left join
+		dg_ow_service_form b on a.ow_id = b.id left join
+		dg_item_file d on a.item_file_id = d.id left join
+		dg_open_water e on b.ow_id = e.id left join
+		dg_consumer_seat f on e.seat_id = f.id
+		where d.delFlag = '0' and e.ow_num = #{num,jdbcType=VARCHAR} and a.is_tc != -1 and b.service_type != 7 and a.item_file_number > 0 and (a.settlement_status != 1 or a.settlement_status is null)
+  	</select>
+  	
+  	<select id="selectTeamSeatInfo" resultType="map" parameterType="map">
+		select a.id as waterId,a.ow_num as owNum,b.id as seatId,b.name,b.number as seatNumber from dg_open_water a left join
+		dg_consumer_seat b on a.seat_id = b.id 
+		 <where>
+	  	    <if test="teamMember != null and teamMember != ''">
+	        		and a.team_members = #{teamMember,jdbcType=VARCHAR}
+	        </if>
+			 <if test="ids != null and ids.size() > 0">
+	        		and a.seat_id in
+				<foreach collection="ids" item="id" open="(" close=")" separator=",">
+					      #{id,jdbcType=INTEGER}
+				</foreach> 
+			</if>
+			and a.ow_state = 1
+		</where>
+		
+  	</select>
+  	
+  	
+    <select id="selectTeamSeatInfoNotInWaterIds" resultType="map" parameterType="map">
+		select a.id as waterId,a.ow_num as owNum,b.id as seatId,b.name,b.number as seatNumber from dg_open_water a left join
+		dg_consumer_seat b on a.seat_id = b.id 
+		 <where>
+	  	    <if test="teamMember != null and teamMember != ''">
+	        		and a.team_members = #{teamMember,jdbcType=VARCHAR}
+	        </if>
+			 <if test="ids != null and ids.size() > 0">
+	        		and a.id not in
+				<foreach collection="ids" item="id" open="(" close=")" separator=",">
+					      #{id,jdbcType=INTEGER}
+				</foreach> 
+			</if>
+			and a.ow_state = 1
+		</where>
+		
+  	</select>
+  	
+  	  	
+  	<select id="selectWaterByTeamMember" resultType="map" parameterType="map">
+		select * from dg_open_water 
+		where team_members = #{teamMember,jdbcType=VARCHAR} 
+		and seat_id in 
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			      #{id,jdbcType=INTEGER}
+		</foreach> 
+		and ow_state = 1
+  	</select>
+  	
+  	
+  	<select id="selectConsumerDetailByWaterIdAndItemFileId" resultType="map" parameterType="map">
+		select a.* from dg_ow_consumer_details a left join
+		dg_ow_service_form b on a.ow_id = b.id left join 
+		dg_open_water c on b.ow_id = c.id 
+		where c.id = #{owId,jdbcType=INTEGER} and a.item_file_id = #{itemFileId,jdbcType=INTEGER} and a.item_file_number > 0 and a.is_tc != -1 
+		and b.service_type != 3 and b.service_type != 7
+  	</select>
+  	
+  	
+  	  	
+  	<select id="selectZdConsumerDetailByWaterIdAndItemFileId" resultType="map" parameterType="map">
+		select a.* from dg_ow_consumer_details a left join
+		dg_ow_service_form b on a.ow_id = b.id left join 
+		dg_open_water c on b.ow_id = c.id
+		where c.id = #{owId,jdbcType=INTEGER} and a.item_file_id = #{itemFileId,jdbcType=INTEGER}
+		and a.item_file_number > 0 and a.is_tc != -1 and (b.service_type = 6  or b.service_type = 1)
+  	</select>
+  	
+  	<select id="selectConsumerDetailByOwId" resultType="java.lang.Double" parameterType="map">
+		select sum(a.item_file_number) from dg_ow_consumer_details  a left join dg_ow_service_form b 
+		on a.ow_id = b.id left join dg_open_water c on b.ow_id = c.id 
+		where (a.ow_id = #{owId,jdbcType=INTEGER} or a.back_ow_id = #{owId,jdbcType=INTEGER}) 
+		and a.item_file_id = #{itemFileId,jdbcType=INTEGER} 
+		and a.is_tc != -1 and a.notes != 7 and c.ow_num = #{yeId,jdbcType=VARCHAR}
+		group by a.item_file_id
+  	</select>
+  	
+  	
+  	<update id="updateReminder" parameterType="map">
+		update dg_ow_consumer_details set reminder_number = reminder_number+1 where
+		ow_id = #{owId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER} and is_tc != -1  and notes != 7 
+		and item_file_number > 0
+	</update>
+	
+	
+	
+	<select id="selectQcItemByWaterType2" resultType="map">
+		select 
+		a.*,d.name as itemFileName,d.unit as unit,f.num as bigNum,
+		f.name as bigName,g.num as smallNum,g.name as smallName,
+		d.num as itemNum,f.id as bId,g.id as sId 
+		from dg_ow_consumer_details a left join
+		dg_ow_service_form b on a.ow_id = b.id left join 
+		dg_item_file d on a.item_file_id = d.id left join
+		dg_item_file_type f on d.ppdl_id = f.id left join
+		dg_item_file_type g on d.ppxl_id = g.id left join
+		dg_open_water e on b.ow_id = e.id 
+		where e.ow_num = #{waterNum,jdbcType=VARCHAR} and g.id = #{xlId,jdbcType=INTEGER} and a.is_tc != -1 
+		and b.service_type != 7  and a.item_file_number > 0 and d.delFlag = '0'
+  	</select>
+  	
+	
+	
+	<update id="updateQcType1" parameterType="map">
+		update dg_ow_consumer_details set qc_sl = qc_sl+ #{qcNumber,jdbcType=INTEGER},
+		qc_fs = #{qcFs,jdbcType=INTEGER},qc_zhsj = #{qcZhsj,jdbcType=TIMESTAMP},
+		qc_zt = 1 where
+		ow_id = #{owId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER} and is_tc != -1 
+		and notes != 7 
+		and item_file_number > 0
+	</update>
+	<update id="updateQcType2" parameterType="map">
+		update dg_ow_consumer_details set 
+		qc_fs = #{qcFs,jdbcType=INTEGER},qc_zhsj = #{qcZhsj,jdbcType=TIMESTAMP},
+		qc_zt = 1 where 
+		ow_id = #{owId,jdbcType=INTEGER} and item_file_id = #{itemFileId,jdbcType=INTEGER} and is_tc != -1
+		and notes != 7
+		and item_file_number > 0
+	</update>
+	
+	
+	
+	<select id="getServiceIncreaItemByOwId" resultType="map" parameterType="java.lang.Integer">
+	    select * from dg_ow_consumer_details a where a.ow_id = 
+		(select b.id from dg_ow_service_form b where b.ow_id = #{owId,jdbcType=INTEGER} and b.service_type = 1)
+	    and a.item_file_id > 0 and a.is_tc != -1 
+  	</select>
+  	  	
+  	<select id="getTotalIncreaItemByOwId" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" parameterType="map">
+	    select a.* from dg_ow_consumer_details a left join
+	    dg_ow_service_form b on a.ow_id = b.id left join 
+	    dg_open_water c on b.ow_id = c.id where c.id = #{id,jdbcType=INTEGER}
+	    and b.service_type in(1,6) and a.item_file_id = #{itemFileId,jdbcType=INTEGER}
+	    and a.is_tc != -1
+  	</select>
+  	
+  	<select id="getTotalIncreCount" resultType="java.lang.Double" parameterType="map">
+	    select sum(item_file_number) from dg_ow_consumer_details where item_file_id = #{itemFileId,jdbcType=INTEGER}
+	    and is_tc != -1 
+	    <if test="owIds != null and owIds.size() > 0">
+	   	    and ( ow_id in
+		    <foreach collection="owIds" item="owId" index="index" open="(" close=")" separator=",">
+				 #{owId.owId,jdbcType=INTEGER}
+			</foreach> 
+			or back_ow_id in
+			<foreach collection="owIds" item="owId" index="index" open="(" close=")" separator=",">
+				 #{owId.owId,jdbcType=INTEGER}
+			</foreach> )
+	    </if> group by item_file_id
+  	</select>
+  	
+  	<select id="getMemberMainSeat" resultType="java.lang.Integer" parameterType="map">
+	    select  team_main_seat from dg_open_water where team_members=#{TeamMembers,jdbcType=VARCHAR}
+	    order by id limit 1
+   </select>
+   
+   
+   <select id="getWaterItemCountByItemId" resultType="java.lang.Double" parameterType="map">
+	    select  sum(a.item_file_number) from dg_ow_consumer_details a left join
+	    dg_ow_service_form b on a.ow_id = b.id left join 
+	    dg_open_water c on b.ow_id = c.id where 
+	    a.item_file_id =#{itemId} and a.is_tc != -1 
+	    and b.service_type != 7 and c.id = #{owId}
+   </select>
+   
+   
+   <select id="selectLimitItemCountBySeatId" resultType="java.lang.Integer" parameterType="map">
+	    select count(*) from dg_area_limit_item a left join dg_consumer_seat b on a.area_id = b.cons_area 
+	    where b.id =  #{seatId,jdbcType=INTEGER} and a.item_id = #{itemId,jdbcType=INTEGER}
+   </select>
+   
+   <select id="selectServerTypeByServerId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+	    select service_type from  dg_ow_service_form
+	    where id =  #{id,jdbcType=INTEGER}
+   </select>
+   
+   <select id="updateInveDate" resultType="java.lang.String" parameterType="Map">
+	  select updateInve(#{itemFileId},#{ItemFileCount});
+   </select>
+   
+   <select id="selectUserByCardNo" resultType="java.lang.Integer" parameterType="java.lang.String">
+	  select count(*) from sys_user where emp_cardno = #{cardNo}
+   </select>
+   
+   <select id="selectSeatByCard" resultType="java.lang.Integer" parameterType="java.lang.String">
+	  select count(*) from dg_card where cardnum = #{cardNo} and consumerid = #{seatId}
+   </select>
+   
+   
+   <select id="selectGdFromItemIds" resultType="java.lang.Integer" parameterType="list">
+   	  select a.id from dg_item_file a left join dg_item_file_type b on a.ppdl_id = b.id where 
+   	  b.coupon_code = 'G001' and a.id in 
+	  <foreach collection="list" item="item" close=")" open="(" separator=",">
+	        #{item.itemFileId}
+	  </foreach>
+   </select>
+
+    <select id="selectItemByWater_new" resultType="java.util.Map">
+ select dif.id as item_file_id,d.cou as item_file_number,d.sub as subtotal,dif.name as itemName,dif.pxdt,dif.pxxt,
+        dif.unit as unit,dif.num as itemNum ,dif.name as itemFileName
+		,dif.zjf,d.item_final_price from dg_item_file dif right join(
+        SELECT
+            a.item_file_id,sum(item_file_number) as cou,sum(a.subtotal) as sub,a.item_final_price as item_final_price
+        FROM
+            dg_open_water dow
+        LEFT JOIN dg_ow_service_form dosf ON dow.id = dosf.ow_id
+        LEFT JOIN dg_ow_consumer_details a ON a.ow_id = dosf.id
+        LEFT JOIN dg_item_file d ON a.item_file_id = d.id
+        WHERE
+            d.delFlag = '0'
+        AND dow.ow_num = #{owNum}
+        AND a.is_tc != - 1
+        AND dosf.service_type != 7
+        AND (
+            a.settlement_status != 1
+            OR a.settlement_status IS NULL
+        )
+        group by a.item_file_id)d on dif.id = d.item_file_id;
+    </select>
+    
+    
+    <select id="selectAllItemCXsqgOutOfQy" resultType="map" parameterType="Map">
+		select 
+		a.id,a.num,a.name,a.unit,a.standard_price,a.is_tc,a.lspx,a.ppxl_id,a.pxdt,a.pxxt,b.item_id,d.front_sale_count,g.name as xlName,
+		k.item_id as xsqg
+		from dg_item_file a left join 
+		dg_item_outof_stock b on b.item_id = a.id left join 
+		dg_item_sale_limit c on  date(c.today) = curdate() left join
+		dg_item_sale_limit_s d on  (c.id = d.limit_id and a.id = d.item_id) left join
+		dg_item_file_type g on a.ppxl_id = g.id left join 
+		(
+		select h.* from
+		dg_item_time_limit h  left join
+		dg_item_time_limit_p j on h.p_id = j.id	where
+		<![CDATA[NOW() > j.start_time and NOW() < j.end_time]]>  and h.surplus_limit >0
+		) k on k.item_id = a.id 
+		where a.delFlag = '0' and a.id not in (select item_id from dg_item_disable)  and
+		a.id not in (select item_id from dg_item_outof_stock) and
+		a.id not in (select item_id from dg_area_limit_item e left join 
+		dg_consumer_seat f on e.area_id = f.cons_area where f.id = #{seatId,jdbcType=INTEGER} group by e.item_id) and
+		a.id not in (select j.item_id from dg_item_sale_limit i left join
+		dg_item_sale_limit_s j on  i.id = j.limit_id  where 
+		j.front_sale_count <![CDATA[<= ]]> 0 and date(i.today) = curdate()) and a.yxe = 1 
+		and g.id in 
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+		    #{id,jdbcType=INTEGER}
+		</foreach>
+		order by a.id
+  </select>
+</mapper>

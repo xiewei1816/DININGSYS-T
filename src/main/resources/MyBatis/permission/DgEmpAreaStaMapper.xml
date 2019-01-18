@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.permission.DgEmpAreaStaMapper" >
+
+  <select id="selectEmpAreaStaPer" resultType="java.lang.Integer">
+    select val from dg_front_desk_oper_qx where code = 'emp_area_sta_qx'
+  </select>
+
+  <select id="selectAllEmp" resultType="SysUser">
+    select * from sys_user where is_del = '0'
+  </select>
+
+  <select id="selectAllArea" parameterType="map" resultType="DgEmpAreaSta">
+    select deas.area_code as areaCode,deas.emp_code as empCode,dca.name as araeName
+    from dg_emp_area_statistics deas
+    left join dg_consumption_area dca on deas.area_code = dca.number
+    where deas.emp_code = #{empCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAllNoDelArea" resultType="DgEmpAreaSta">
+    select id,number as areaCode,name as areaName,0 as isOpen from dg_consumption_area where del_flag = '0'
+  </select>
+
+  <delete id="deleteEmpAreaStaData" parameterType="map">
+    DELETE from dg_emp_area_statistics where emp_code = #{empCode,jdbcType=VARCHAR} and area_code = #{areaCode,jdbcType=VARCHAR}
+  </delete>
+
+  <delete id="deleteEmpAreaStaDataByEmpCode" parameterType="map">
+    DELETE from dg_emp_area_statistics where emp_code = #{empCode,jdbcType=VARCHAR}
+  </delete>
+
+  <insert id="insertEmpAreaStaData" parameterType="map">
+    insert into dg_emp_area_statistics values (#{empCode,jdbcType=VARCHAR},#{areaCode,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectDataByEmpCodeAndAreaCode" parameterType="map" resultType="DgEmpAreaSta">
+    select * from  dg_emp_area_statistics where emp_code = #{empCode,jdbcType=VARCHAR} and area_code = #{areaCode,jdbcType=VARCHAR}
+  </select>
+
+  <update id="editEmpAreaSta" parameterType="map">
+    update dg_front_desk_oper_qx set val = #{isOpen,jdbcType=INTEGER} where code = 'emp_area_sta_qx'
+  </update>
+
+  <select id="selectAllAreaCode" resultType="java.lang.String">
+    select number from dg_consumption_area where del_flag = '0'
+  </select>
+
+  <insert id="insertEmpAreaStaDataMulti" parameterType="map">
+    insert into dg_emp_area_statistics VALUES
+    <foreach collection="list" item="item" index="index"
+             separator=",">
+      ( #{empCode,jdbcType=VARCHAR},#{item,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+</mapper>

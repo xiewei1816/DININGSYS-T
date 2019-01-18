@@ -1,0 +1,87 @@
+
+a{
+	text-decoration: none; 
+}
+.left-content{
+	position:relative;
+	float:left;
+	width: 160px;
+	height: 350px;
+	margin: 0px 10px 0px 10px;
+}
+.left-menu
+{
+	float:left;
+	width: auto;
+	height: 350px;
+}
+.right-content{
+	margin-left: 10px;
+}
+.control{
+	margin-left:180px;
+	height: AUTO;
+	width:10px;
+	background-image:url(../../../../img/center0.gif);
+	background-repeat:no-repeat;
+}
+.extra-t{
+	position:absolute;
+	width:160px;
+	top:0px;
+	border: 1px solid #f6a828;
+}
+.jq-margin1{
+	margin-left:190px;
+	width:610px;
+	height: 180px;
+}
+.len-1,.len-2{
+	display:inline-block;
+	width:100px;
+}
+.sele{
+	margin-left:190px;
+	width: 510px;
+	height:40px;
+	border-color: #00f1f1;
+}
+.sele span{
+	height:40px;
+	line-height:40px;
+}
+.sele-all-1,.sele-all-2{
+	display:inline-block;
+	width:250px;
+	text-align:right;
+	height:40px;
+	line-height:40px;
+	cursor:pointer;
+	text-decoration: none; 
+}
+.sele-all:HOVER,.sele-all-1:HOVER,.sele-all-2:HOVER{
+	color: #ff6100;
+	text-decoration: none; 
+}
+.input-button{
+	height: 30px;
+	font-size:12px; 
+	line-height:30px; 
+	text-align:center; 
+	border:1px; 
+	border-color: #37b5f9;
+	padding-left:15px;
+	padding-right:15px;
+	border-radius:3px; 
+	
+}
+.input-button:HOVER{
+	border:1px; 
+	border-color: #57b5f9;
+	background: #c0c0c0;
+}
+.input-button:ACTIVE{
+	border:1px; 
+	border-color: #77b5f9;
+	background: #a0a0a0;
+}

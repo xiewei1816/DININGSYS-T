@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.DgReserveSeatidsMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgReserveSeatids" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="seat_id" property="seatId" jdbcType="INTEGER" />
+    <result column="reserve_id" property="reserveId" jdbcType="INTEGER" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, seat_id, reserve_id,state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_reserve_seatids
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    update  dg_reserve_seatids set state = 2
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveSeatids" >
+    insert into dg_reserve_seatids (id, seat_id, reserve_id,state
+      )
+    values (#{id,jdbcType=INTEGER}, #{seatId,jdbcType=INTEGER}, #{reserveId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveSeatids" >
+    insert into dg_reserve_seatids
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+      <if test="reserveId != null" >
+        reserve_id,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="reserveId != null" >
+        #{reserveId,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveSeatids" >
+    update dg_reserve_seatids
+    <set >
+      <if test="seatId != null" >
+        seat_id = #{seatId,jdbcType=INTEGER},
+      </if>
+      <if test="reserveId != null" >
+        reserve_id = #{reserveId,jdbcType=INTEGER},
+      </if>
+       <if test="state != null" >
+        state = #{reserveId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgReserveSeatids" >
+    update dg_reserve_seatids
+    set seat_id = #{seatId,jdbcType=INTEGER},
+      reserve_id = #{reserveId,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="deleteZsByParentId" parameterType="java.lang.Integer" >
+     delete  from dg_reserve_seatids  
+    where reserve_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <update id="deleteByParentId" parameterType="java.lang.Integer" >
+    update  dg_reserve_seatids set state = 2 
+    where reserve_id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="deleteByParentIds" parameterType="java.util.List" >
+    update dg_reserve_seatids set state = 2 
+    where reserve_id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+    <delete id="deleteZsByParentIds" parameterType="java.util.List" >
+    delete from dg_reserve_seatids
+    where reserve_id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  
+  <select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    o.id, o.seat_id, o.reserve_id,s.name as seatName
+    from dg_reserve_seatids o left join dg_consumer_seat s on o.seat_id = s.id 
+    where reserve_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 选出未占用的预定客位 -->
+  <select id="selectByParentIdExitUse" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    o.id, o.seat_id, o.reserve_id,s.name as seatName
+    from dg_reserve_seatids o left join dg_consumer_seat s on o.seat_id = s.id 
+    where reserve_id = #{id,jdbcType=INTEGER} and o.state is null
+  </select>
+</mapper>

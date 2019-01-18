@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgOwDetailsOtherMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDetailsOther" >
+    <result column="sf_id" property="sfId" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="otype" property="otype" jdbcType="INTEGER" />
+    <result column="ocode" property="ocode" jdbcType="VARCHAR" />
+    <result column="oname" property="oname" jdbcType="VARCHAR" />
+    <result column="ocosts" property="ocosts" jdbcType="DOUBLE" />
+    <result column="zzff_sf" property="zzffSf" jdbcType="INTEGER" />
+    <result column="zzff_sf_type" property="zzffSfType" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDetailsOther" >
+    insert into dg_ow_details_other (sf_id, item_id, otype, 
+      ocode, oname, ocosts, 
+      zzff_sf, zzff_sf_type)
+    values (#{sfId,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{otype,jdbcType=INTEGER}, 
+      #{ocode,jdbcType=VARCHAR}, #{oname,jdbcType=VARCHAR}, #{ocosts,jdbcType=DOUBLE}, 
+      #{zzffSf,jdbcType=INTEGER}, #{zzffSfType,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDetailsOther" >
+    insert into dg_ow_details_other
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sfId != null" >
+        sf_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="otype != null" >
+        otype,
+      </if>
+      <if test="ocode != null" >
+        ocode,
+      </if>
+      <if test="oname != null" >
+        oname,
+      </if>
+      <if test="ocosts != null" >
+        ocosts,
+      </if>
+      <if test="zzffSf != null" >
+        zzff_sf,
+      </if>
+      <if test="zzffSfType != null" >
+        zzff_sf_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sfId != null" >
+        #{sfId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="otype != null" >
+        #{otype,jdbcType=INTEGER},
+      </if>
+      <if test="ocode != null" >
+        #{ocode,jdbcType=VARCHAR},
+      </if>
+      <if test="oname != null" >
+        #{oname,jdbcType=VARCHAR},
+      </if>
+      <if test="ocosts != null" >
+        #{ocosts,jdbcType=DOUBLE},
+      </if>
+      <if test="zzffSf != null" >
+        #{zzffSf,jdbcType=INTEGER},
+      </if>
+      <if test="zzffSfType != null" >
+        #{zzffSfType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="selectByOwId" resultType="DgOwDetailsOther" parameterType="Map" >
+    select 
+    *
+    from dg_ow_details_other
+    where sf_id = #{owId,jdbcType=INTEGER} and item_id = #{itemId,jdbcType=INTEGER} 
+  </select>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into dg_ow_details_other (sf_id, item_id, otype, 
+      ocode, oname, ocosts, 
+      zzff_sf, zzff_sf_type)
+    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+    (#{item.sfId,jdbcType=INTEGER}, #{item.itemId,jdbcType=INTEGER}, #{item.otype,jdbcType=INTEGER}, 
+      #{item.ocode,jdbcType=VARCHAR}, #{item.oname,jdbcType=VARCHAR}, #{item.ocosts,jdbcType=DOUBLE}, 
+      #{item.zzffSf,jdbcType=INTEGER}, #{item.zzffSfType,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+</mapper>

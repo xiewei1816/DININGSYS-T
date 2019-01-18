@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemSaleLimitMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="today" property="today" jdbcType="DATE" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, today, type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_sale_limit
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_sale_limit
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit" >
+    insert into dg_item_sale_limit (id, today, type)
+    values (#{id,jdbcType=INTEGER}, #{today,jdbcType=DATE}, #{type,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit" >
+    insert into dg_item_sale_limit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="today != null" >
+        today,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="today != null" >
+        #{today,jdbcType=DATE},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit" >
+    update dg_item_sale_limit
+    <set >
+      <if test="today != null" >
+        today = #{today,jdbcType=DATE},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit" >
+    update dg_item_sale_limit
+    set today = #{today,jdbcType=DATE},
+      type = #{type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  <select id="selectByDate" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_sale_limit
+    where DATE_FORMAT(today,'%Y-%m-%d')= #{date,jdbcType=VARCHAR} 
+  </select>
+  
+    <select id="getCountByData" resultType="java.lang.Integer" parameterType="java.lang.String" >
+    select count(*) from dg_item_sale_limit
+    where DATE_FORMAT(today,'%Y-%m-%d')= #{date,jdbcType=VARCHAR} 
+  </select>
+  
+  <insert id="insertBackId" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit"  useGeneratedKeys="true" keyProperty="id">
+    insert into dg_item_sale_limit
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="today != null" >
+        today,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="uuidKey != null" >
+        uuid_key,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="today != null" >
+        #{today,jdbcType=DATE},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="uuidKey != null" >
+         #{uuidKey,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+   <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_sale_limit 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_sale_limit
+        (
+		    id,today,type
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.today and ''!=im.today">#{im.today},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.type">#{im.type}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

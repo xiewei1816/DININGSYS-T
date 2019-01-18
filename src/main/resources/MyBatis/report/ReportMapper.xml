@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.report.ReportPayWayMapper" >
+
+   <!-- ***************************************** 结算方式信息 ***************************************** -->
+   <!-- 提供结算方式查询页码 -->
+   <select id="countPaywayListByPage" resultType="integer" parameterType="Payway">
+    	select count(0) from (
+	    	select * from (
+			   select
+			   b.cw_num as cwNum,<!-- 结算流水 -->
+			   d.cName,<!-- 结算方式 -->
+			   c.name as cwType,<!-- 结算方式类型 -->
+			   case when a.cw_code='RMB' then a.conversion_amount - b.change_amount when a.cw_code &lt;&gt; 'RMB' then a.conversion_amount end AS amountsReceivable, <!-- 应收金额 -->
+			   a.conversion_amount as paidAmount,<!-- 实收金额 ，支付金额-->
+			   case when a.cw_code='RMB' then b.change_amount when a.cw_code &lt;&gt; 'RMB' then 0 end AS changeAmount,<!-- 找零金额 -->
+			   b.clearing_state as clearingState,<!-- 修正标志 -->
+			   DATE_FORMAT(b.clearing_time, '%Y-%m-%d %T') as clearingTime,<!-- 结算时间 -->
+			   b.clearing_notes as clearingNotes <!-- 备注 -->
+			   from (select id,cw_num,change_amount,clearing_state,clearing_time,clearing_notes from dg_reception_clearing_water
+				   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+					   select id,cw_num,change_amount,clearing_state,clearing_time,clearing_notes from dg_reception_clearing_water_${suffix}
+				   </foreach>
+				   ) b
+			   left join (select cw_code,conversion_amount,cw_id from dg_ow_clearingway
+				   <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+					   select cw_code,conversion_amount,cw_id from dg_ow_clearingway_${suffix}
+				   </foreach>
+				   ) a on b.id = a.cw_id
+			   left join dg_settlement_way c on c.number = a.cw_code
+			   left join dg_public_code0 d on d.id = c.type
+			   <where>
+				   <if test="startTime != null and startTime != ''">
+					   and b.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+				   </if>
+				   <if test="endTime != null and endTime != ''">
+					   and b.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+				   </if>
+				   <if test="cwName != null and cwName != ''">
+					   and a.cw_code = #{cwName}
+				   </if>
+				   and b.clearing_state in (2,3)
+			   </where>
+		   ) as tempTable
+		   order by tempTable.clearingTime
+    	) tb
+    </select>
+   <!-- 提供结算方式分页查询 -->
+   <select id="selectPaywayListByPage" parameterType="Payway" resultType="Payway">
+   		select * from (
+		   select
+		   b.cw_num as cwNum,<!-- 结算流水 -->
+		   d.cName,<!-- 结算方式 -->
+		   c.name as cwType,<!-- 结算方式类型 -->
+		   case when a.cw_code='RMB' then a.conversion_amount - b.change_amount when a.cw_code &lt;&gt; 'RMB' then a.conversion_amount end AS amountsReceivable, <!-- 应收金额 -->
+		   a.conversion_amount as paidAmount,<!-- 实收金额 ，支付金额-->
+		   case when a.cw_code='RMB' then b.change_amount when a.cw_code &lt;&gt; 'RMB' then 0 end AS changeAmount,<!-- 找零金额 -->
+		   b.clearing_state as clearingState,<!-- 修正标志 -->
+		   DATE_FORMAT(b.clearing_time, '%Y-%m-%d %T') as clearingTime,<!-- 结算时间 -->
+		   b.clearing_notes as clearingNotes <!-- 备注 -->
+		   from (select id,cw_num,change_amount,clearing_state,clearing_time,clearing_notes from dg_reception_clearing_water
+			   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+				   select id,cw_num,change_amount,clearing_state,clearing_time,clearing_notes from dg_reception_clearing_water_${suffix}
+			   </foreach>
+			   ) b
+		   left join (select cw_code,conversion_amount,cw_id from dg_ow_clearingway
+			   <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+				   select cw_code,conversion_amount,cw_id from dg_ow_clearingway_${suffix}
+			   </foreach>
+			   ) a on b.id = a.cw_id
+		   left join dg_settlement_way c on c.number = a.cw_code
+		   left join dg_public_code0 d on d.id = c.type
+		   <where>
+			   <if test="startTime != null and startTime != ''">
+				   and b.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+			   </if>
+			   <if test="endTime != null and endTime != ''">
+				   and b.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+			   </if>
+			   <if test="cwName != null and cwName != ''">
+				   and a.cw_code = #{cwName}
+			   </if>
+			   and b.clearing_state in (2,3)
+		   </where>
+	   ) as tempTable
+       	<choose>
+	      	<when test="sidx != null and sidx != ''">
+	      		order by tempTable.${sidx}  ${sord}
+	      	</when>
+	      	<otherwise>
+	      		order by tempTable.clearingTime
+	      	</otherwise>
+	    </choose>
+	   limit #{startRow},#{endRow}	
+   </select>
+   <!-- 提供结算方式导出查询 -->
+   <select id="selectPayWayReportList" parameterType="map" resultType="map">
+	   select * from (
+		   <foreach collection="tableSuffixList" separator="union all" item="suffix">
+			   select
+			   b.cw_num as cwNum,<!-- 结算流水 -->
+			   d.cName,<!-- 结算方式 -->
+			   c.name as cwType,<!-- 结算方式类型 -->
+			   case when a.cw_code='RMB' then a.conversion_amount - b.change_amount when a.cw_code &lt;&gt; 'RMB' then a.conversion_amount end AS amountsReceivable, <!-- 应收金额 -->
+			   a.conversion_amount as paidAmount,<!-- 实收金额 ，支付金额-->
+			   case when a.cw_code='RMB' then b.change_amount when a.cw_code &lt;&gt; 'RMB' then 0 end AS changeAmount,<!-- 找零金额 -->
+			   b.clearing_state as clearingState,<!-- 修正标志 -->
+			   DATE_FORMAT(b.clearing_time, '%Y-%m-%d %T') as clearingTime,<!-- 结算时间 -->
+			   b.clearing_notes as clearingNotes <!-- 备注 -->
+			   from (select id,cw_num,change_amount,clearing_state,clearing_time,clearing_notes from dg_reception_clearing_water
+				   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+					   select id,cw_num,change_amount,clearing_state,clearing_time,clearing_notes from dg_reception_clearing_water_${suffix}
+				   </foreach>
+				   ) b
+			   left join (select cw_code,conversion_amount,cw_id from dg_ow_clearingway
+				   <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+					   select cw_code,conversion_amount,cw_id from dg_ow_clearingway_${suffix}
+				   </foreach>
+				   ) a on b.id = a.cw_id
+			   left join dg_settlement_way c on c.number = a.cw_code
+			   left join dg_public_code0 d on d.id = c.type
+			   <where>
+				   <if test="startTime != null and startTime != ''">
+					   and b.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+				   </if>
+				   <if test="endTime != null and endTime != ''">
+					   and b.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+				   </if>
+				   <if test="cwName != null and cwName != ''">
+					   and a.cw_code = #{cwName}
+				   </if>
+				   and b.clearing_state in (2,3)
+			   </where>
+		   </foreach>
+	   ) as tempTable
+	   order by tempTable.clearingTime
+   </select>
+   
+   <!--*******************************营业统计日报******************************-->
+   <select id="selectBusinessStatisticsDateSufl" parameterType="String" resultType="map">
+		select AZ.*,AJ.*,AY.*,AN.* from 
+		(select IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as zrml,IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as zrdeyh,IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as zrxsxj,IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as zrys from 
+			(select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+			) drcw 
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d') = DATE_SUB(#{searchDate}, INTERVAL 1 DAY) and drcw.clearing_state = 2) AZ,
+		(select IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as jrml,IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as jrdeyh,IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as jrxsxj,IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as jrys from 
+			(select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+			) drcw 
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d' ) = DATE_FORMAT(#{searchDate} , '%Y-%m-%d' ) and drcw.clearing_state = 2) AJ,
+		(select IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as byml,IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as bydeyh,IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as byxsxj,IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as byys from 
+			(select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+			) drcw 
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m' ) = DATE_FORMAT(#{searchDate} , '%Y-%m' ) and drcw.clearing_state = 2) AY,
+		(select IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as bnml,IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as bndeyh,IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as bnxsxj,IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as bnys from 
+			(select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select zero_amount,fixed_discount,consumption_amount,amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+			) drcw 
+		where DATE_FORMAT(drcw.clearing_time, '%Y' ) = DATE_FORMAT(#{searchDate} , '%Y' ) and drcw.clearing_state = 2) AN
+   </select>
+   <select id="selectBusinessStatisticsDateSk" parameterType="String" resultType="map">
+   		select t1.bnsum,t2.bysum,t3.jsum,t4.znsum,t1.cw_code,t1.zfname from 
+   		(select  IFNULL(sum(cast(docw.conversion_amount as DECIMAL(18,2))),0) as bnsum,docw.cw_code,dsw.name as zfname from 
+	   		(select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway
+			 union all
+			 select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway_${tableDate} 
+			) docw 
+   		left join dg_settlement_way dsw on docw.cw_code = dsw.number
+		left join 
+			(select id,clearing_state from dg_reception_clearing_water
+			 union all
+			 select id,clearing_state from dg_reception_clearing_water_${tableDate} 
+			)drcw on docw.cw_id = drcw.id
+   		where DATE_FORMAT(docw.cw_time, '%Y') = DATE_FORMAT(#{searchDate},'%Y') and drcw.clearing_state &lt;&gt; 3 group by docw.cw_code) t1 
+    	left join
+    	(select IFNULL(sum(cast(docw.conversion_amount as DECIMAL(18,2))),0) as bysum,docw.cw_code from 
+    		(select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway
+			 union all
+			 select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway_${tableDate} 
+			) docw 
+		left join 
+			(select id,clearing_state from dg_reception_clearing_water
+			 union all
+			 select id,clearing_state from dg_reception_clearing_water_${tableDate} 
+			)drcw on docw.cw_id = drcw.id
+		where DATE_FORMAT(docw.cw_time, '%Y-%m') = DATE_FORMAT(#{searchDate} , '%Y-%m') and drcw.clearing_state &lt;&gt; 3 group by docw.cw_code)  t2
+    	on t1.cw_code = t2.cw_code 
+    	left join
+    	(select IFNULL(sum(cast(docw.conversion_amount as DECIMAL(18,2))),0) as jsum,docw.cw_code from 
+    		(select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway
+			 union all
+			 select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway_${tableDate} 
+			) docw  
+		left join 
+			(select id,clearing_state from dg_reception_clearing_water
+			 union all
+			 select id,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw on docw.cw_id = drcw.id
+		where DATE_FORMAT(docw.cw_time, '%Y-%m-%d') = DATE_FORMAT(#{searchDate},'%Y-%m-%d') and drcw.clearing_state &lt;&gt; 3 group by docw.cw_code)  t3
+    	on t1.cw_code = t3.cw_code 
+    	left join
+    	(select IFNULL(sum(cast(docw.conversion_amount as DECIMAL(18,2))),0) as znsum,docw.cw_code from 
+    		(select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway
+			 union all
+			 select conversion_amount,cw_code,cw_id,cw_time from dg_ow_clearingway_${tableDate} 
+			) docw  
+		left join 
+			(select id,clearing_state from dg_reception_clearing_water
+			 union all
+			 select id,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw on docw.cw_id = drcw.id
+		where DATE_FORMAT(docw.cw_time, '%Y-%m-%d') = DATE_SUB(#{searchDate},INTERVAL 1 DAY) and drcw.clearing_state &lt;&gt; 3 group by docw.cw_code)  t4
+    	on t1.cw_code = t4.cw_code 
+   </select>
+   <select id="selectBusinessStatisticsDateRj" parameterType="String" resultType="map">
+    	select CZ.*,CJ.*,CY.*,CN.* from
+    		(select IFNULL(sum(dow.people_count),0) as zrp from 
+	    		(select people_count,first_time,ow_state from dg_open_water
+				 union all
+				 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+				) dow 
+			where DATE_FORMAT(dow.first_time, '%Y-%m-%d') = DATE_SUB(#{searchDate}, INTERVAL 1 DAY) and dow.ow_state in (2,6)) CZ,
+    	    (select IFNULL(sum(dow.people_count),0) as jrp from 
+	    		(select people_count,first_time,ow_state from dg_open_water
+				 union all
+				 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+				) dow 
+    	    where DATE_FORMAT(dow.first_time, '%Y-%m-%d') = DATE_FORMAT(#{searchDate}, '%Y-%m-%d') and dow.ow_state in (2,6)) CJ,
+    	    (select IFNULL(sum(dow.people_count),0) as byp from 
+    	    	(select people_count,first_time,ow_state from dg_open_water
+				 union all
+				 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+				) dow 
+    	    where DATE_FORMAT(dow.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate}, '%Y-%m') and dow.ow_state in (2,6)) CY,
+    	    (select IFNULL(sum(dow.people_count),0) as bnp from 
+	    		(select people_count,first_time,ow_state from dg_open_water
+				 union all
+				 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+				) dow 
+    	    where DATE_FORMAT(dow.first_time, '%Y') = DATE_FORMAT(#{searchDate}, '%Y') and dow.ow_state in (2,6)) CN
+   </select>
+   <!--营业统计月报表-->
+   <select id="selectBusinessStatisticsMonth" parameterType="String" resultType="map">
+    	select Bby.*,Sy.*,Snty.*,Byp.*,Syp.*,Sntyp.*
+    	,IFNULL(cast((byys - syys)/syys*100 as DECIMAL(18,4)),0) as sbypercent 
+    	,IFNULL(cast((byys - sntyys)/sntyys*100 as DECIMAL(18,4)),0) as snbypercent
+    	,IFNULL(cast((byp - syp)/syp*100 as DECIMAL(18,4)),0) as sbyrpercent 
+    	,IFNULL(cast((byp - sntyp)/sntyp*100 as DECIMAL(18,4)),0) as snbyrpercent  
+    	,IFNULL(cast(byys/byp as DECIMAL(18,2)),0) as byrjxf  
+    	,IFNULL(cast(syys/syp as DECIMAL(18,2)),0) as syrjxf  
+    	,IFNULL(cast(sntyys/sntyp as DECIMAL(18,2)),0) as snbyrjxf  
+    	,IFNULL(cast(byys/30 as DECIMAL(18,2)),0) as byrj 
+    	,IFNULL(cast(syys/30 as DECIMAL(18,2)),0) as sbyrj 
+    	,IFNULL(cast(sntyys/30 as DECIMAL(18,2)),0) as snbyrj 
+    	from 
+		(select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as byys from 
+			(select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw 
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m' ) = DATE_FORMAT(#{searchDate} , '%Y-%m' ) and drcw.clearing_state = 2) Bby,
+		(select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as syys from 
+			(select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw 
+		where PERIOD_DIFF(date_format(#{searchDate},'%Y%m'),date_format(drcw.clearing_time, '%Y%m')) = 1 and drcw.clearing_state = 2) Sy,
+		(select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as sntyys from 
+			(select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			 union all
+			 select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw 
+		where PERIOD_DIFF(date_format(#{searchDate},'%Y%m'),date_format(drcw.clearing_time, '%Y%m')) = 12 and drcw.clearing_state = 2) Snty,
+		(select IFNULL(sum(dow.people_count),0) as byp from 
+			(select people_count,first_time,ow_state from dg_open_water
+			 union all
+			 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+			) dow 
+		where DATE_FORMAT(dow.first_time, '%Y-%m' ) = DATE_FORMAT(#{searchDate} , '%Y-%m' ) and dow.ow_state in (2,6)) Byp,
+    	(select IFNULL(sum(dow.people_count),0) as syp from 
+    		(select people_count,first_time,ow_state from dg_open_water
+			 union all
+			 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+			) dow 
+    	where PERIOD_DIFF(date_format(#{searchDate},'%Y%m'),date_format(dow.first_time, '%Y%m')) = 1 and dow.ow_state in (2,6)) Syp,
+    	(select IFNULL(sum(dow.people_count),0) as sntyp from 
+			(select people_count,first_time,ow_state from dg_open_water
+			 union all
+			 select people_count,first_time,ow_state from dg_open_water_${tableDate} 
+			) dow 
+    	where PERIOD_DIFF(date_format(#{searchDate},'%Y%m'),date_format(dow.first_time, '%Y%m')) = 12 and dow.ow_state in (2,6)) Sntyp
+   </select>
+   
+   <!--营业统计周报表-->
+   <select id="selectBusinessStatisticsWeek" parameterType="Map" resultType="map">
+    	select Byz.*,Syz.*,Byr.*,Syr.*
+    	,IFNULL(cast((byz - syz)/syz*100 as DECIMAL(18,4)),0) as yypercent 
+    	,IFNULL(cast((byp - syp)/syp*100 as DECIMAL(18,4)),0) as rrpercent  
+    	,IFNULL(cast(byz/byp as DECIMAL(18,2)),0) as bwjxf  
+    	,IFNULL(cast(syz/syp as DECIMAL(18,2)),0) as swjxf  
+    	,IFNULL(cast(byz/30 as DECIMAL(18,2)),0) as byrj 
+    	,IFNULL(cast(syp/30 as DECIMAL(18,2)),0) as sbyrj 
+    	from 
+		(select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as byz from 
+			(select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			    <foreach collection="bTableDateList" item="bTableDate" separator=" union all" open="union all">
+			        select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${bTableDate}
+			    </foreach>
+			 ) drcw
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d' ) <![CDATA[>=]]> #{bStartDate} and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d' ) <![CDATA[<=]]> #{bEndDate}  and drcw.clearing_state = 2) Byz,
+		(select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as syz from 
+			(select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water
+			    <foreach collection="sTableDateList" item="sTableDate" separator=" union all" open="union all">
+			        select amounts_receivable,clearing_time,clearing_state from dg_reception_clearing_water_${sTableDate}
+			    </foreach>
+			 ) drcw
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d' ) <![CDATA[>=]]> #{sStartDate} and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d' ) <![CDATA[<=]]> #{sEndDate} and drcw.clearing_state = 2) Syz,
+		(select IFNULL(sum(dow.people_count),0) as byp from 
+			(select people_count,first_time from dg_open_water
+			    <foreach collection="bTableDateList" item="bTableDate" separator=" union all" open="union all">
+			        select people_count,first_time from dg_open_water_${bTableDate}
+			    </foreach>
+			 ) dow
+		where DATE_FORMAT(dow.first_time, '%Y-%m-%d' ) <![CDATA[>=]]> #{bStartDate} and DATE_FORMAT(dow.first_time, '%Y-%m-%d' ) <![CDATA[<=]]> #{bEndDate} ) Byr,
+    	(select IFNULL(sum(dow.people_count),0) as syp from 
+    		(select people_count,first_time from dg_open_water
+			    <foreach collection="sTableDateList" item="sTableDate" separator=" union all" open="union all">
+			        select people_count,first_time from dg_open_water_${sTableDate}
+			    </foreach>
+			 ) dow
+    	where DATE_FORMAT(dow.first_time, '%Y-%m-%d' ) <![CDATA[>=]]> #{sStartDate} and DATE_FORMAT(dow.first_time, '%Y-%m-%d' ) <![CDATA[<=]]> #{sEndDate} ) Syr
+   </select>
+   
+   <!--区域开台人均-->
+   <select id="selectRegionalOpenBill" parameterType="String" resultType="map">
+    	select t1.*,t2.*
+    	,IFNULL(cast(byitemcount/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjitemcount
+    	,IFNULL(cast(bysummoney/sum(dow.people_count) as DECIMAL(18,2)),0) as bysj 
+    	,IFNULL(cast(bysummoney/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjsummoney
+    	from 
+		(select count(1) as byopenCount,
+			IFNULL(sum(dow.people_count),0) as bypeopleCount,
+			IFNULL(cast(select sum(dwcw1.amounts_receivable) from dg_reception_clearing_water dwcw1 where 
+				dwcw1.id in (select dwcw.id
+			    from dg_reception_clearing_water dwcw left join
+				dg_open_water on dow2.clearing_water_id = dwcw.id LEFT JOIN 
+				dg_consumer_seat seat2 ON dow2.seat_id = seat2.id
+				WHERE dow1.ow_state IN (2, 6) LEFT JOIN 
+				t_b_bis tbb2 on dow2.open_bis = tbb2.bis_name
+				AND DATE_FORMAT(dow2.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate}, '%Y-%m') 
+				<if test="tbBis != null and  tbBis != ''">
+					and tbb2.id = #{tbBis}
+				</if>
+				AND seat2.cons_area = seat.cons_area group by dwcw.id))
+			    as DECIMAL(18,2)),0) as bysummoney,
+			(select sum(docd1.item_file_number) 
+				FROM dg_open_water dow1
+					LEFT JOIN dg_consumer_seat seat1 ON dow1.seat_id = seat1.id
+					LEFT JOIN dg_consumption_area dca1 ON seat1.cons_area = dca1.id
+					LEFT JOIN dg_ow_service_form dosf1 ON dosf1.ow_id = dow1.id
+					LEFT JOIN dg_ow_consumer_details docd1 ON docd1.ow_id = dosf1.id 
+					LEFT JOIN t_b_bis tbb1 on dow1.open_bis = tbb1.bis_name
+					WHERE dow1.ow_state IN (2, 6)
+					AND DATE_FORMAT(dow1.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate}, '%Y-%m') 
+					<if test="tbBis != null and  tbBis != ''">
+						and tbb1.id = #{tbBis}
+					</if>
+					AND seat1.cons_area = seat.cons_area) as byitemcount,
+			(select count(*) from dg_consumer_seat seatc where seatc.del_flag = 0 and seatc.cons_area = seat.cons_area) as seatCount,
+			IFNULL(cast(count(1)/((select count(*) from dg_consumer_seat seatc where seatc.del_flag = 0 and seatc.cons_area = seat.cons_area)*2*30)*100 as DECIMAL(18,2)),0) as byktl,
+			IFNULL(cast(count(1)/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjopenCount,
+			IFNULL(cast(sum(dow.people_count)/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjpeopleCount,
+			seat.cons_area as cons_area,
+			dca.name as areaName
+			from dg_open_water dow left join 
+			dg_consumer_seat seat on dow.seat_id = seat.id left join 
+			dg_consumption_area dca on seat.cons_area = dca.id left join 
+			t_b_bis tbb on dow.open_bis = tbb.bis_name
+			where dow.ow_state in (2,6) and  DATE_FORMAT(dow.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate},'%Y-%m') 
+			<if test="tbBis != null and  tbBis != ''">
+				and tbb.id = #{tbBis}
+			</if>
+			group by seat.cons_area) t1 left JOIN
+		(select count(1) as jropenCount,
+			IFNULL(sum(dow.people_count),0) as jrpeopleCount,
+			IFNULL(cast(select sum(dwcw1.amounts_receivable) from dg_reception_clearing_water dwcw1 where 
+				dwcw1.id in (select dwcw.id
+			    from dg_reception_clearing_water dwcw left join
+				dg_open_water on dow2.clearing_water_id = dwcw.id LEFT JOIN 
+				dg_consumer_seat seat2 ON dow2.seat_id = seat2.id
+				WHERE dow1.ow_state IN (2, 6) LEFT JOIN 
+				t_b_bis tbb2 on dow2.open_bis = tbb2.bis_name
+				AND DATE_FORMAT(dow2.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate}, '%Y-%m') 
+				<if test="tbBis != null and  tbBis != ''">
+					and tbb2.id = #{tbBis}
+				</if>
+				AND seat2.cons_area = seat.cons_area group by dwcw.id))
+			    as DECIMAL(18,2)),0)  as jrsummoney,
+			(select sum(docd1.item_file_number) 
+				FROM dg_open_water dow1
+				LEFT JOIN dg_consumer_seat seat1 ON dow1.seat_id = seat1.id
+				LEFT JOIN dg_consumption_area dca1 ON seat1.cons_area = dca1.id
+				LEFT JOIN dg_ow_service_form dosf1 ON dosf1.ow_id = dow1.id
+				LEFT JOIN dg_ow_consumer_details docd1 ON docd1.ow_id = dosf1.id
+				LEFT JOIN t_b_bis tbb1 on dow1.open_bis = tbb1.bis_name
+				WHERE dow1.ow_state IN (2, 6)
+				AND DATE_FORMAT(dow1.first_time, '%Y-%m-%d') = DATE_FORMAT(#{searchDate}, '%Y-%m-%d') AND seat1.cons_area = seat.cons_area 
+				<if test="tbBis != null and  tbBis != ''">
+					and tbb1.id = #{tbBis}
+			    </if>  ) as jritemcount,
+     		IFNULL(cast(sum(dwcw.amounts_receivable)/sum(dow.people_count) as DECIMAL(18,2)),0) as jrsj,
+			IFNULL(cast(count(1)/((select count(*) from dg_consumer_seat seatc where seatc.del_flag = 0 and seatc.seat_type = seat.seat_type)*2*30)*100 as DECIMAL(18,2)),0) as jrktl,
+			seat.cons_area as cons_area
+			from dg_open_water dow left join 
+    		dg_reception_clearing_water dwcw on dow.clearing_water_id = dwcw.id  left join 
+			dg_consumer_seat seat on dow.seat_id = seat.id left join 
+			t_b_bis tbb on dow.open_bis = tbb.bis_name
+			where dow.ow_state in (2,6) and  DATE_FORMAT(dow.first_time, '%Y-%m-%d') = #{searchDate} 
+			<if test="tbBis != null and  tbBis != ''">
+				and tbb.id = #{tbBis}
+			</if>
+			group by seat.cons_area) t2 on t1.cons_area = t2.cons_area
+   </select>
+   
+   
+   <!--区域开台人均-->
+   <select id="selectRegionalOpenAnalysisBill" parameterType="String" resultType="map">
+    	select t1.*,t2.* from 
+		(select count(1) as byopenCount,
+			IFNULL(sum(dow.people_count),0) as bypeopleCount,
+			IFNULL(cast(sum(dwcw.amounts_receivable) as DECIMAL(18,2)),0) as bysummoney,
+			(select sum(docd1.item_file_number) 
+				FROM dg_open_water dow1
+					LEFT JOIN dg_consumer_seat seat1 ON dow1.seat_id = seat1.id
+					LEFT JOIN dg_consumption_area dca1 ON seat1.cons_area = dca1.id
+					LEFT JOIN dg_ow_service_form dosf1 ON dosf1.ow_id = dow1.id
+					LEFT JOIN dg_ow_consumer_details docd1 ON docd1.ow_id = dosf1.id 
+					LEFT JOIN t_b_bis tbb1 on dow1.open_bis = tbb1.bis_name
+					WHERE dow1.ow_state IN (2, 6)
+					AND DATE_FORMAT(dow1.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate}, '%Y-%m') 
+					<if test="tbBis != null and  tbBis != ''">
+						and tbb1.id = #{tbBis}
+					</if>
+					AND seat1.cons_area = seat.cons_area AND tbb1.id = tbb.id) as byitemcount,
+			(select count(*) from dg_consumer_seat seatc where seatc.del_flag = 0 and seatc.cons_area = seat.cons_area) as seatCount,
+     		IFNULL(cast(sum(dwcw.amounts_receivable)/sum(dow.people_count) as DECIMAL(18,2)),0) as bysj,
+			IFNULL(cast(sum(dwcw.amounts_receivable)/(select count(*) from dg_consumer_seat seatc where seatc.del_flag = 0 and seatc.cons_area = seat.cons_area) as DECIMAL(18,2)),0) as byzjxf,
+			IFNULL(cast(count(1)/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjopenCount,
+			IFNULL(cast(sum(dow.people_count)/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjpeopleCount,
+			IFNULL(cast(sum(dwcw.amounts_receivable)/CONVERT(DATE_FORMAT(#{searchDate}, '%d'),SIGNED) as DECIMAL(18,2)),0) as rjsummoney,
+			seat.cons_area as cons_area,
+			dca.name as areaName,
+			tbb.bis_name as bisName,
+			tbb.id as tbbId
+			from dg_open_water dow left join 
+    		dg_reception_clearing_water dwcw on dow.clearing_water_id = dwcw.id  left join 
+			dg_consumer_seat seat on dow.seat_id = seat.id left join 
+			dg_consumption_area dca on seat.cons_area = dca.id left join 
+			t_b_bis tbb on dow.open_bis = tbb.bis_name
+			where dow.ow_state in (2,6) and  DATE_FORMAT(dow.first_time, '%Y-%m') = DATE_FORMAT(#{searchDate},'%Y-%m') 
+			<if test="tbBis != null and  tbBis != ''">
+				and tbb.id = #{tbBis}
+			</if>
+			group by seat.cons_area,tbb.id) t1 left JOIN
+		(select count(1) as jropenCount,
+			IFNULL(sum(dow.people_count),0) as jrpeopleCount,
+			IFNULL(cast(sum(dwcw.amounts_receivable) as DECIMAL(18,2)),0) as jrsummoney,
+			(select sum(docd1.item_file_number) 
+				FROM dg_open_water dow1
+				LEFT JOIN dg_consumer_seat seat1 ON dow1.seat_id = seat1.id
+				LEFT JOIN dg_consumption_area dca1 ON seat1.cons_area = dca1.id
+				LEFT JOIN dg_ow_service_form dosf1 ON dosf1.ow_id = dow1.id
+				LEFT JOIN dg_ow_consumer_details docd1 ON docd1.ow_id = dosf1.id
+				LEFT JOIN t_b_bis tbb1 on dow1.open_bis = tbb1.bis_name
+				WHERE dow1.ow_state IN (2, 6)
+				AND DATE_FORMAT(dow1.first_time, '%Y-%m-%d') = DATE_FORMAT(#{searchDate}, '%Y-%m-%d') AND seat1.cons_area = seat.cons_area AND tbb1.id = tbb.id
+				<if test="tbBis != null and  tbBis != ''">
+					and tbb1.id = #{tbBis}
+				</if>) as jritemcount,
+     		IFNULL(cast(sum(dwcw.amounts_receivable)/sum(dow.people_count) as DECIMAL(18,2)),0) as jrsj,
+			IFNULL(cast(sum(dwcw.amounts_receivable)/(select count(*) from dg_consumer_seat seatc where seatc.del_flag = 0 and seatc.seat_type = seat.seat_type) as DECIMAL(18,2)),0) as jrzjxf,
+			seat.cons_area as cons_area,
+			tbb.id as tbbId
+			from dg_open_water dow left join 
+    		dg_reception_clearing_water dwcw on dow.clearing_water_id = dwcw.id  left join 
+			dg_consumer_seat seat on dow.seat_id = seat.id left join 
+			t_b_bis tbb on dow.open_bis = tbb.bis_name
+			where dow.ow_state in (2,6) and  DATE_FORMAT(dow.first_time, '%Y-%m-%d') = #{searchDate} 
+			<if test="tbBis != null and  tbBis != ''">
+				and tbb.id = #{tbBis}
+			</if>
+			group by seat.cons_area,tbb.id) t2 on (t1.cons_area = t2.cons_area and t1.tbbId = t2.tbbId)
+   </select>
+
+	<select id="selectAllPayWay" resultType="com.yqsh.diningsys.web.model.archive.DgSettlementWay">
+		select id,number,name from dg_settlement_way where delFlag = '0'
+	</select>
+
+</mapper>

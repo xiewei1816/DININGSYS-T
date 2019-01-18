@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysMenu" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="menu_name" property="menuName" jdbcType="VARCHAR" />
+    <result column="menu_url" property="menuUrl" jdbcType="VARCHAR" />
+    <result column="menu_code" property="menuCode" jdbcType="VARCHAR" />
+    <result column="menu_state" property="menuState" jdbcType="VARCHAR" />
+    <result column="menu_order" property="menuOrder" jdbcType="INTEGER" />
+    <result column="menu_icon" property="menuIcon" jdbcType="VARCHAR" />
+    <result column="menu_type" property="menuType" jdbcType="INTEGER" />
+    <result column="menu_parent_name" property="parentName" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, parent_id, menu_name, menu_url, menu_code, menu_state, menu_order, menu_icon, 
+    menu_type
+  </sql>
+  <select id="selectAllMenu" resultMap="BaseResultMap">
+    select c.*,p.menu_name as menu_parent_name from sys_menu p right join (
+      select
+      <include refid="Base_Column_List" />
+      from sys_menu
+    ) c on c.parent_id = p.id
+  </select>
+  <select id="selectAllMenuWithOutSelf" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu where id != #{id,jdbcType=INTEGER} and menu_type = 'default'
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select c.*,p.menu_name as menu_parent_name from sys_menu p right join (
+    select
+    <include refid="Base_Column_List" />
+    from sys_menu
+    where id = #{id,jdbcType=INTEGER}
+    ) c on c.parent_id = p.id
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from sys_menu
+    where id = #{id,jdbcType=INTEGER}
+    <if test="ids != null">
+      or id in
+      <foreach collection="ids" item="idd" separator="," open="(" close=")">
+        #{idd,jdbcType=INTEGER}
+      </foreach>
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysMenu" >
+    insert into sys_menu ( parent_id, menu_name,
+      menu_url, menu_code, menu_state, 
+      menu_order, menu_icon, menu_type
+      )
+    values (#{parentId,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR},
+      #{menuUrl,jdbcType=VARCHAR}, #{menuCode,jdbcType=VARCHAR}, #{menuState,jdbcType=VARCHAR}, 
+      #{menuOrder,jdbcType=INTEGER}, #{menuIcon,jdbcType=VARCHAR}, #{menuType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.SysMenu" >
+    insert into sys_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="menuName != null" >
+        menu_name,
+      </if>
+      <if test="menuUrl != null and menuUrl != ''" >
+        menu_url,
+      </if>
+      <if test="menuCode != null" >
+        menu_code,
+      </if>
+      <if test="menuState != null" >
+        menu_state,
+      </if>
+      <if test="menuOrder != null" >
+        menu_order,
+      </if>
+      <if test="menuIcon != null" >
+        menu_icon,
+      </if>
+      <if test="menuType != null" >
+        menu_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="menuName != null" >
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null and menuUrl != ''" >
+        #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuCode != null" >
+        #{menuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="menuState != null" >
+        #{menuState,jdbcType=VARCHAR},
+      </if>
+      <if test="menuOrder != null" >
+        #{menuOrder,jdbcType=INTEGER},
+      </if>
+      <if test="menuIcon != null" >
+        #{menuIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuType != null" >
+        #{menuType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysMenu" >
+    update sys_menu
+    <set >
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="menuName != null" >
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null and menuUrl != ''" >
+        menu_url = #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuCode != null" >
+        menu_code = #{menuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="menuState != null" >
+        menu_state = #{menuState,jdbcType=VARCHAR},
+      </if>
+      <if test="menuOrder != null" >
+        menu_order = #{menuOrder,jdbcType=INTEGER},
+      </if>
+      <if test="menuIcon != null" >
+        menu_icon = #{menuIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="menuType != null" >
+        menu_type = #{menuType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysMenu" >
+    update sys_menu
+    set parent_id = #{parentId,jdbcType=INTEGER},
+      menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_url = #{menuUrl,jdbcType=VARCHAR},
+      menu_code = #{menuCode,jdbcType=VARCHAR},
+      menu_state = #{menuState,jdbcType=VARCHAR},
+      menu_order = #{menuOrder,jdbcType=INTEGER},
+      menu_icon = #{menuIcon,jdbcType=VARCHAR},
+      menu_type = #{menuType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="modifyMenuState" parameterType="map">
+    update sys_menu
+    set
+      menu_state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectNextOrderByMenuId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select max(menu_order) as maxOrder from sys_menu where parent_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--用户登录获取功能权限-->
+  <select id="selectLoginUserDutiesPermission" parameterType="map" resultType="SysMenu">
+    select * from sys_role_menu srm
+    left join sys_menu sm on srm.menu_id = sm.id
+    where srm.role_code = #{empDuties,jdbcType=VARCHAR} and sm.menu_state = 1
+  </select>
+
+  <select id="selectLoginUserFunPermission" parameterType="map" resultType="SysMenu">
+    select distinct * from sys_role_menu rm LEFT join sys_menu m on rm.menu_id = m.id where rm.role_id in
+    <foreach collection="ids" open="(" close=")" separator="," item="id">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+    and m.menu_state = 'enable' and m.menu_type = 'button'
+  </select>
+
+  <!--查询后台管理模块菜单-->
+  <select id="selectLoginUserMenuPermission" parameterType="map" resultType="SysMenu">
+    select sm.* from sys_menu sm RIGHT join sys_role_menu srm on sm.id = srm.menu_id where sm.id in (
+    <foreach collection="list" item="id" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+    ) and srm.role_code = #{empDuties,jdbcType=VARCHAR} order by sm.parent_id,sm.menu_order
+  </select>
+
+  <select id="selectDeleteIdByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select c.id from (
+    	select * from sys_menu where FIND_IN_SET(id, queryChildrenMenu(#{id,jdbcType=INTEGER}))
+    ) c
+  </select>
+
+  <select id="selectRoleByMenuId" parameterType="java.lang.Integer" resultType="SysRoleMenu">
+    SELECT * from sys_role_menu where menu_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectBaseMenu" resultType="SysMenu">
+  select * from sys_menu
+  </select>
+
+  <select id="getSysSecMenuTree" resultType="SysMenu" parameterType="java.lang.Integer">
+  select * from sys_menu where parent_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getSysOpeMenuTree" resultType="SysMenu" parameterType="java.lang.Integer">
+  select * from sys_menu where parent_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectSysPerLevelOneData" resultType="SysMenu">
+  select * from sys_menu where parent_id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getAllBakcgroudMenu" resultType="SysMenu" parameterType="map">
+    select * from sys_menu where id in (
+    <foreach collection="list" item="id" separator=",">
+        #{id,jdbcType=INTEGER}
+    </foreach>
+    )
+  </select>
+
+  <select id="getUserMenu" resultType="SysMenu" parameterType="map">
+      select * from sys_menu sm right join sys_role_menu srm on sm.id = srm.menu_id
+      where srm.role_code = #{empDuties,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getAllDeskMenu" resultType="SysMenu" parameterType="map">
+    select * from sys_menu where id in (
+    <foreach collection="list" item="id" separator=",">
+        #{id,jdbcType=INTEGER}
+    </foreach>
+    )
+  </select>
+
+  <select id="selectDutiesMenu" parameterType="map" resultType="SysRoleMenu">
+    select role_code as roleCode,menu_id as menuId from sys_role_menu where role_code = #{dutiesCode,jdbcType=VARCHAR} and menu_id = #{menuId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="delDutiesMenu" parameterType="map">
+    <!--delete from sys_role_menu where role_code = #{dutiesCode,jdbcType=VARCHAR} and menu_id in
+      (
+      <foreach collection="list" item="id" separator=",">
+          #{id,jdbcType=INTEGER}
+      </foreach>
+      )-->
+    delete from sys_role_menu where role_code = #{dutiesCode,jdbcType=VARCHAR} and menu_id = #{menuId}
+  </delete>
+  
+  <insert id="insertDutiesMenu" parameterType="map">
+    <!--insert into sys_role_menu VALUES
+      <foreach collection="list" item="id" open="(" close=")" separator="),(">
+          #{dutiesCode,jdbcType=VARCHAR},#{id,jdbcType=INTEGER}
+      </foreach>-->
+    insert into sys_role_menu VALUES(#{dutiesCode,jdbcType=VARCHAR},#{menuId,jdbcType=INTEGER},uuid())
+  </insert>
+
+    <select id="getMenuByRootId" parameterType="map" resultType="java.lang.String">
+        select queryMenuInfo(#{rootId,jdbcType=INTEGER})
+    </select>
+
+    <select id="getClienMenuByRootId" parameterType="map" resultType="java.lang.String">
+        select queryClienMenuList(#{rootId,jdbcType=INTEGER})
+    </select>
+
+    <select id="getBtnsByRootId" parameterType="map" resultType="java.lang.String">
+        select queryClienBtnList(#{rootId,jdbcType=INTEGER})
+    </select>
+
+    <select id="selectUserReceptionMenu" parameterType="map" resultType="SysMenu">
+      select sm2.*,case when A.role_code is null then 0 else 1 end as permissionFlag from (
+        select sm.*,srm.role_code from sys_role_menu srm
+        right join sys_menu sm on srm.menu_id = sm.id
+        where role_code = #{empDuties,jdbcType=VARCHAR} or role_code is null
+        order by menu_order
+      )A right join(select * from sys_menu where id in (
+      <foreach collection="list" item="id" separator=",">
+        #{id,jdbcType=INTEGER}
+      </foreach>
+      )) sm2 on A.id = sm2.id
+        <!--select sm.* from sys_role_menu srm
+        left join sys_menu sm on srm.menu_id = sm.id
+        where srm.role_code = #{empDuties,jdbcType=VARCHAR}
+        and srm.menu_id in (
+          <foreach collection="list" item="id" separator=",">
+              #{id,jdbcType=INTEGER}
+          </foreach>
+        ) order by menu_order-->
+    </select>
+
+  <select id="selectCheckPermission" resultType="com.yqsh.diningsys.web.model.SysRoleMenu" parameterType="map">
+    select * from sys_role_menu where role_code = #{dutiesCode} and menu_id = #{menuId}
+  </select>
+
+  <select id="selectMenuByMenuCode" resultType="com.yqsh.diningsys.web.model.SysMenu">
+    select * from sys_menu where menu_code = #{menuCode}
+  </select>
+</mapper>

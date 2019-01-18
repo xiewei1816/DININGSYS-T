@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.ServiceClassMapper" >
+	<sql id="selectCols">
+		o.id AS "id",
+		o.eatTimeId AS "eatTimeId",
+		o.seatId AS "seatId",
+		o.waiterId AS "waiterId",
+		o.createTime AS "createTime",
+		o.createUserid AS "createUserid",
+		o.delFlag AS "delFlag",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		bb.id AS "eatTime.id",
+		bb.bis_name AS "eatTime.bisName",
+		cs.id AS "seat.id",
+		cs.number AS "seat.number",
+		cs.name AS "seat.name",
+		be.id AS "waiter.id",
+		be.emp_name AS "waiter.empName"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.createUserid
+		left join t_b_bis bb on bb.id = o.eatTimeId
+		left join dg_consumer_seat cs on cs.id = o.seatId
+		left join sys_user be on be.id = o.waiterId
+	</sql>
+	
+	<sql id="queryCriteria">
+		and o.delFlag = 0
+		and cs.del_flag = 0
+		<if test="eatTimeId != null and eatTimeId != 0">
+          and o.eatTimeId = #{eatTimeId}
+        </if>
+        <if test="seatId != null and seatId != 0">
+          and o.seatId = #{seatId}
+        </if>
+        <if test="waiterId != null and waiterId != 0">
+          and o.waiterId = #{waiterId}
+        </if>
+        <if test="crStartTime != null and crStartTime != '' ">
+         and o.createTime > #{crStartTime}
+        </if>
+        <if test="crEndTime != null and crEndTime != '' ">
+         and o.createTime <![CDATA[
+			<
+         ]]> #{crEndTime}
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="ServiceClass" parameterType="ServiceClass">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_service_class o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.createTime desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="ServiceClass">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_service_class o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getServiceClassByID" parameterType="ServiceClass" resultType="ServiceClass">
+		select 
+			<include refid="selectCols"></include>
+		from dg_service_class o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="ServiceClass" resultType="ServiceClass">
+		select 
+			<include refid="selectCols"></include>
+		from dg_service_class o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.createTime desc
+	</select>
+    <select id="selectDataByBisIdAndSeatId" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.ServiceClass">
+		select * from dg_service_class where eatTimeId = #{bisId,jdbcType=INTEGER} and seatId = #{seatId,jdbcType=INTEGER} ORDER BY id desc LIMIT 0,1
+	</select>
+
+    <insert id="newInsert" parameterType="ServiceClass">
+  	insert into dg_service_class(
+		eatTimeId,
+		seatId,
+		waiterId,
+		createTime,
+		createUserid,
+		delFlag
+  	) values (
+  		#{eatTimeId},
+		#{seatId},
+		#{waiterId},
+		now(),
+		#{createUserid},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="ServiceClass">
+  	update dg_service_class set 
+		eatTimeId = #{eatTimeId},
+		seatId = #{seatId},
+		waiterId = #{waiterId}
+	where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="ServiceClass">
+	delete from dg_service_class where id in
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">
+	  #{ids}
+	 </foreach> 
+	</delete>
+</mapper>

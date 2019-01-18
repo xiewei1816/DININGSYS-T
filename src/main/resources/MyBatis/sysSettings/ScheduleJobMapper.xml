@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.sysSettings.ScheduleJobMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.sysSettings.ScheduleJob" >
+    <result column="jobid" property="jobid" jdbcType="VARCHAR" />
+    <result column="createtime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="jobname" property="jobname" jdbcType="VARCHAR" />
+    <result column="jobgroup" property="jobgroup" jdbcType="VARCHAR" />
+    <result column="jobstatus" property="jobstatus" jdbcType="VARCHAR" />
+    <result column="cronexpression" property="cronexpression" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="beanclass" property="beanclass" jdbcType="VARCHAR" />
+    <result column="isconcurrent" property="isconcurrent" jdbcType="VARCHAR" />
+    <result column="springid" property="springid" jdbcType="VARCHAR" />
+    <result column="methodname" property="methodname" jdbcType="VARCHAR" />
+    <result column="delflag" property="delflag" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.sysSettings.ScheduleJob" >
+    insert into schedule_job(
+    	jobid,
+		createtime,
+		updatetime,
+		jobname,
+		jobgroup,
+		jobstatus,
+		cronexpression,
+		description,
+		beanclass,
+		isconcurrent,
+		springid,
+		methodname
+    ) values (
+    	UUID(),
+    	#{createtime,jdbcType=TIMESTAMP}, 
+    	#{updatetime,jdbcType=TIMESTAMP}, 
+    	#{jobname,jdbcType=VARCHAR},
+    	#{jobgroup,jdbcType=VARCHAR},
+    	0, 
+    	#{cronexpression,jdbcType=VARCHAR}, 
+    	#{description,jdbcType=VARCHAR},
+    	#{beanclass,jdbcType=VARCHAR},
+    	0, 
+    	#{springid,jdbcType=VARCHAR}, 
+    	#{methodname,jdbcType=VARCHAR}
+    )
+  </insert>
+  <select id="findAllScheduleJob" resultType="ScheduleJob" parameterType="java.lang.String">
+    select * from schedule_job where delflag = 0
+    <if test="_parameter != null and _parameter != ''">
+    	AND jobname like CONCAT('%',#{jobname,jdbcType=VARCHAR},'%' )
+    </if>
+  </select>
+  <select id="selectById" resultType="ScheduleJob" parameterType="java.lang.String" >
+    select * from schedule_job where jobid = #{jobid,jdbcType=VARCHAR}
+  </select>
+  <update id="updateById" parameterType="com.yqsh.diningsys.web.model.sysSettings.ScheduleJob" >
+    update schedule_job set 
+    	createtime = #{createtime,jdbcType=TIMESTAMP},
+		updatetime = #{updatetime,jdbcType=TIMESTAMP},
+		jobname = #{jobname,jdbcType=VARCHAR},
+		jobgroup = #{jobgroup,jdbcType=VARCHAR},
+		jobstatus = #{jobstatus,jdbcType=VARCHAR},
+		cronexpression = #{cronexpression,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		beanclass = #{beanclass,jdbcType=VARCHAR},
+		isconcurrent = #{isconcurrent,jdbcType=VARCHAR},
+		springid = #{springid,jdbcType=VARCHAR},
+		methodname = #{methodname,jdbcType=VARCHAR}
+    where jobid = #{jobid,jdbcType=VARCHAR}
+  </update>
+  <update id="deleteById" parameterType="java.lang.String">
+	update schedule_job set delflag = 1 where jobid = #{jobId,jdbcType=VARCHAR}
+  </update>
+</mapper>

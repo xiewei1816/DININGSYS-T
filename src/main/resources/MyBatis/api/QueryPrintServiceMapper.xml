@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.QueryPrintMapper" >
+    <!-- 根据团队编号查询团队成员 -->
+   <select id="selectTeamSeatMembersList" parameterType="map" resultType="map">
+	select
+	GROUP_CONCAT(b.number,'-',b.name) as teamMember
+	from 
+	dg_open_water a
+	inner join dg_consumer_seat b on b.id=a.seat_id
+	where a.team_members = #{teamMembers}
+   </select>
+
+  <!-- ***************************************** 当前客单 ***************************************** -->
+    <!-- 查询当前客单座位信息 -->
+   <select id="selectSeatAreaList" parameterType="map" resultType="map">
+  	select
+	a.`name` as seatName,
+	b.`name` as areaName,
+	a.seat_label as seatLabel
+	from dg_consumer_seat a
+	inner join dg_consumption_area b on b.id = a.cons_area
+	where a.id = #{seatId,jdbcType=INTEGER}
+   </select>
+  
+  <!-- 查询当前客单信息 -->
+  <select id="selectGuestList" parameterType="map" resultType="map">
+	select
+	a.id,
+	a.ow_num as owNum,
+	b.name as posName,<!-- 开单POS -->
+	DATE_FORMAT(a.first_time, '%Y-%m-%d %T') as firstTime,<!-- 开单时间 -->
+	a.people_count as peopleCount,<!-- 人数 -->
+	c.name as seatName,<!-- 原始客位 -->
+	d.emp_name as empName,<!-- 服务员 -->
+	<!-- 客户  -->
+	a.documents,<!-- 单据 -->
+	a.join_team_time as joinTeamTime,<!-- 更换客位时间 -->
+	a.yjd_print_num,<!-- 预接单打印次数 -->
+	a.kyd_print_num,<!-- 客用单打印次数 -->
+	a.team_members as teamMembers<!-- 团队号 -->
+	from 
+	dg_open_water a 
+	left join dg_pos b on b.id = a.open_pos
+	left join dg_consumer_seat c on c.id = a.seat_id 
+	left join sys_user d on d.id = a.waiter
+	<where>
+        <if test="owNum != null and owNum != ''">
+         and a.ow_num = #{owNum}
+        </if>
+        order by a.id
+    	</where>
+  </select>
+  
+  <!-- 查询当前客单信息下品项信息 -->
+  <select id="selectGuestItemFileList" parameterType="map" resultType="map">
+	select
+	d.num,       <!-- 代码 -->
+	d.name,      <!-- 品项 -->
+	d.gg,        <!-- 规格 -->
+	d.unit,      <!-- 单位 -->
+	c.item_final_price,  <!-- 价格 -->
+	c.discount,          <!-- 折让 -->
+	b.service_type,      <!-- 注 -->
+	c.item_file_number,    <!-- 数量 -->
+	c.item_file_zs,        <!-- 只数 -->
+	c.subtotal,            <!-- 小计 -->
+	c.serving_case as servingCase,<!-- 上菜情况 -->
+	c.guest <!-- 客座 -->
+	from dg_open_water a 
+	inner join dg_ow_service_form b on b.ow_id = a.id
+	inner join dg_ow_consumer_details c on c.ow_id = b.id
+	inner join dg_item_file d on d.id = c.item_file_id
+	<where>
+		d.delFlag = '0'
+        <if test="id != null and id != ''">
+         and a.id = #{id}
+        </if>
+    	</where>
+  </select>
+  
+  <!-- ***************************************** 核对单据 ***************************************** -->
+  <!-- 根据座位查询核对信息营业流水信息 -->
+    <select id="selectDocListOpenWater" resultType="map" parameterType="map">
+      SELECT
+      a.ow_num AS owNum,
+      a.people_count AS peopleCount,
+      a.first_time AS firstTime,
+      a.open_bis AS openBis,
+      a.cr_id AS crId,
+      a.ow_state AS owState,
+	  c.name AS posName,
+	  b.emp_name AS empName,
+	  d.name AS seatName
+	  FROM dg_open_water a
+	  LEFT JOIN sys_user b ON a.waiter = b.id
+	  LEFT JOIN dg_pos c ON a.open_pos = c.id
+	  LEFT JOIN dg_consumer_seat d ON a.seat_id = d.id
+	  WHERE a.seat_id = #{seatId,jdbcType=INTEGER}
+	  AND a.ow_state IN (1, 3, 8 ,9)
+  </select>
+   <!-- 查询核对单据客位信息 -->
+  <select id="selectCheckDocSeatList" parameterType="map" resultType="map">
+  	select
+	a.ow_num as owNum,
+	concat_ws('-',c.name,b.name) as seatName
+	from 
+	dg_open_water a 
+	inner join dg_consumer_seat b on b.id = a.seat_id
+	inner join dg_consumption_area c on c.id = b.cons_area
+	<where>
+        <if test="owNum != null and owNum != ''">
+         and a.ow_num = #{owNum}
+        </if>
+        order by a.id
+    </where>
+  </select>
+  <!-- 查询核对单据信息 -->
+  <select id="selectCheckDocList" parameterType="map" resultType="map">
+	select
+	a.id,<!-- 服务流水ID -->
+	a.service_type as serviceType,<!-- 1/开单客位自增品项 2/加单  3/赠单  4/退单 -->
+	a.service_num as serviceNum,<!-- 服务流水号 -->
+	b.open_bis as openBis,<!-- 市别 -->
+	<!-- 手工单号 -->
+	d.emp_name as empName,<!-- 点单员 -->
+	<!-- 点单员 -->
+	<!-- 授权员 -->
+	DATE_FORMAT(a.service_time, '%Y-%m-%d %T') as serviceTime,<!-- 时间 -->
+	c.`name` as serPos<!-- 服务POS -->
+	<!-- 串口厨打次数 -->
+	<!-- 串口厨打时间 -->
+	<!-- 并口厨打次数 -->
+	<!-- 并口厨打时间 -->
+	<!-- 打印服务厨打次数 -->
+	<!-- 打印服务厨打时间 -->
+	from dg_ow_service_form a 
+	left join dg_open_water b on b.id = a.ow_id	
+	left join dg_pos c on c.id = b.open_pos
+	left join sys_user d on d.id = a.waiter_id
+	<where>
+        <if test="owNum != null and owNum != ''">
+         and b.ow_num = #{owNum}
+        </if>
+        <!-- and b.ow_state not in (3) --> <!-- 3-埋单   -->
+        and a.waiter_id not in (0)
+        and a.service_type in (1,2,3,4) <!-- 1/开单客位自增品项 2/加单  3/赠单  4/退单 -->
+        order by a.id
+    	</where>
+  </select>
+
+  <!-- 查询当前核对单据信息下品项信息 -->
+  <select id="selectCheckItemFileList" parameterType="map" resultType="map">
+	select
+	d.name,      <!-- 品项 -->
+	c.item_final_price,  <!-- 价格 -->
+	c.item_file_number,    <!-- 数量 -->
+	c.item_file_zs,        <!-- 只数 -->
+	<!-- 注 -->
+	d.unit,      <!-- 单位 -->
+	c.production_costs,<!-- 制作费用 -->
+	c.subtotal            <!-- 小计 -->
+	from dg_open_water a 
+	inner join dg_ow_service_form b on b.ow_id = a.id
+	inner join dg_ow_consumer_details c on c.ow_id = b.id
+	inner join dg_item_file d on d.id = c.item_file_id
+	<where>
+		d.delFlag = '0'
+        <if test="sfId != null and sfId != ''"> 	
+         and b.id = #{sfId}
+        </if>
+    </where>
+  </select>
+	
+  <!-- ***************************************** 团队信息 ***************************************** -->
+  <!-- 查询团队信息 -->
+  <select id="selectTeamMembersList" parameterType="map" resultType="map">
+	select 
+	team_members as teamMembers <!-- 团队编号 -->
+	from dg_open_water a
+	where a.is_team = 1 and a.ow_state not in(2,6,7,-1)
+	group by team_members
+	order by team_members
+  </select>
+  <!-- 根据团队编号查询团队信息树形数据 -->
+  <select id="selectTeamBySeatNameList" parameterType="map" resultType="map">
+	select 
+	b.id,<!-- 客位编号 -->
+	concat_ws('-',b.number,b.name) as seatName, <!-- 成员（客位） -->
+	a.ow_num as owNum
+	from dg_open_water a
+	left join dg_consumer_seat b on b.id = a.seat_id
+	where a.team_members = #{teamMembers}
+	and a.is_team &lt;&gt; 0
+  </select>
+  <!-- 根据客位编号查询团队信息 -->
+  <select id="selectTeamList" parameterType="map" resultType="map">
+	select 
+	a.team_members as teamMembers, <!-- 团队编号 -->
+	concat_ws('-',b.number,b.name) as seatName, <!-- 成员 -->
+	a.ow_num as owNum, <!-- 营业流水 -->
+	a.people_count as peopleCount, <!-- 人数 -->
+	a.join_team_notes as joinTeamNotes, <!-- 加入团队 -->
+	a.subtotal, <!-- 消费金额 -->
+	DATE_FORMAT(a.first_time, '%m-%d %T') as firstTime, <!-- 开单时间 -->
+	a.ow_state as owState, <!-- 状态 此字段前端做判断用 -->
+	a.ow_state as closeBill,<!-- 关账 -->
+	DATE_FORMAT(a.join_team_time, '%m-%d %T') as joinTeamTime <!-- 加入团队/转账时间 -->
+	from dg_open_water a
+	inner join dg_consumer_seat b on b.id = a.seat_id
+	<where>
+        <if test="seatId != null and seatId != ''">
+         and a.seat_id = #{seatId}  <!-- 根据客位编号 -->
+        </if>
+        <if test="teamMembers != null and teamMembers != ''">
+         and a.team_members = #{teamMembers}  <!-- 根据团队编号 -->
+        </if>
+        <if test="owNum != null and owNum != ''">
+         and a.ow_num = #{owNum}  <!-- 营业流水号 -->
+        </if>
+    </where>
+    and  a.is_team &lt;&gt; 0
+	  and a.ow_state not in (2,6,7,-1)
+	order by a.team_members
+  </select>
+  <!-- 根据营业流水号查询营业单信息 -->
+  <select id="getTeamMembersList" parameterType="map" resultType="map">
+	select 
+	open_pos as openPos, <!-- 开单POS -->
+	is_team as isTeam, <!-- 开单默认为0，代表不是团队。1为团队 -->
+	seat_id as seatId, <!-- 自身客位id -->
+	transfer_target as transferTarget <!-- 该营业流水转账的营业流水号 -->
+	from dg_open_water
+	where ow_num = #{owNum}
+  </select>
+  <!-- 根据营业流水号退出团队 -->
+  <update id="updWaterJoinTeamNotes" parameterType="map" >
+	update dg_open_water set 
+		is_team = #{isTeam},
+		team_main_seat = #{teamMainSeat}, 
+		team_members = #{teamMembers}
+	where ow_num = #{owNum}
+  </update>
+  <!--  ************************************* 撤销转账  ********************************** -->
+  <!-- 根据撤销转账营业流水号更改客位状态为占用 -->
+   <update id="updRepealWaterSeatState" parameterType="map" >
+	UPDATE dg_consumer_seat a
+	SET a.seat_state = 2 <!-- 客位状态。1空闲、2占用、3清扫、4预定、5埋单 -->
+	WHERE
+		a.id = (
+			SELECT
+				seat_id
+			FROM
+				dg_open_water b
+			WHERE
+				b.ow_num = #{owNum}
+		)
+  </update>
+    <!-- 根据撤销转账营业流水号更改该营业流水的【转账的营业流水号 、转账备注、转账时间-->
+   <update id="updRepealWaterManyTeam" parameterType="map" >
+	   update dg_open_water set
+	   is_team = 0, <!-- 设置撤销转账营业流水为团队 开单默认为0，代表不是团队。1为团队 -->
+	   seat_id = #{seatId},
+	   ow_state = 1,
+	   transfer_target = null,
+	   join_team_notes = null,
+	   join_team_time = null,
+	   team_members = #{newTeamNum},
+	   team_main_seat = #{seatId}
+	   where ow_num = #{owNum}
+  </update>
+   <!-- 根据撤销转账营业流水号更改该营业流水主营业流水下客位数量-1-->
+   <update id="updRepealWaterSeatAmount" parameterType="map" >
+	update dg_open_water set seat_amount = seat_amount - 1
+	where ow_num = #{owNum} <!-- 主营业流水 -->
+  </update>
+
+	<update id="updateOldSeatState">
+		update dg_consumer_seat set seat_state = 2,last_open_time = now() where id = #{oldSeatId}
+	</update>
+
+	<update id="updateOpenWaterNonTeam">
+		update dg_open_water set is_team = 0 where ow_num = #{owNum}
+	</update>
+
+	<!-- ***************************************** 转账流水查询 ***************************************** -->
+  <!-- 查询转入、转出转账流水信息 -->
+  <select id="selectIntoOrOutOpenWaterList" parameterType="map" resultType="map">
+	select 
+	a.id,
+	concat_ws('-',b.number,b.name) as seatName, <!-- 客位 -->
+	a.ow_num as owNum, <!-- 营业流水 -->
+	DATE_FORMAT(a.first_time, '%Y-%m-%d %T') as firstTime,<!-- 开单时间 -->
+	concat_ws('-',c.number,c.name) as openPos, <!-- 开单POS -->
+	<!-- 以下为非表格数据 -->
+	a.people_count as peopleCount, <!-- 人数 -->
+	e.emp_name as waiter, <!-- 服务员 -->
+	<!-- 客户 -->
+	a.documents, <!-- 单据 -->
+    a.ow_notes as owNotes, <!-- 整单备注 -->
+	a.team_members as teamMembers, <!-- 团队成员 -->
+	f.cw_num as cwNum <!-- 结算流水 -->
+	from dg_open_water a
+	left join dg_consumer_seat b on b.id = a.seat_id
+	left join dg_pos c on c.id = a.open_pos
+	left join dg_consumption_area d on d.id = b.cons_area
+	left join sys_user e on e.id = a.waiter 
+	left join dg_reception_clearing_water f on f.id = a.clearing_water_id
+	<where>
+	    <if test="expArea != null and expArea != ''">
+			and d.id = #{expArea} <!-- 消费区域 -->
+		</if>
+		<if test="clientSeat != null and clientSeat != ''">
+			and b.id = #{clientSeat} <!-- 客位 -->
+		</if>
+		<if test="owNum != null and owNum != ''">
+			and a.ow_num = #{owNum} <!-- 营业流水号 -->
+		</if>
+        <if test="joinTeamNotes == 1">
+        	and a.join_team_notes = '加入团队' <!-- 转入 -->
+        </if>
+        <if test="joinTeamNotes == 2">
+         	and a.join_team_notes = '转账' <!-- 转出 -->
+        </if>
+    </where>
+	order by a.id
+  </select>
+    <select id="selectIntoOrOutItemFileList" parameterType="map" resultType="map">
+	select
+	d.num,       <!-- 代码 -->
+	d.name,      <!-- 品项 -->
+	d.gg,        <!-- 规格 -->
+	d.unit,      <!-- 单位 -->
+	c.item_final_price,  <!-- 价格 -->
+	c.discount,          <!-- 折让 -->
+	<!-- 注 -->
+	c.item_file_number,    <!-- 数量 -->
+	c.item_file_zs,        <!-- 只数 -->
+	c.subtotal,            <!-- 小计 -->
+	c.serving_case as servingCase,<!-- 上菜情况 -->
+	c.guest <!-- 客座 -->
+	from dg_open_water a 
+	inner join dg_ow_service_form b on b.ow_id = a.id
+	inner join dg_ow_consumer_details c on c.ow_id = b.id
+	inner join dg_item_file d on d.id = c.item_file_id
+	<where>
+		d.delFlag = '0'
+        <if test="owNum != null and owNum != ''">
+         and a.ow_num = #{owNum}
+        </if>
+    	</where>
+  </select>
+  
+  <!-- ***************************************** 已结账单***************************************** -->
+  <!-- 查询结算流水信息+翻台账单查询 -->
+  <select id="selectClearingList" parameterType="map" resultType="map">
+	select
+	a.cw_num as cwNum, <!-- 结算流水 -->
+	c.name as seatName, <!-- 客位 -->
+	DATE_FORMAT(a.clearing_time, '%Y-%m-%d %T') as clearingTime, <!-- 结算时间 -->
+	b.ow_num as owNum <!-- 营业流水 -->
+	from dg_reception_clearing_water a
+	left join dg_open_water b on b.clearing_water_id = a.id
+	left join dg_consumer_seat c on c.id = b.seat_id 
+	left join dg_consumption_area d on d.id = c.cons_area
+	<where>
+        <if test="seatId != null and seatId != ''">
+         and c.id = #{seatId} <!-- 客位 -->
+        </if>
+        <if test="openBis != null and openBis != ''">
+         and b.open_bis = #{openBis} <!-- 市别 -->
+        </if>
+        <if test="consArea != null and consArea != ''">
+         and c.cons_area = #{consArea} <!-- 消费区域 -->
+        </if>
+        <if test="firstTime != null and firstTime != ''">
+         and b.first_time between '${firstTime} 00:00:00' and '${firstTime} 23:59:59' <!-- 翻台账单查询条件 - 营业时间 -->
+        </if>
+    </where>
+    order by a.cw_num
+  </select>
+  
+  <!-- 根据结算流水查询结算流水基本信息 -->
+  <select id="selectClearingBaseList" parameterType="map" resultType="map">
+	select
+	a.cw_num as cwNum, <!-- 结算流水 -->
+	a.consumption_amount as consumptionAmount, <!-- 消费金额 -->
+	a.zero_amount as zeroAmount, <!-- 抹零金额 -->
+	a.fixed_discount as fixedDiscount, <!-- 定额优惠 -->
+	a.paid_amount as paidAmount, <!-- 实收金额 -->
+	a.change_amount as changeAmount, <!-- 找零金额 -->
+	DATE_FORMAT(a.clearing_time, '%Y-%m-%d %T') as clearingTime, <!-- 结算时间 -->
+	c.bis_name as clearingBis, <!-- 结算市别 -->
+	a.clearing_operator as clearingOperator, <!-- 结算操作员 -->
+	concat_ws('-',d.number,d.name) as clearingPos, <!-- 结算POS -->
+	a.print_cont as printCont, <!-- 打印次数 -->
+	a.invoicing, <!-- 开具发票 -->
+	a.zero_settlement as zeroSettlement, <!-- 零结算 -->
+	a.retro_documents as retroDocuments, <!-- 补录单据 -->
+	a.statement_label as statementLabel, <!-- 结账单标注 -->
+	a.coupon_amount as couponAmount<!-- 赠券金额 -->
+	FROM dg_reception_clearing_water a
+	INNER JOIN dg_open_water b ON b.clearing_water_id = a.id
+	INNER JOIN t_b_bis c ON c.id = a.clearing_bis
+	INNER JOIN dg_pos d ON d.id = a.clearing_pos
+	where a.cw_num = #{cwNum} <!-- 结算流水号 -->
+    group by a.id
+  </select>
+  
+  <!-- 根据结算流水查询营业流水基本信息 -->
+  <select id="selectOpenWaterBaseList" parameterType="map" resultType="map">
+	select
+	a.id,
+	a.ow_num as owNum, <!-- 营业流水 -->
+	c.name as seatName, <!-- 客位 -->
+	a.people_count as peopleCount, <!-- 人数 -->
+	a.item_costs_sum as itemCostsSum, <!-- 品项费 -->
+	a.discount_costs as discountCosts, <!-- 优惠 -->
+	a.service_charge as serviceCharge, <!-- 服务费 -->
+	a.private_room_cost as privateRoomCost, <!-- 包房费 -->
+	a.minimum_consumption as minimumConsumption, <!-- 最低消费 -->
+	a.minimum_charge_complete as minimumChargeComplete, <!-- 最低消费补齐 -->
+	a.subtotal <!-- 小计 -->
+	from dg_open_water a
+	left join dg_reception_clearing_water b on b.id = a.clearing_water_id
+	left join dg_consumer_seat c on c.id = a.seat_id
+	where b.cw_num = #{cwNum}  <!-- 结算流水号 -->
+    order by a.ow_num
+  </select>
+  
+  <!-- 根据营业流水ID查询 -->
+  <!-- 结算方式 -->
+  <select id="selectClearingWayBaseList" parameterType="map" resultType="map">
+ 	select 
+	b.name as typeName, <!-- 结算方式 -->
+	a.settlement_amount as settlementAmount, <!-- 金额 -->
+	a.conversion_amount as conversionAmount, <!-- 换算金额 -->
+	a.notes <!-- 备注 -->
+	from dg_ow_clearingway a
+	inner join dg_settlement_way b on b.number = a.cw_code
+	inner join dg_open_water c on c.clearing_water_id = a.cw_id
+	and c.id = #{id} <!-- 营业流水ID -->
+  </select>
+  <!-- 消费明细 -->
+  <!-- selectGuestItemFileList -->
+  <!-- 优惠信息 -->
+  
+  <!-- 发票信息 -->
+  <select id="selectReceiptFileList" parameterType="map" resultType="map">
+ 	select
+	b.receipt_count, <!-- 发票张数 -->
+	b.receipt_denomination, <!-- 发票面额 -->
+	b.receipt_amount, <!-- 发票金额 -->
+	b.receipt_num, <!-- 发票号码 -->
+	b.notes <!-- 备注 -->
+	from dg_open_water a
+	inner join dg_ow_receipt b on b.cw_id = a.clearing_water_id
+	and a.id = #{id} <!-- 营业流水ID -->
+  </select>
+
+	<!-- 未结算品项 -->
+	<select id="getNoBalenceDataList" resultType="map">
+		select a.item_file_id,a.item_file_number,a.subtotal,a.item_final_price,i.num,i.name,i.unit,
+		(select name from dg_consumer_seat where id = d.seat_id) as tablename,
+		d.ow_num,d.people_count,DATE_FORMAT(d.first_time, '%m-%d %T') as first_time,
+		(select name from dg_pos where id = d.open_pos) as posname,
+		(select emp_name from sys_user where id = d.waiter) as waiter
+		from dg_ow_consumer_details a
+		join dg_ow_service_form b on b.id = a.ow_id
+		join dg_open_water d on d.id = b.ow_id
+		join dg_item_file i on i.id = a.item_file_id
+		where i.delFlag = '0' and  b.ow_id in (select id from dg_open_water where ow_state in (1,3,4,5,8,9)) and a.item_file_number > 0
+		order by d.first_time
+	</select>
+</mapper>

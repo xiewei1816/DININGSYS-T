@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.DgCashPledgeMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgCashPledge" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ow_num" property="owNum" jdbcType="VARCHAR" />
+    <result column="cp_type" property="cpType" jdbcType="VARCHAR" />
+    <result column="cp_currency" property="cpCurrency" jdbcType="VARCHAR" />
+    <result column="cp_money" property="cpMoney" jdbcType="DOUBLE" />
+    <result column="conver_money" property="converMoney" jdbcType="DOUBLE" />
+    <result column="reg_time" property="regTime" jdbcType="TIMESTAMP" />
+    <result column="ref_info" property="refInfo" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="print_number" property="printNumber" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    a.id,a.ow_num,a.cp_type,b.cName as cpCurrency,a.cp_money,a.conver_money,a.reg_time,a.ref_info,a.remark,a.print_number
+  </sql> 
+
+ <insert id="regMoney" parameterType="DgCashPledge">
+  	insert into dg_cash_pledge(
+		ow_num,
+		cp_type,
+		cp_currency,
+		cp_money,
+		conver_money,
+		reg_time,
+		ref_info,
+		remark
+  	) values (
+  		#{owNum},
+		#{cpType},
+		#{cpCurrency},
+		#{cpMoney},
+		#{converMoney},
+		#{regTime},
+		#{refInfo},
+		#{remark}
+  	)
+  </insert>
+  
+  <update id="updateCashPledge" parameterType="DgCashPledge">
+  	update dg_cash_pledge a set 
+  		ow_num = #{owNum},
+  		cp_type = #{cpType},
+  		cp_currency = #{cpCurrency},
+		cp_money = #{cpMoney},
+		conver_money = #{cpMoney},
+		reg_time = #{regTime},
+		ref_info = #{refInfo},
+		remark = #{remark}
+	where a.ow_num = #{owNum} and a.cp_type = #{cpType}
+  </update>
+  
+  <select id="selectCashPledge" parameterType="DgCashPledge" resultType="DgCashPledge">
+		select 
+		<include refid="Base_Column_List"></include>
+		from dg_cash_pledge a
+		left join dg_public_code0 b on b.id = a.cp_currency
+		<where>
+			<if test="owNum != null and owNum != ''">
+	         and a.ow_num = #{owNum}
+	        </if>
+	        <if test="cpType != null and cpType != ''">
+	         and a.cp_type = #{cpType}
+	        </if>
+	    </where>
+	</select>
+	
+  <update id="updetePrintNumber" parameterType="DgCashPledge">
+	update dg_cash_pledge o set o.print_number = print_number + 1 where o.ow_num = #{owNum}
+	</update>
+</mapper>

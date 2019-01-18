@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgSpeciallyBusinessMapper" >
+	<sql id="selectCols">
+		o.id AS "id",
+		o.name AS "name",
+		o.businessId AS "businessId",
+		o.discountRate AS "discountRate",
+		o.isEditRate AS "isEditRate",
+		o.createTime AS "createTime",
+		o.createUserid AS "createUserid",
+		o.delFlag AS "delFlag",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		pc.id AS "business.cgpcid",
+		pc.cName AS "business.cname"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.createUserid
+		left join dg_public_code0 pc on pc.id = o.businessId
+	</sql>
+	
+	<sql id="queryCriteria">
+		and o.delFlag = 0
+        <if test="name != null and name != ''">
+         and o.name like '%${name}%'
+        </if>
+        <if test="checkName != null and checkName != ''">
+         and o.name like '%${checkName}%'
+        </if>
+        <if test="businessId != null and businessId != 0">
+          and o.businessId = #{businessId}
+        </if>
+        <if test="crStartTime != null and crStartTime != ''">
+         and o.createTime >= #{crStartTime}
+        </if>
+        <if test="crEndTime != null and crEndTime != '' ">
+         and o.createTime  <![CDATA[<]]> #{crEndTime}
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="DgSpeciallyBusiness" parameterType="DgSpeciallyBusiness">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_specially_business o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.createTime desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgSpeciallyBusiness">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_specially_business o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getDgSpeciallyBusinessByID" parameterType="DgSpeciallyBusiness" resultType="DgSpeciallyBusiness">
+		select 
+			<include refid="selectCols"></include>
+		from dg_specially_business o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="DgSpeciallyBusiness" resultType="DgSpeciallyBusiness">
+		select 
+			<include refid="selectCols"></include>
+		from dg_specially_business o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.createTime desc
+	</select>
+  
+  <insert id="newInsert" parameterType="DgSpeciallyBusiness">
+  	insert into dg_specially_business(
+		name,
+		businessId,
+		discountRate,
+		isEditRate,
+		createTime,
+		createUserid,
+		delFlag
+  	) values (
+		#{name},
+		#{businessId},
+		#{discountRate},
+		#{isEditRate},
+		#{createTime},
+		#{createUserid},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="DgSpeciallyBusiness">
+  	update dg_specially_business set 
+		name = #{name},
+		businessId = #{businessId},
+		discountRate = #{discountRate},
+		isEditRate = #{isEditRate}
+	where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="DgSpeciallyBusiness">
+	update dg_specially_business set delFlag = 1 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+</mapper>

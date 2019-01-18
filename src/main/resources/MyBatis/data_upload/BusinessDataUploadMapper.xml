@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.data_upload.BusinessDataUploadMapper">
+
+    <resultMap id="serviceForm" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwServiceForm">
+        <result jdbcType="INTEGER" property="id" column="id"/>
+        <result property="serviceNum" column="service_num" jdbcType="VARCHAR"/>
+        <result property="owId" column="ow_id" jdbcType="INTEGER"/>
+        <result property="waiterId" column="waiter_id" jdbcType="INTEGER"/>
+        <result property="servieTime" column="service_time" jdbcType="TIMESTAMP"/>
+        <result property="serviceRoundtrip" column="service_roundtrip" jdbcType="VARCHAR"/>
+        <result property="serviceType" column="service_type" jdbcType="INTEGER"/>
+        <result property="zdbz" column="zdbz" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectClearingWater" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        select drcw.*,#{shopKey} as shopKey
+         from dg_reception_clearing_water drcw
+        where drcw.cw_num is not null and drcw.clearing_time is not null
+        <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time > #{startTime}
+        </if>
+        order by drcw.clearing_time
+        limit #{startLimit},#{endLimit}
+    </select>
+
+    <select id="selectOpenWaterByCwId" parameterType="list" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+      select dow.*,DATE_FORMAT(dow.split_time,'%Y-%m-%d %H:%i:%s') as splitTime2 from dg_open_water dow where clearing_water_id IN
+      <foreach collection="list" item="item" separator="," close=")" open="(">
+          #{item.id}
+      </foreach>
+    </select>
+
+    <select id="selectLastUploadTime" parameterType="integer" resultType="string">
+        select time from sys_dataupload_log where type = #{type} order by time desc limit 0,1
+    </select>
+
+    <select id="selectServiceFormByOwId"
+            resultMap="serviceForm">
+        select id,service_num,ow_id,waiter_id,DATE_FORMAT(service_time,'%Y-%m-%d %H:%i:%S') as service_time,service_roundtrip,service_type,zdbz from dg_ow_service_form where ow_id in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.id}
+        </foreach>
+    </select>
+
+    <select id="selectOwConsumerDetails"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+      select * from dg_ow_consumer_details where ow_id in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.id}
+        </foreach>
+    </select>
+
+    <select id="selectCashPledge"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgCashPledge">
+        select * from dg_cash_pledge where ow_num in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.owNum}
+        </foreach>
+    </select>
+
+    <select id="selectDgOwRecepits"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwReceipt">
+        select * from dg_ow_receipt where cw_id in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.id}
+        </foreach>
+    </select>
+
+    <select id="selectCountClearingWater" resultType="java.lang.Integer">
+        select count(drcw.id) as shopKey
+        from dg_reception_clearing_water drcw
+        where drcw.cw_num is not null
+        <if test="startTime != null and startTime != ''">
+            and drcw.clearing_time > #{startTime}
+        </if>
+        order by drcw.clearing_time
+    </select>
+
+    <select id="selectDgOwClearingWay"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+        select * from dg_ow_clearingway where cw_id in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.id}
+        </foreach>
+    </select>
+
+    <select id="selectFwjsCwId"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        select cw_id as id,op_time as returnSettleTime from sys_fwjs_log
+        <where>
+            <if test="startTime != null and startTime != ''">
+                and op_time > #{startTime}
+            </if>
+        </where>
+        order by returnSettleTime
+    </select>
+
+    <select id="selectSBillOpenWater"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_state = 7
+        <if test="startTime != null and startTime != ''">
+            and handingsbill_time > #{startTime}
+        </if>
+        order by handingsbill_time
+    </select>
+
+    <select id="selectAuthCodeLogData" resultType="com.yqsh.diningsys.web.model.SysAuthorizationLog">
+        select * from sys_authorization_log
+        <where>
+            <if test="startTime != null and startTime != ''">
+                and auth_time > #{startTime}
+            </if>
+        </where>
+        order by auth_time
+    </select>
+
+    <select id="selectDiscountInfoByCwId"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDiscount">
+        select * from dg_ow_discount where cw_id in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.id}
+        </foreach>
+    </select>
+
+    <insert id="insertBusinessDataUploadLog" parameterType="SysDatauploadLog">
+        insert into sys_dataupload_log values(#{id},#{time},#{type})
+    </insert>
+
+</mapper>

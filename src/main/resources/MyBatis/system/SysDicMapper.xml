@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysDicMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysDic" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dic_name" property="dicName" jdbcType="VARCHAR" />
+    <result column="dic_code" property="dicCode" jdbcType="VARCHAR" />
+    <result column="dic_type" property="dicType" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dic_name, dic_code, dic_type, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_dic
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_dic
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysDic" >
+    insert into sys_dic ( dic_name, dic_code,
+      dic_type)
+    values ( #{dicName,jdbcType=VARCHAR}, #{dicCode,jdbcType=VARCHAR},
+      #{dicType,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.SysDic" >
+    insert into sys_dic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="dicName != null" >
+        dic_name,
+      </if>
+      <if test="dicCode != null" >
+        dic_code,
+      </if>
+      <if test="dicType != null" >
+        dic_type,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="dicName != null" >
+        #{dicName,jdbcType=VARCHAR},
+      </if>
+      <if test="dicCode != null" >
+        #{dicCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dicType != null" >
+        #{dicType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysDic" >
+    update sys_dic
+    <set >
+      <if test="dicName != null" >
+        dic_name = #{dicName,jdbcType=VARCHAR},
+      </if>
+      <if test="dicCode != null" >
+        dic_code = #{dicCode,jdbcType=VARCHAR},
+      </if>
+      <if test="dicType != null" >
+        dic_type = #{dicType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysDic" >
+    update sys_dic
+    set dic_name = #{dicName,jdbcType=VARCHAR},
+      dic_code = #{dicCode,jdbcType=VARCHAR},
+      dic_type = #{dicType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByPrimaryKeys" parameterType="list">
+    DELETE from sys_dic where id IN
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+  <select id="selectByConAndPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT * from sys_dic
+    <where>
+      <if test="sSearch != null and sSearch != ''">
+        dic_name like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or dic_code like '%'+#{sSearch,jdbcType=INTEGER}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or dic_type like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or convert(create_time,DATE) like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+    </where>
+    <if test="orderCol != null and orderCol != ''">
+      order by ${orderCol}  ${sSortDir_0}
+    </if>
+  </select>
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.util.Map" >
+    select 
+    sd.id, sd.dic_name, sd.dic_code, sd.dic_type, sd.create_time  
+    from sys_dic sd, sys_dic_type sdt where sd.dic_type=sdt.id and sdt.dic_type_code=#{dicTypeCode}
+  </select>
+</mapper>

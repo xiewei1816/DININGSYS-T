@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemDiscountProgrammeMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="recyclebin" property="recyclebin" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="allow_f_dis" property="allowFDis" jdbcType="INTEGER" />
+    <result column="disable" property="disable" jdbcType="INTEGER" />
+    <result column="date_limit" property="dateLimit" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="DATE" />
+    <result column="end_time" property="endTime" jdbcType="DATE" />
+    <result column="discount" property="discount" jdbcType="INTEGER" />
+    <result column="use_store_type" property="useStoreType" jdbcType="INTEGER" />
+    <result column="use_store" property="useStore" jdbcType="VARCHAR" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, recyclebin, code, name, type, allow_f_dis, disable, date_limit, start_time, end_time, 
+    discount, use_store_type, use_store,time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_discount_programme
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAllProgrammes" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_discount_programme
+    where recyclebin = 0
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_discount_programme
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" >
+    insert into dg_item_discount_programme (id, recyclebin, code, 
+      name, type, allow_f_dis, 
+      disable, date_limit, start_time, 
+      end_time, discount, use_store_type, 
+      use_store,time)
+    values (#{id,jdbcType=INTEGER}, #{recyclebin,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{allowFDis,jdbcType=INTEGER}, 
+      #{disable,jdbcType=INTEGER}, #{dateLimit,jdbcType=INTEGER}, #{startTime,jdbcType=DATE}, 
+      #{endTime,jdbcType=DATE}, #{discount,jdbcType=INTEGER}, #{useStoreType,jdbcType=INTEGER}, 
+      #{useStore,jdbcType=VARCHAR},#{time,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" >
+    insert into dg_item_discount_programme
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="recyclebin != null" >
+        recyclebin,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="allowFDis != null" >
+        allow_f_dis,
+      </if>
+      <if test="disable != null" >
+        disable,
+      </if>
+      <if test="dateLimit != null" >
+        date_limit,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="useStoreType != null" >
+        use_store_type,
+      </if>
+      <if test="useStore != null" >
+        use_store,
+      </if>
+       <if test="time != null" >
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="recyclebin != null" >
+        #{recyclebin,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="allowFDis != null" >
+        #{allowFDis,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        #{disable,jdbcType=INTEGER},
+      </if>
+      <if test="dateLimit != null" >
+        #{dateLimit,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=DATE},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=DATE},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=INTEGER},
+      </if>
+      <if test="useStoreType != null" >
+        #{useStoreType,jdbcType=INTEGER},
+      </if>
+      <if test="useStore != null" >
+        #{useStore,jdbcType=VARCHAR},
+      </if>
+       <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" >
+    update dg_item_discount_programme
+    <set >
+      <if test="recyclebin != null" >
+        recyclebin = #{recyclebin,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="allowFDis != null" >
+        allow_f_dis = #{allowFDis,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        disable = #{disable,jdbcType=INTEGER},
+      </if>
+      <if test="dateLimit != null" >
+        date_limit = #{dateLimit,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=DATE},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=DATE},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=INTEGER},
+      </if>
+      <if test="useStoreType != null" >
+        use_store_type = #{useStoreType,jdbcType=INTEGER},
+      </if>
+      <if test="useStore != null" >
+        use_store = #{useStore,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" >
+    update dg_item_discount_programme
+    set recyclebin = #{recyclebin,jdbcType=INTEGER},
+      code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      allow_f_dis = #{allowFDis,jdbcType=INTEGER},
+      disable = #{disable,jdbcType=INTEGER},
+      date_limit = #{dateLimit,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=DATE},
+      end_time = #{endTime,jdbcType=DATE},
+      discount = #{discount,jdbcType=INTEGER},
+      use_store_type = #{useStoreType,jdbcType=INTEGER},
+      use_store = #{useStore,jdbcType=VARCHAR},
+      time = #{time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+
+  
+  <select id="selectAllItemFile" parameterType="Map" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file 
+    <where>
+    	delFlag = 0
+   		<if test="yxdz == null">
+	    	and yxdz = 1
+	    </if>
+	    <if test="disable == null">
+	    	and id not in  (select item_id from dg_item_disable where 1=1) 
+	    </if>  
+ 		<if test="ids.size() > 0">
+ 			and id not in 
+		    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+		      #{id,jdbcType=INTEGER}
+		    </foreach>
+		</if>
+	 </where>
+  </select>
+  
+  
+   <select id="selectAllDgItemFile"  resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where  id not in (select item_id from dg_item_disable where 1=1) and delFlag=0
+  </select>
+  
+  
+  <select id="selectAllItemFileType" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType">
+    select a.* from dg_item_file_type a  where a.parent_id != 0 and a.id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+   <select id="selectHaveItem" parameterType="Map" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file  
+    <where>
+    	delFlag = 0
+   		<if test="yxdz == null">
+	    	and yxdz = 1
+	    </if>
+	    <if test="disable == null">
+	    	and id not in  (select item_id from dg_item_disable where 1=1) 
+	    </if> 
+        and id in
+	    <foreach collection="list" item="id" open="(" close=")" separator=",">
+	      #{id,jdbcType=INTEGER}
+	    </foreach>
+    </where>
+  </select>
+  
+  <select id="selectHaveItemType" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType">
+    select a.* from dg_item_file_type a 
+    where a.id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+  <select id="selectSmallItemFile" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file
+    <where>
+    	delFlag = 0
+   		<if test="yxdz == null">
+	    	and yxdz = 1
+	    </if>
+	    <if test="disable == null">
+	    	and id not in  (select item_id from dg_item_disable where 1=1) 
+	    </if>  
+ 		<if test="ids.size() > 0">
+ 			and id not in 
+		    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+		      #{id,jdbcType=INTEGER}
+		    </foreach>
+		</if>
+		and ppxl_id = #{ppxl_id,jdbcType=INTEGER}
+	 </where>
+  </select>
+  
+    <select id="selectSmallDgItemFile" parameterType="java.lang.Integer" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where ppxl_id = #{id,jdbcType=INTEGER}  and id not in (select item_id from dg_item_disable where 1=1) and delFlag=0
+  </select>
+  
+  
+  <select id="selectSmallItemFileType" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType">
+    select a.* from dg_item_file_type  a  where a.parent_id = #{parent_id,jdbcType=INTEGER} and a.id not in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach> 
+  </select>
+  
+  
+  <select id="selectBigItemFile" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file
+    <where>
+    	delFlag = 0
+   		<if test="yxdz == null">
+	    	and yxdz = 1
+	    </if>
+	    <if test="disable == null">
+	    	and id not in  (select item_id from dg_item_disable where 1=1) 
+	    </if> 
+ 		<if test="ids.size() > 0">
+ 			and id not in 
+		    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+		      #{id,jdbcType=INTEGER}
+		    </foreach>
+		</if>
+		and ppdl_id = #{ppdl_id,jdbcType=INTEGER}
+	 </where>
+  </select>
+  
+  
+  
+  <select id="selectBigDgItemFile" parameterType="java.lang.Integer" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where ppdl_id = #{ppdl_id,jdbcType=INTEGER}  and id not in (select item_id from dg_item_disable where 1=1) and delFlag = 0
+  </select>
+  
+  <insert id="insertBackId" useGeneratedKeys="true" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" keyProperty="id">
+    insert into dg_item_discount_programme (recyclebin, code,
+      name, type, allow_f_dis, 
+      disable, date_limit, start_time, 
+      end_time, discount, use_store_type, 
+      use_store,time)
+    values (#{recyclebin,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR},
+      #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{allowFDis,jdbcType=INTEGER}, 
+      #{disable,jdbcType=INTEGER}, #{dateLimit,jdbcType=INTEGER}, #{startTime,jdbcType=DATE}, 
+      #{endTime,jdbcType=DATE}, #{discount,jdbcType=INTEGER}, #{useStoreType,jdbcType=INTEGER}, 
+      #{useStore,jdbcType=VARCHAR},#{time,jdbcType=TIMESTAMP})
+  </insert>
+ 
+ 
+ 
+   <!-- 模糊查询 -->
+  <select id="searchVague" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file 
+	<where>
+		delFlag = 0
+   		<if test="yxdz == null">
+	    	and yxdz = 1
+	    </if>
+	    <if test="disable == null">
+	    	and id not in  (select item_id from dg_item_disable where 1=1) 
+	    </if>  
+	    <if test="search != null and search != ''">
+			and (num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))
+	    </if>
+	    <if test="pxPid != '-1' and pxPid != ''">
+	    	and (ppxl_id = #{pxPid} or ppdl_id = #{pxPid})
+	    </if>  
+	    <if test="ids.size() > 0">
+		    and id not in
+		    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+		      #{id,jdbcType=INTEGER}
+		    </foreach>
+	    </if>
+    </where>
+  </select>
+ 
+ 
+ 
+    <!-- 模糊查询 -->
+  <select id="search" parameterType="java.lang.String" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where delFlag = 0 and id not in (select item_id from dg_item_disable where 1=1) and (num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))
+  </select>
+  
+    <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_discount_programme where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+  
+  
+  
+  
+  <!-- 分页 -->
+  <select id="countAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" resultType="java.lang.Integer">
+    select count(id) from dg_item_discount_programme
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="code != null and code != ''">
+               	AND code = #{code,jdbcType=VARCHAR}
+        </if>
+        AND recyclebin = #{recyclebin,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="getAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_discount_programme
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="code != null and code != ''">
+        		AND code like CONCAT('%',#{code,jdbcType=VARCHAR},'%' )
+        </if>
+        AND recyclebin = #{recyclebin,jdbcType=INTEGER}
+     </where>
+    limit #{startRow},#{endRow}
+  </select>
+  
+  <update id="trash" parameterType="list" >
+    update dg_item_discount_programme
+    set  recyclebin = 1
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="restore" parameterType="list" >
+    update dg_item_discount_programme
+    set  recyclebin = 0
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <select id="reminder" resultType="Map">
+  	select a.id,a.name,TIMESTAMPDIFF(DAY,curdate(),a.end_time) as timeDiff
+  	from dg_item_discount_programme a where recyclebin = 0
+  </select>
+  
+  <select id="seleNameCode" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from dg_item_discount_programme
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND (name = #{name} or code = #{code})
+        </if>
+        <if test="id != null">
+        		AND id != #{id}
+        </if>
+     </where>
+  </select>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_discount_programme 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_discount_programme
+	    (
+		    id,recyclebin,code,name,type,allow_f_dis,disable,date_limit,
+		    start_time,end_time,discount,use_store_type,use_store,time
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.recyclebin">#{im.recyclebin},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.code">#{im.code},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.name">#{im.name},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.type">#{im.type},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.allow_f_dis">#{im.allow_f_dis},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.disable">#{im.disable},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.date_limit">#{im.date_limit},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.start_time">#{im.start_time},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.end_time">#{im.end_time},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.discount">#{im.discount},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.use_store_type">#{im.use_store_type},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.use_store">#{im.use_store},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.time">#{im.time}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

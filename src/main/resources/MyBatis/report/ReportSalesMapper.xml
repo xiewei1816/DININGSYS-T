@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.report.ReportSalesMapper" >
+
+   <select id="countSalesListByPage" resultType="integer" parameterType="Sales">
+	   select count(0) from (
+	   SELECT
+	   dif.name as itemFileName,
+	   sum(docd.subtotal) as total,
+	   sum(docd.item_file_number) as number,
+	   dif.standard_price as standardPrice,
+	   sum(docd.discount_money) as discountMoney,
+	   su.emp_name as marketingStaffName
+	   FROM
+	   (select id,waiter,clearing_water_id from dg_open_water
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,waiter,clearing_water_id from dg_open_water_${suffix}
+	   </foreach>
+	   ) dow
+
+	   LEFT JOIN
+	   (select id,clearing_time from dg_reception_clearing_water
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,clearing_time from dg_reception_clearing_water_${suffix}
+	   </foreach>
+	   ) drcw ON dow.clearing_water_id = drcw.id
+
+	   LEFT JOIN
+	   (select id,ow_id from dg_ow_service_form
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,ow_id from dg_ow_service_form_${suffix}
+	   </foreach>
+	   ) dosf ON dow.id = dosf.ow_id
+
+	   LEFT JOIN
+	   (select ow_id,item_file_id,item_file_number,discount_money,subtotal,notes from dg_ow_consumer_details
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select ow_id,item_file_id,item_file_number,discount_money,subtotal,notes from dg_ow_consumer_details_${suffix}
+	   </foreach>
+	   ) docd ON dosf.id = docd.ow_id
+	   LEFT JOIN dg_item_file dif ON docd.item_file_id = dif.id
+	   LEFT JOIN sys_user su ON dow.waiter = su.id
+	   WHERE
+	   dow.clearing_water_id IS NOT NULL
+	   AND docd.notes = 2
+	   <if test="ppxlIds != null and ppxlIds != ''">
+	   	   AND dif.ppxl_id in
+		   <foreach item="ids" index="index" collection="ppxlIds" open="(" separator="," close=")">
+			   #{ids}
+		   </foreach>
+	   </if>
+	   <if test="startTime != null and startTime != ''">
+		   AND drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+	   </if>
+	   <if test="endTime != null and endTime != ''">
+		   AND drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+	   </if>
+	   <if test="marketingStaff != null and marketingStaff != ''">
+		   AND dow.waiter = #{marketingStaff}
+	   </if>
+
+	   GROUP BY itemFileName
+	   ORDER BY total DESC
+	   ) tb
+    </select>
+
+   <select id="selectSalesListByPage" parameterType="Sales" resultType="Sales">
+	   SELECT
+	   dif.name as itemFileName,
+	   sum(docd.subtotal) as total,
+	   sum(docd.item_file_number) as number,
+	   dif.standard_price as standardPrice,
+	   sum(docd.discount_money) as discountMoney,
+	   su.emp_name as marketingStaffName
+	   FROM
+	   (select id,waiter,clearing_water_id from dg_open_water
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,waiter,clearing_water_id from dg_open_water_${suffix}
+	   </foreach>
+	   ) dow
+
+	   LEFT JOIN
+	   (select id,clearing_time from dg_reception_clearing_water
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,clearing_time from dg_reception_clearing_water_${suffix}
+	   </foreach>
+	   ) drcw ON dow.clearing_water_id = drcw.id
+
+	   LEFT JOIN
+	   (select id,ow_id from dg_ow_service_form
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,ow_id from dg_ow_service_form_${suffix}
+	   </foreach>
+	   ) dosf ON dow.id = dosf.ow_id
+
+	   LEFT JOIN
+	   (select ow_id,item_file_id,item_file_number,discount_money,subtotal,notes from dg_ow_consumer_details
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select ow_id,item_file_id,item_file_number,discount_money,subtotal,notes from dg_ow_consumer_details_${suffix}
+	   </foreach>
+	   ) docd ON dosf.id = docd.ow_id
+	   LEFT JOIN dg_item_file dif ON docd.item_file_id = dif.id
+	   LEFT JOIN sys_user su ON dow.waiter = su.id
+	   WHERE
+	   dow.clearing_water_id IS NOT NULL
+	   AND docd.notes = 2
+	   <if test="ppxlIds != null and ppxlIds != ''">
+		   AND dif.ppxl_id in
+		   <foreach item="ids" index="index" collection="ppxlIds" open="(" separator="," close=")">
+			   #{ids}
+		   </foreach>
+	   </if>
+	   <if test="startTime != null and startTime != ''">
+		   AND drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+	   </if>
+	   <if test="endTime != null and endTime != ''">
+		   AND drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+	   </if>
+	   <if test="marketingStaff != null and marketingStaff != ''">
+		   AND dow.waiter = #{marketingStaff}
+	   </if>
+
+	   GROUP BY itemFileName
+	   ORDER BY total DESC
+	   limit #{startRow},#{endRow}	
+   </select>
+
+   <select id="selectSalesReportList" parameterType="Sales" resultType="Sales">
+	   SELECT
+	   dif.name as itemFileName,
+	   sum(docd.subtotal) as total,
+	   sum(docd.item_file_number) as number,
+	   dif.standard_price as standardPrice,
+	   sum(docd.discount_money) as discountMoney,
+	   su.emp_name as marketingStaffName
+	   FROM
+	   (select id,waiter,clearing_water_id from dg_open_water
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,waiter,clearing_water_id from dg_open_water_${suffix}
+	   </foreach>
+	   ) dow
+
+	   LEFT JOIN
+	   (select id,clearing_time from dg_reception_clearing_water
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,clearing_time from dg_reception_clearing_water_${suffix}
+	   </foreach>
+	   ) drcw ON dow.clearing_water_id = drcw.id
+
+	   LEFT JOIN
+	   (select id,ow_id from dg_ow_service_form
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select id,ow_id from dg_ow_service_form_${suffix}
+	   </foreach>
+	   ) dosf ON dow.id = dosf.ow_id
+
+	   LEFT JOIN
+	   (select ow_id,item_file_id,item_file_number,discount_money,subtotal,notes from dg_ow_consumer_details
+	   <foreach collection="tableSuffixList" open="union all" separator="union all" item="suffix">
+		   select ow_id,item_file_id,item_file_number,discount_money,subtotal,notes from dg_ow_consumer_details_${suffix}
+	   </foreach>
+	   ) docd ON dosf.id = docd.ow_id
+	   LEFT JOIN dg_item_file dif ON docd.item_file_id = dif.id
+	   LEFT JOIN sys_user su ON dow.waiter = su.id
+	   WHERE
+	   dow.clearing_water_id IS NOT NULL
+	   AND docd.notes = 2
+	   <if test="ppxlIds != null and ppxlIds != ''">
+		   AND dif.ppxl_id in
+		   <foreach item="ids" index="index" collection="ppxlIds" open="(" separator="," close=")">
+			   #{ids}
+		   </foreach>
+	   </if>
+	   <if test="startTime != null and startTime != ''">
+		   AND drcw.clearing_time <![CDATA[>=]]> #{startTime,jdbcType=VARCHAR}
+	   </if>
+	   <if test="endTime != null and endTime != ''">
+		   AND drcw.clearing_time <![CDATA[<=]]> #{endTime,jdbcType=VARCHAR}
+	   </if>
+	   <if test="marketingStaff != null and marketingStaff != ''">
+		   AND dow.waiter = #{marketingStaff}
+	   </if>
+
+	   GROUP BY itemFileName
+	   ORDER BY total DESC
+   </select>
+
+</mapper>

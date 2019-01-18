@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.print.DgPrintDataMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.print.DgPrintData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="print_type" property="printType" jdbcType="VARCHAR" />
+    <result column="unique_identif" property="uniqueIdentif" jdbcType="VARCHAR" />
+    <result column="success" property="success" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.yqsh.diningsys.web.model.print.DgPrintData" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, print_type, unique_identif, success
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dg_print_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_print_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.print.DgPrintData" >
+    insert into dg_print_data (id, print_type, unique_identif, 
+      success, content)
+    values (#{id,jdbcType=INTEGER}, #{printType,jdbcType=VARCHAR}, #{uniqueIdentif,jdbcType=VARCHAR}, 
+      #{success,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.print.DgPrintData" >
+    insert into dg_print_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="printType != null" >
+        print_type,
+      </if>
+      <if test="uniqueIdentif != null" >
+        unique_identif,
+      </if>
+      <if test="success != null" >
+        success,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="printType != null" >
+        #{printType,jdbcType=VARCHAR},
+      </if>
+      <if test="uniqueIdentif != null" >
+        #{uniqueIdentif,jdbcType=VARCHAR},
+      </if>
+      <if test="success != null" >
+        #{success,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.print.DgPrintData" >
+    update dg_print_data
+    <set >
+      <if test="printType != null" >
+        print_type = #{printType,jdbcType=VARCHAR},
+      </if>
+      <if test="uniqueIdentif != null" >
+        unique_identif = #{uniqueIdentif,jdbcType=VARCHAR},
+      </if>
+      <if test="success != null" >
+        success = #{success,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yqsh.diningsys.web.model.print.DgPrintData" >
+    update dg_print_data
+    set print_type = #{printType,jdbcType=VARCHAR},
+      unique_identif = #{uniqueIdentif,jdbcType=VARCHAR},
+      success = #{success,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.print.DgPrintData" >
+    update dg_print_data
+    set print_type = #{printType,jdbcType=VARCHAR},
+      unique_identif = #{uniqueIdentif,jdbcType=VARCHAR},
+      success = #{success,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <select id="getCount" resultType="java.lang.Integer">
+    select  count(*) 
+    from dg_print_data 
+    where  success = 0 order by id
+   </select>
+   
+   
+   <select id="selectOwNumByServiceId" resultType="java.lang.String" parameterType="java.lang.Integer">
+    select  a.ow_num
+    from dg_open_water a left join dg_ow_service_form b on a.id = b.ow_id 
+    where  b.id = #{owId,jdbcType=INTEGER}
+   </select>
+   
+   
+   <select id="getFirstItem" resultType="com.yqsh.diningsys.web.model.print.DgPrintData">
+    select    
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dg_print_data 
+    where  success = 0 order by id limit 1
+   </select>
+   
+   <select id="selePrintItem" resultType="Map" parameterType="java.lang.Integer">
+     select  b.item_file_id,b.item_file_number,a.unit,b.item_final_price,b.is_tc as isTc,
+     a.name as name,a.num as num,
+     b.subtotal,a.ppdl_id as ppdl_id,a.ppxl_id as ppxl_id from
+     dg_item_file a left join dg_ow_consumer_details b on
+     a.id = b.item_file_id left join dg_item_file_type c on a.ppdl_id = c.id left join
+     dg_item_file_type d on a.ppxl_id = d.id where b.ow_id = #{owId,jdbcType=INTEGER}
+   </select>
+   
+   <select id="getPrintOwServiceInfo" resultType="Map" parameterType="java.lang.Integer">
+     select c.name as seatName,date_format(b.service_time,'%Y-%m-%d %H:%i:%s') as time,a.ow_num as owNum,d.name as consumerName,
+     d.id as consumerId, b.service_num as serviceNum, b.service_type as serviceType, concat(su.emp_code,'-',su.emp_name) as empName,ifnull(b.zdbz,'无') as zdbz from dg_open_water a left join dg_ow_service_form b on a.id = b.ow_id
+     left join dg_consumer_seat c on a.seat_id = c.id left join dg_consumption_area d on c.cons_area = d.id
+     left join sys_user su on b.waiter_id = su.id
+     where b.id = #{owId,jdbcType=INTEGER}
+   </select>
+   
+   <select id="getPrintOwServiceInfoByWaterId" resultType="Map" parameterType="java.lang.Integer">
+     select d.id as consumerId from dg_open_water a 
+     left join dg_consumer_seat c on a.seat_id = c.id 
+     left join dg_consumption_area d on c.cons_area = d.id
+     where a.id = #{owId,jdbcType=INTEGER}
+   </select>
+   
+   
+   <select id="selePrintItemByReminder" resultType="Map" parameterType="java.util.List">
+	     select  b.item_file_id,b.item_file_number,a.unit,b.item_final_price,
+	     a.name as name,a.num as num,b.reminder_number,b.ow_id,
+	     b.subtotal,a.ppdl_id as ppdl_id,a.ppxl_id as ppxl_id from
+	     dg_item_file a left join dg_ow_consumer_details b on
+	     a.id = b.item_file_id left join dg_item_file_type c on a.ppdl_id = c.id left join
+	     dg_item_file_type d on a.ppxl_id = d.id where 
+	     <foreach collection="list" item="item" open="" close="" separator="or">
+		      (b.ow_id = #{item.serviceId,jdbcType=INTEGER} and b.item_file_id = #{item.itemFileId,jdbcType=INTEGER})
+	     </foreach>
+   </select>
+   
+   <select id="getPrintWaterInfo" resultType="Map" parameterType="java.lang.Integer">
+     select  a.ow_num,b.name,date_format(a.first_time,'%Y-%m-%d %H:%i:%s') as first_time,a.people_count from dg_open_water a left join dg_consumer_seat b on a.seat_id = b.id
+     where a.id = #{owId,jdbcType=INTEGER}
+   </select>
+   
+   <select id="selectAllTeamMember" resultType="Map">
+     select a.ow_num,b.name as seat_name,b.number as seat_code from dg_open_water a left join dg_consumer_seat b on a.seat_id = b.id
+     where  a.team_members = #{member,jdbcType=VARCHAR} and a.id != #{owId,jdbcType=INTEGER}
+  </select>
+</mapper>

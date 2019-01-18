@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgGiftFormReasonMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgGiftFormReason" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gfcode" property="gfcode" jdbcType="VARCHAR" />
+    <result column="gfrtype" property="gfrtype" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, gfcode, gfrtype, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_gift_form_reason
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_gift_form_reason
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgGiftFormReason" >
+    insert into dg_gift_form_reason (id, gfcode, gfrtype, 
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{gfcode,jdbcType=VARCHAR}, #{gfrtype,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgGiftFormReason" >
+    insert into dg_gift_form_reason
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gfcode != null" >
+        gfcode,
+      </if>
+      <if test="gfrtype != null" >
+        gfrtype,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="gfcode != null" >
+        #{gfcode,jdbcType=VARCHAR},
+      </if>
+      <if test="gfrtype != null" >
+        #{gfrtype,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgGiftFormReason" >
+    update dg_gift_form_reason
+    <set >
+      <if test="gfcode != null" >
+        gfcode = #{gfcode,jdbcType=VARCHAR},
+      </if>
+      <if test="gfrtype != null" >
+        gfrtype = #{gfrtype,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgGiftFormReason" >
+    update dg_gift_form_reason
+    set gfcode = #{gfcode,jdbcType=VARCHAR},
+      gfrtype = #{gfrtype,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getAllData" parameterType="DgGiftFormReason" resultMap="BaseResultMap">
+    select * from dg_gift_form_reason
+  </select>
+
+  <delete id="deleteData" parameterType="list">
+    DELETE from dg_gift_form_reason where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+  <select id="countAllData" resultType="java.lang.Integer">
+    select count(id) from dg_gift_form_reason
+  </select>
+
+  	<select id="getAllReasonList" parameterType="DgGiftFormReason" resultType="DgGiftFormReason">
+  		select * from dg_gift_form_reason
+	  	 <where>
+	  	 	<if test="gfrtype != null and gfrtype != ''">
+		        and gfrtype = #{gfrtype,jdbcType=VARCHAR}
+		      </if>
+	      </where>
+	</select>
+
+  <select id="selectNextCode" resultType="java.lang.Integer">
+      select max(cast(gfcode as UNSIGNED)) as maxCode from dg_gift_form_reason
+  </select>
+
+  <select id="selectGiftFormByReason" parameterType="DgGiftForm"
+          resultType="com.yqsh.diningsys.web.model.archive.DgGiftForm">
+    select * from dg_gift_form where gfreason = #{id,jdbcType=INTEGER}
+  </select>
+
+</mapper>

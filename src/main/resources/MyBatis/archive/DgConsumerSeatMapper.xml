@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgConsumerSeatMapper" >
+	<sql id="selectCols">
+		o.id AS "id",
+		o.allow_number_id as allowNumberId,
+		jan.name AS allowNumberName,
+		jan.min_allow_number as minAllowNumber,
+		jan.max_allow_number as maxAllowNumber,
+		o.number AS "number",
+		o.name AS "name",
+		o.all_name AS "allName",
+<!-- 		o.seat_type AS "seatType", -->
+		dpc.cName AS "seatType",
+		o.allow_number AS "allowNumber",
+		o.default_state AS "defaultState",
+		o.cons_area AS "consArea",
+		o.mnemonic AS "mnemonic",
+		o.create_time AS "createTime",
+		o.explains AS "explains",
+		o.create_user AS "createUserid",
+		o.del_flag AS "delFlag",
+		o.disabled_seat AS "disabledSeat",
+		o.inset_retention_room AS "insetRetentionRoom",
+		o.immediate_settlement AS "immediateSettlement",
+		o.not_statistics_overtaiwan AS "notStatisticsOvertaiwan",
+		o.empty_guest AS "emptyGuest",
+		o.customer_retention AS "customerRetention",
+		o.seat_state As seatState,
+		o.vip_identify As vipIdentify,
+		o.seat_label As seatLabel,
+		o.last_open_time As lastOpenTime,
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		ca.id AS "area.id",
+		ca.name AS "area.name",
+		ca.number AS "area.number",
+		o.uuid_key AS "uuidKey"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.create_user
+		left join dg_consumption_area ca on ca.id = o.cons_area
+		left join dg_public_code0 dpc on dpc.id = o.seat_type
+		left join dg_allow_number jan on jan.id = o.allow_number_id
+	</sql>
+	
+	<sql id="queryCriteria">
+		and ca.del_flag = 0 <!-- 客位与消费区域数据同步 -->
+  	 	<if test="conditions != null and conditions != ''">
+          and (o.number like '%${conditions}%' or o.name like '%${conditions}%' or o.mnemonic like '%${conditions}%')
+        </if>
+        <if test="number != null and number != ''">
+          and o.number like '%${number}%'
+        </if>
+        <if test="name != null and name != ''">
+         and o.name like '%${name}%'
+        </if>
+        <if test="checkName != null and checkName != ''">
+         and o.name = #{checkName}
+        </if>
+        <if test="mnemonic != null and mnemonic != ''">
+          and o.mnemonic like '%${mnemonic}%'
+        </if>
+        <if test="seatType != null and seatType != ''">
+          and o.seat_type = #{seatType}
+        </if>
+        <if test="consArea != null and consArea != 0">
+          and o.cons_area = #{consArea}
+        </if>
+        <if test="crStartTime != null and crStartTime != ''">
+         and o.create_time >= #{crStartTime}
+        </if>
+        <if test="crEndTime != null and crEndTime != ''">
+         and o.create_time <![CDATA[<]]>#{crEndTime}
+        </if>
+        <if test="delFlag != null">
+		 and o.del_flag = #{delFlag} <!-- 客位与消费区域数据同步 -->
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="Map" parameterType="DgConsumerSeat">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_consumer_seat o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+
+	<select id="getConsumerSeatByArea" resultType="java.util.HashMap" parameterType="map">
+		select seatId2,CASE when B.zdxf_type is not null then B.zdxf_money else 0.00 END as zdxf,A.*,
+		DG_FU_getSeatName(A.team_main_seat) as teamMainSeatName
+		from (select  dow.*,DATE_FORMAT(dow.first_time,'%H:%i:%s') as firstTime,dcs.number as seatCode,dcs.mnemonic as zjf,dcs.id as seatId2,dcs.name as seatName,dcs.allow_number as allowNumber,dcs.seat_state as seatState,dca.name as areaName,dcs.cons_area as consArea,dcs.inset_retention_room as insetRetentionRoom,dcs.last_open_time as lastOpenTime,dcs.vip_identify as isVip,dcs.seat_label as seatLabel
+		from (select * from  dg_open_water where ow_state in (1,3,4,5,8,9)) dow RIGHT JOIN dg_consumer_seat dcs on dow.seat_id = dcs.id left JOIN dg_consumption_area dca on dcs.cons_area = dca.id
+		where dcs.del_flag = 0 and dcs.disabled_seat = 0
+		<if test="areas != null">
+			and dcs.cons_area in
+			<foreach item="id" collection="areas" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+		</if>
+		) A
+		LEFT JOIN (select * from dg_seat_manager where zdxf = 2) B on A.seatId2 = B.seat_id
+		<where>
+			<if test="state != null and state != ''">
+				A.seatState = #{state,jdbcType=INTEGER}
+			</if>
+			<if test="areaId != null and areaId != ''">
+				and A.consArea = #{areaId,jdbcType=INTEGER}
+			</if>
+		</where>
+		order by seatCode
+	</select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgConsumerSeat">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_consumer_seat o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getConsumerSeatByNumber" parameterType="String" resultType="DgConsumerSeat">
+		select 
+			<include refid="selectCols"></include>
+		from dg_consumer_seat o
+                        <include refid="selectTables"></include>
+		where o.number = #{number}
+	</select>
+  
+  
+    <select id="getConsumerSeatById" parameterType="java.lang.Integer" resultType="DgConsumerSeat">
+		select 
+			<include refid="selectCols"></include>
+		from dg_consumer_seat o
+                        <include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+  <select id="getDgConsumerSeatByID" parameterType="DgConsumerSeat" resultType="DgConsumerSeat">
+		select 
+			<include refid="selectCols"></include>
+		from dg_consumer_seat o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="DgConsumerSeat">
+		select
+			<include refid="selectCols"></include>
+		from dg_consumer_seat o
+			<include refid="selectTables"></include>
+		where o.id = #{id,jdbcType=INTEGER}
+	</select>
+
+   <select id="getAllList" parameterType="DgConsumerSeat" resultType="DgConsumerSeat">
+		select 
+			<include refid="selectCols"></include>
+		from dg_consumer_seat o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.create_time desc
+	</select>
+  
+  <insert id="newInsert" parameterType="DgConsumerSeat" useGeneratedKeys="true" keyProperty="id">
+  	insert into dg_consumer_seat(
+  		allow_number_id,
+		number,
+		name,
+		all_name,
+		seat_type,
+		allow_number,
+		default_state,
+		cons_area,
+		mnemonic,
+		create_time,
+		explains,
+		create_user,
+		disabled_seat,
+		inset_retention_room,
+		immediate_settlement,
+		not_statistics_overtaiwan,
+		empty_guest,
+		customer_retention,
+		del_flag
+  	) values (
+  		#{allowNumberId},
+  		#{number},
+		#{name},
+		#{allName},
+		#{seatType},
+		#{allowNumber},
+		#{defaultState},
+		#{consArea},
+		#{mnemonic},
+		#{createTime},
+		#{explains},
+		#{createUserid},
+		#{disabledSeat},
+		#{insetRetentionRoom},
+		#{immediateSettlement},
+		#{notStatisticsOvertaiwan},
+		#{emptyGuest},
+		#{customerRetention},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="DgConsumerSeat">
+  	update dg_consumer_seat set 
+  		allow_number_id = #{allowNumberId},
+		number = #{number},
+		name = #{name},
+		all_name = #{allName},
+		seat_type = #{seatType},
+		allow_number = #{allowNumber},
+		default_state = #{defaultState},
+		cons_area = #{consArea},
+		mnemonic = #{mnemonic},
+		explains = #{explains},
+		disabled_seat = #{disabledSeat},
+		inset_retention_room = #{insetRetentionRoom},
+		immediate_settlement = #{immediateSettlement},
+		not_statistics_overtaiwan = #{notStatisticsOvertaiwan},
+		empty_guest = #{emptyGuest},
+		customer_retention = #{customerRetention}
+	where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="DgConsumerSeat">
+	update dg_consumer_seat set del_flag = 1 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">
+	  #{ids}  
+	 </foreach> 
+	</delete>
+
+
+
+   <update id="restore" parameterType="DgConsumerSeat" >
+    update dg_consumer_seat
+    set  del_flag = 0
+    where id in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  
+    <delete id="deleteByIds" parameterType="DgConsumerSeat">
+	delete from dg_consumer_seat where id in 
+	  <foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	    #{ids}  
+	  </foreach> 
+	</delete>
+
+	<update id="updateState" parameterType="DgConsumerSeat">
+  	update dg_consumer_seat set 
+		seat_state = #{seatState},
+		seat_label = #{seatLabel},
+		last_open_time = #{lastOpenTime} 
+	where id = #{id}
+  	</update>
+
+	<update id="modifySeatSeat" parameterType="integer">
+		update dg_consumer_seat set
+		seat_state = 1
+	where id = #{id}
+	</update>
+
+	<update id="updateSeatPDState" parameterType="map">
+		update dg_consumer_seat set seat_state = #{status} where uuid_key = #{id}
+	</update>
+
+	<select id="getAllFreeSeat" parameterType="map" resultType="DgConsumerSeat">
+		select *
+		from dg_consumer_seat 
+		where seat_state = 1 and del_flag =0  and cons_area in (
+			select id from dg_consumption_area where del_flag = 0
+		)
+		and cons_area in
+		<foreach collection="list" close=")" item="pos" separator="," open="(">
+			#{pos}
+		</foreach>
+		<if test="isAdmit != true">
+			and inset_retention_room = 0
+		</if>
+	</select>
+
+
+	<select id="getAllSeatByPos" parameterType="map" resultType="DgConsumerSeat">
+		select *
+		from dg_consumer_seat 
+		where del_flag =0  and cons_area in (
+			select id from dg_consumption_area where del_flag = 0
+		)
+		and cons_area in
+		<foreach collection="list" close=")" item="pos" separator="," open="(">
+			#{pos}
+		</foreach>
+	</select>
+	
+	
+
+	<update id="updateSeatState" parameterType="DgConsumerSeat">
+		update dg_consumer_seat set
+		seat_state = #{seatState}
+		where id = #{id}
+	</update>
+	
+	
+	<select id="getAllSeatWithServiceClass" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+		select dcs1.*,a.waiterId from dg_consumer_seat dcs1 LEFT JOIN (
+		  select dcs.*,dsc.waiterId from dg_consumer_seat dcs left join dg_service_class dsc
+			  on dcs.id = dsc.seatId where dcs.del_flag = 0 and dsc.eatTimeId = #{bisId,jdbcType=INTEGER}
+		  ) A on dcs1.id = a.id  left join dg_consumption_area B on dcs1.cons_area = B.id where dcs1.del_flag = 0 
+		  and B.del_flag = 0
+	</select>
+
+	<select id="selectDataByAreaId" parameterType="integer"
+			resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+		SELECT * from dg_consumer_seat where cons_area = #{id,jdbcType=INTEGER}
+	</select>
+
+    <select id="selectAllClearingSeat" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+		select dcs.*,dsm.qssc from dg_consumer_seat dcs LEFT join dg_seat_manager dsm on dcs.id = dsm.seat_id where dcs.seat_state = 3
+	</select>
+
+	<select id="selectEndTime" parameterType="integer"
+			resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+		select * from dg_reception_clearing_water where id = (
+			select clearing_water_id from dg_open_water where seat_id = #{id,jdbcType=INTEGER} order by first_time desc limit 0,1)
+	</select>
+
+    <select id="selectAllSeat" resultType="Map">
+		select uuid_key as id,seat_state as status,
+		(case  when last_open_time is null then ''  
+		when last_open_time = '' then '' 
+		else DATE_FORMAT(last_open_time,'%Y-%m-%d %H:%i:%S') end) as openTime 
+		from dg_consumer_seat where del_flag = 0
+	</select>
+
+	<update id="updateSeatByUuidKey"  parameterType="Map">  
+         update dg_consumer_seat set
+              seat_state = #{status}
+         where uuid_key = #{uuidKey,jdbcType=VARCHAR}  
+    </update> 
+    
+   <select id="selectSeatIdByUuidKey" parameterType="String"
+			resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+		SELECT * from dg_consumer_seat where uuid_key = #{uuidKey,jdbcType=VARCHAR}  
+	</select>
+
+	<select id="selectAllUsingSeat" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+		select dcs.id,dcs.cons_area,dcs.name from dg_consumer_seat dcs where dcs.del_flag = 0
+		<choose>
+			<when test="areaId != null">
+				and dcs.cons_area = #{areaId}
+			</when>
+			<when test="state != null">
+				and dcs.seat_state = #{state}
+			</when>
+			<when test="areaId == null">
+				and dcs.cons_area in
+				<foreach item="id" collection="areas" open="(" separator="," close=")">
+					#{id}
+				</foreach>
+			</when>
+		</choose>
+	</select>
+
+	<select id="selectCurrentTransferOpenWater"
+			resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+		select * from dg_open_water where ow_state not int (2,6,7,-1) and transfer_target is not null
+	</select>
+
+
+	<select id="selectByIds" parameterType="List"
+			resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+		SELECT * from dg_consumer_seat where id  in
+		<foreach item="item" collection="ids" open="(" separator="," close=")">
+			#{item.seatId}
+		</foreach>
+	</select>
+	
+	<select id="selectAllUseSeat" resultType="java.lang.Integer">
+		SELECT count(*) from dg_consumer_seat where seat_state = 2
+	</select>
+</mapper>

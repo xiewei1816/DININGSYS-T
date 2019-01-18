@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgItemShowRankMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgItemShowRank" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="px_id" property="pxId" jdbcType="INTEGER" />
+    <result column="is_show" property="isShow" jdbcType="VARCHAR" />
+    <result column="is_rank" property="isRank" jdbcType="VARCHAR" />
+    <result column="rank" property="rank" jdbcType="INTEGER" />
+    <result column="pxlx" property="pxlx" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="selectCols" >
+    id, px_id, is_show, is_rank, pxlx, rank, create_time, update_time
+  </sql>
+<!-- 新增消费品项显示设置信息 -->
+  <insert id="newInsert" parameterType="DgItemShowRank">
+  	insert into dg_item_show_rank(
+		px_id,
+		is_show,
+		is_rank,
+		pxlx,
+		rank,
+		create_time,
+		update_time
+  	) values (
+  		#{pxId},
+  		#{isShow},
+  		#{isRank},
+  		#{pxlx},
+  		#{rank},
+  		#{createTime},
+		#{updateTime}
+  	)
+  </insert>
+<!-- 修改消费品项显示设置信息 -->
+  <update id="update" parameterType="DgItemShowRank">
+  	update dg_item_show_rank set 
+		px_id = #{pxId},
+		is_show = #{isShow},
+		pxlx = #{pxlx},
+  		is_rank = #{isRank},
+		update_time = #{updateTime}
+	where id = #{id}
+  </update>
+<!-- 删除消费品项显示设置信息 -->
+  <delete id="delete" parameterType="DgItemShowRank">
+	delete from dg_item_show_rank where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+  </delete>
+  <!-- 根据多条件查询消费品项显示设置信息 -->
+  <select id="getAllList" parameterType="DgItemShowRank" resultType="DgItemShowRank">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from dg_item_show_rank o
+	  	 <where>
+	        <if test="pxId != null and pxId != ''">
+	          and o.px_id like = #{pxId}'
+	        </if>
+	        <if test="isShow != null and isShow != ''">
+	         and o.is_show = #{isShow}'
+	        </if>
+	        <if test="isRank != null and isRank != ''">
+	         and o.is_rank = #{isRank}
+	        </if>
+	      </where>
+	      order by rank asc
+	</select>
+	<!-- 查询品项 "显示设置"信息 -->
+	<select id="selectDgItemFileList" parameterType="map" resultType="map">
+    select b.id,b.num,b.name,b.unit,b.cost_price as costPrice,b.sm
+    from dg_item_file_type a
+	INNER JOIN dg_item_file b on a.id =  b.ppxl_id
+	INNER JOIN dg_item_show_rank c on b.id = c.px_id
+    <where>
+        b.delFlag = '0'
+        <if test="id != null and id != ''">
+          and a.id = #{id}
+        </if>
+        <if test="pxlx != null and pxlx != ''">
+         and c.pxlx = #{pxlx}
+        </if>
+        <if test="isShow != null and isShow != ''">
+         and c.is_show = #{isShow}
+        </if>
+        <if test="isRank != null and isRank != ''">
+         and c.is_rank = #{isRank}
+        </if>
+        <if test="param != null and param != ''">
+         and (
+         	b.num like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or 
+         	b.name like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or
+         	b.zjf like CONCAT('%',#{param,jdbcType=VARCHAR},'%' )
+         ) 
+        </if>
+     </where>
+     order by rank asc
+  </select>
+  
+  	<!-- 查询品项 "显示设置"信息 显示或排行 -->
+	<select id="selectDgItemFileNoShowRankList" parameterType="map" resultType="map">
+	select a.id,a.num,a.name,a.unit,a.cost_price as costPrice,a.sm
+	 from dg_item_file a
+    <where>
+        a.delFlag = '0'
+    	<if test="ppdlId != null and ppdlId != ''">
+         and a.ppdl_id = #{ppdlId}
+        </if>
+        <if test="ppxlId != null and ppxlId != ''">
+         and a.ppxl_id = #{ppxlId}
+        </if>
+        <if test="isShow != null and isShow != '' and pxlx != null and pxlx != ''">
+         and a.id not in ( select b.px_id from dg_item_show_rank b where b.is_show = #{isShow} and b.pxlx = #{pxlx}) 
+        </if>
+        <if test="isRank != null and isRank != '' and pxlx != null and pxlx != ''">
+         and a.id not in ( select b.px_id from dg_item_show_rank b where b.is_rank = #{isRank} and b.pxlx = #{pxlx}) 
+        </if>
+        <if test="param != null and param != ''">
+         and (
+         	a.num like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or 
+         	a.name like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or
+         	a.zjf like CONCAT('%',#{param,jdbcType=VARCHAR},'%' )
+         ) 
+        </if>
+     </where>
+  </select>
+  
+  	<!-- 查询品项小类 "显示设置"信息 显示或排行 -->
+	<select id="selectDgSmallItemFileNoShowRankList" parameterType="map" resultType="map">
+	select a.id,a.num,a.name
+	 from dg_item_file_type a
+    <where>
+    	<if test="id != null and id != ''">
+         and a.id = #{id} 
+        </if>
+        <if test="parentId != null and parentId != ''">
+         and a.parent_id = #{parentId} 
+        </if>
+        <if test="isShow != null and isShow != '' and pxlx != null and pxlx != ''">
+         and a.id not in ( select b.px_id from dg_item_show_rank b where b.is_show = #{isShow} and b.pxlx = #{pxlx})
+        </if>
+        <if test="isRank != null and isRank != '' and pxlx != null and pxlx != ''">
+         and a.id not in ( select b.px_id from dg_item_show_rank b where b.is_rank = #{isRank} and b.pxlx = #{pxlx}) and a.pp is null
+        </if>
+        <if test="param != null and param != ''">
+         and (
+         	a.num like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or 
+         	a.name like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or
+         	a.zjf like CONCAT('%',#{param,jdbcType=VARCHAR},'%' )
+         ) 
+        </if>
+     </where>
+  </select>
+  
+  	<!-- 查询品项小类 "排行设置" 信息 -->
+	<select id="selectDgItemFileSmallList" parameterType="map" resultType="map">
+    select a.id,a.num,a.name
+    from dg_item_file_type a
+	INNER JOIN dg_item_show_rank b on a.id = b.px_id
+    <where>
+        <if test="id != null and id != ''">
+          and a.id = #{id}
+        </if>
+        <if test="pxlx != null and pxlx != ''">
+         and b.pxlx = #{pxlx}
+        </if>
+        <if test="isRank != null and isRank != ''">
+         and b.is_rank = #{isRank}
+        </if>
+        <if test="isShow != null and isShow != ''">
+         and b.is_show = #{isShow}
+        </if>
+        <if test="param != null and param != ''">
+         and (
+         	b.num like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or 
+         	b.name like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or
+         	b.zjf like CONCAT('%',#{param,jdbcType=VARCHAR},'%' )
+         ) 
+        </if>
+     </where>
+     order by rank asc
+  </select>
+  
+  	<!-- 根据品项名称、编号、助记码条件查询品项信息 -->
+	<select id="selectDgItemBySearch" parameterType="map" resultMap="BaseResultMap">
+    select b.id as id,b.num as isShow,b.name as isRank
+    from dg_item_file_type a
+	INNER JOIN dg_item_file b on a.id =  b.xxlx_id
+	INNER JOIN dg_item_show_rank c on b.id = c.px_id
+    <where>
+        b.delFlag = '0'
+        <if test="id != null and id != ''">
+          and a.id = #{id}
+        </if>
+        <if test="ppdlId != null and ppdlId != ''">
+         and b.ppdl_id = #{ppdlId}
+        </if>
+        <if test="ppxlId != null and ppxlId != ''">
+         and b.ppxl_id = #{ppxlId}
+        </if>
+        <if test="isShow != null and isShow != ''">
+         and c.is_show = #{isShow}
+        </if>
+        <if test="isRank != null and isRank != ''">
+         and c.is_rank = #{isRank}
+        </if>
+        <if test="param != null and param != ''">
+         and (
+         	b.num like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or 
+         	b.name like CONCAT('%',#{param,jdbcType=VARCHAR},'%' ) or
+         	b.zjf like CONCAT('%',#{param,jdbcType=VARCHAR},'%' )
+         )
+        </if>
+     </where>
+     order by rank asc
+  </select>
+  
+  <!-- 通过品项ID查询消费品项显示设置信息  -->
+  <select id="getDgItemShowRankByPxId" parameterType="DgItemShowRank" resultType="DgItemShowRank">
+  	 SELECT
+  	 	<include refid="selectCols"></include>
+  	 from dg_item_show_rank o where o.px_id = #{pxId} and o.pxlx = #{pxlx}
+  </select>
+  <!-- 通过ID查询消费品项显示设置信息  -->
+  <select id="getDgItemShowRankById" parameterType="DgItemShowRank" resultType="DgItemShowRank">
+  	 SELECT
+  	 	<include refid="selectCols"></include>
+  	 from dg_item_show_rank o where o.px_id = #{id} and o.is_show = 1 and o.pxlx = 0
+  </select>
+  <!-- 通过向上移动查询消费品项显示设置信息  -->
+  <select id="getDgItemShowRankByMoveUp" parameterType="DgItemShowRank" resultType="DgItemShowRank">
+  	 SELECT
+  	 	<include refid="selectCols"></include>
+  	 from dg_item_show_rank o where rank &lt; #{rank} and o.is_show = 1 and o.pxlx = 0 order by rank desc limit 1
+  </select>
+    <!-- 通过向下移动查询消费品项显示设置信息  -->
+  <select id="getDgItemShowRankByMoveDown" parameterType="DgItemShowRank" resultType="DgItemShowRank">
+  	 SELECT
+  	 	<include refid="selectCols"></include>
+  	 from dg_item_show_rank o where rank &gt; #{rank} and o.is_show = 1 and o.pxlx = 0 order by rank asc limit 1
+  </select>
+  <!-- 消费品项显示设置信息-排序移动 -->
+  <update id="dgItemShowSetRank" parameterType="map">
+  	update dg_item_show_rank o set o.rank = #{rank} where o.id = #{id} and o.is_show = 1 and o.pxlx = 0
+  </update>
+</mapper>

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgReceptionClearingWaterMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cw_num" property="cwNum" jdbcType="VARCHAR" />
+    <result column="consumption_amount" property="consumptionAmount" jdbcType="DOUBLE" />
+    <result column="zero_amount" property="zeroAmount" jdbcType="DOUBLE" />
+    <result column="fixed_discount" property="fixedDiscount" jdbcType="DOUBLE" />
+    <result column="amounts_receivable" property="amountsReceivable" jdbcType="DOUBLE" />
+    <result column="paid_amount" property="paidAmount" jdbcType="DOUBLE" />
+    <result column="change_amount" property="changeAmount" jdbcType="DOUBLE" />
+    <result column="clearing_time" property="clearingTime" jdbcType="TIMESTAMP" />
+    <result column="clearing_bis" property="clearingBis" jdbcType="INTEGER" />
+    <result column="clearing_operator" property="clearingOperator" jdbcType="INTEGER" />
+    <result column="clearing_pos" property="clearingPos" jdbcType="VARCHAR" />
+    <result column="print_cont" property="printCont" jdbcType="INTEGER" />
+    <result column="invoicing" property="invoicing" jdbcType="INTEGER" />
+    <result column="zero_settlement" property="zeroSettlement" jdbcType="INTEGER" />
+    <result column="retro_documents" property="retroDocuments" jdbcType="INTEGER" />
+    <result column="statement_label" property="statementLabel" jdbcType="VARCHAR" />
+    <result column="coupon_amount" property="couponAmount" jdbcType="DOUBLE" />
+    <result column="clearing_notes" property="clearingNotes" jdbcType="VARCHAR" />
+    <result column="clearing_member" property="clearingMember" jdbcType="VARCHAR" />
+    <result column="clearing_state" property="clearingState" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cw_num, consumption_amount, zero_amount, fixed_discount, amounts_receivable, 
+    paid_amount, change_amount, clearing_time, clearing_bis, clearing_operator, clearing_pos, 
+    print_cont, invoicing, zero_settlement, retro_documents, statement_label, coupon_amount, 
+    clearing_notes, clearing_member, clearing_state
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_reception_clearing_water
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_reception_clearing_water
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater" >
+    insert into dg_reception_clearing_water (id, cw_num, consumption_amount, 
+      zero_amount, fixed_discount, amounts_receivable, 
+      paid_amount, change_amount, clearing_time, 
+      clearing_bis, clearing_operator, clearing_pos, 
+      print_cont, invoicing, zero_settlement, 
+      retro_documents, statement_label, coupon_amount, 
+      clearing_notes, clearing_member, clearing_state
+      )
+    values (#{id,jdbcType=INTEGER}, #{cwNum,jdbcType=VARCHAR}, #{consumptionAmount,jdbcType=DOUBLE}, 
+      #{zeroAmount,jdbcType=DOUBLE}, #{fixedDiscount,jdbcType=DOUBLE}, #{amountsReceivable,jdbcType=DOUBLE}, 
+      #{paidAmount,jdbcType=DOUBLE}, #{changeAmount,jdbcType=DOUBLE}, #{clearingTime,jdbcType=TIMESTAMP}, 
+      #{clearingBis,jdbcType=INTEGER}, #{clearingOperator,jdbcType=INTEGER}, #{clearingPos,jdbcType=VARCHAR},
+      #{printCont,jdbcType=INTEGER}, #{invoicing,jdbcType=INTEGER}, #{zeroSettlement,jdbcType=INTEGER}, 
+      #{retroDocuments,jdbcType=INTEGER}, #{statementLabel,jdbcType=VARCHAR}, #{couponAmount,jdbcType=DOUBLE}, 
+      #{clearingNotes,jdbcType=VARCHAR}, #{clearingMember,jdbcType=VARCHAR}, #{clearingState,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater" >
+    insert into dg_reception_clearing_water
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cwNum != null" >
+        cw_num,
+      </if>
+      <if test="consumptionAmount != null" >
+        consumption_amount,
+      </if>
+      <if test="zeroAmount != null" >
+        zero_amount,
+      </if>
+      <if test="fixedDiscount != null" >
+        fixed_discount,
+      </if>
+      <if test="amountsReceivable != null" >
+        amounts_receivable,
+      </if>
+      <if test="paidAmount != null" >
+        paid_amount,
+      </if>
+      <if test="changeAmount != null" >
+        change_amount,
+      </if>
+      <if test="clearingTime != null" >
+        clearing_time,
+      </if>
+      <if test="clearingBis != null" >
+        clearing_bis,
+      </if>
+      <if test="clearingOperator != null" >
+        clearing_operator,
+      </if>
+      <if test="clearingPos != null" >
+        clearing_pos,
+      </if>
+      <if test="printCont != null" >
+        print_cont,
+      </if>
+      <if test="invoicing != null" >
+        invoicing,
+      </if>
+      <if test="zeroSettlement != null" >
+        zero_settlement,
+      </if>
+      <if test="retroDocuments != null" >
+        retro_documents,
+      </if>
+      <if test="statementLabel != null" >
+        statement_label,
+      </if>
+      <if test="couponAmount != null" >
+        coupon_amount,
+      </if>
+      <if test="clearingNotes != null" >
+        clearing_notes,
+      </if>
+      <if test="clearingMember != null" >
+        clearing_member,
+      </if>
+      <if test="clearingState != null" >
+        clearing_state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cwNum != null" >
+        #{cwNum,jdbcType=VARCHAR},
+      </if>
+      <if test="consumptionAmount != null" >
+        #{consumptionAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="zeroAmount != null" >
+        #{zeroAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="fixedDiscount != null" >
+        #{fixedDiscount,jdbcType=DOUBLE},
+      </if>
+      <if test="amountsReceivable != null" >
+        #{amountsReceivable,jdbcType=DOUBLE},
+      </if>
+      <if test="paidAmount != null" >
+        #{paidAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="changeAmount != null" >
+        #{changeAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingTime != null" >
+        #{clearingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="clearingBis != null" >
+        #{clearingBis,jdbcType=INTEGER},
+      </if>
+      <if test="clearingOperator != null" >
+        #{clearingOperator,jdbcType=INTEGER},
+      </if>
+      <if test="clearingPos != null" >
+        #{clearingPos,jdbcType=VARCHAR},
+      </if>
+      <if test="printCont != null" >
+        #{printCont,jdbcType=INTEGER},
+      </if>
+      <if test="invoicing != null" >
+        #{invoicing,jdbcType=INTEGER},
+      </if>
+      <if test="zeroSettlement != null" >
+        #{zeroSettlement,jdbcType=INTEGER},
+      </if>
+      <if test="retroDocuments != null" >
+        #{retroDocuments,jdbcType=INTEGER},
+      </if>
+      <if test="statementLabel != null" >
+        #{statementLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="couponAmount != null" >
+        #{couponAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingNotes != null" >
+        #{clearingNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="clearingMember != null" >
+        #{clearingMember,jdbcType=VARCHAR},
+      </if>
+      <if test="clearingState != null" >
+        #{clearingState,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater" >
+    update dg_reception_clearing_water
+    <set >
+      <if test="cwNum != null" >
+        cw_num = #{cwNum,jdbcType=VARCHAR},
+      </if>
+      <if test="consumptionAmount != null" >
+        consumption_amount = #{consumptionAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="zeroAmount != null" >
+        zero_amount = #{zeroAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="fixedDiscount != null" >
+        fixed_discount = #{fixedDiscount,jdbcType=DOUBLE},
+      </if>
+      <if test="amountsReceivable != null" >
+        amounts_receivable = #{amountsReceivable,jdbcType=DOUBLE},
+      </if>
+      <if test="paidAmount != null" >
+        paid_amount = #{paidAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="changeAmount != null" >
+        change_amount = #{changeAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingTime != null" >
+        clearing_time = #{clearingTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="clearingBis != null" >
+        clearing_bis = #{clearingBis,jdbcType=INTEGER},
+      </if>
+      <if test="clearingOperator != null" >
+        clearing_operator = #{clearingOperator,jdbcType=INTEGER},
+      </if>
+      <if test="clearingPos != null" >
+        clearing_pos = #{clearingPos,jdbcType=VARCHAR},
+      </if>
+      <if test="printCont != null" >
+        print_cont = #{printCont,jdbcType=INTEGER},
+      </if>
+      <if test="invoicing != null" >
+        invoicing = #{invoicing,jdbcType=INTEGER},
+      </if>
+      <if test="zeroSettlement != null" >
+        zero_settlement = #{zeroSettlement,jdbcType=INTEGER},
+      </if>
+      <if test="retroDocuments != null" >
+        retro_documents = #{retroDocuments,jdbcType=INTEGER},
+      </if>
+      <if test="statementLabel != null" >
+        statement_label = #{statementLabel,jdbcType=VARCHAR},
+      </if>
+      <if test="couponAmount != null" >
+        coupon_amount = #{couponAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="clearingNotes != null" >
+        clearing_notes = #{clearingNotes,jdbcType=VARCHAR},
+      </if>
+      <if test="clearingMember != null" >
+        clearing_member = #{clearingMember,jdbcType=VARCHAR},
+      </if>
+      <if test="clearingState != null" >
+        clearing_state = #{clearingState,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater" >
+    update dg_reception_clearing_water
+    set cw_num = #{cwNum,jdbcType=VARCHAR},
+      consumption_amount = #{consumptionAmount,jdbcType=DOUBLE},
+      zero_amount = #{zeroAmount,jdbcType=DOUBLE},
+      fixed_discount = #{fixedDiscount,jdbcType=DOUBLE},
+      amounts_receivable = #{amountsReceivable,jdbcType=DOUBLE},
+      paid_amount = #{paidAmount,jdbcType=DOUBLE},
+      change_amount = #{changeAmount,jdbcType=DOUBLE},
+      clearing_time = #{clearingTime,jdbcType=TIMESTAMP},
+      clearing_bis = #{clearingBis,jdbcType=INTEGER},
+      clearing_operator = #{clearingOperator,jdbcType=INTEGER},
+      clearing_pos = #{clearingPos,jdbcType=VARCHAR},
+      print_cont = #{printCont,jdbcType=INTEGER},
+      invoicing = #{invoicing,jdbcType=INTEGER},
+      zero_settlement = #{zeroSettlement,jdbcType=INTEGER},
+      retro_documents = #{retroDocuments,jdbcType=INTEGER},
+      statement_label = #{statementLabel,jdbcType=VARCHAR},
+      coupon_amount = #{couponAmount,jdbcType=DOUBLE},
+      clearing_notes = #{clearingNotes,jdbcType=VARCHAR},
+      clearing_member = #{clearingMember,jdbcType=VARCHAR},
+      clearing_state = #{clearingState,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

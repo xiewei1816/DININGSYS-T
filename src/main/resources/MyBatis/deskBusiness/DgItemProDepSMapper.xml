@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemProDepSMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDepS" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="place_id" property="placeId" jdbcType="INTEGER" />
+    <result column="pro_dep_id" property="proDepId" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="dep_id" property="depId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, place_id, pro_dep_id, item_id, dep_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_pro_dep_s
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_pro_dep_s
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDepS" >
+    insert into dg_item_pro_dep_s (id, place_id, pro_dep_id, 
+      item_id, dep_id)
+    values (#{id,jdbcType=INTEGER}, #{placeId,jdbcType=INTEGER}, #{proDepId,jdbcType=INTEGER}, 
+      #{itemId,jdbcType=INTEGER}, #{depId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDepS" >
+    insert into dg_item_pro_dep_s
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="placeId != null" >
+        place_id,
+      </if>
+      <if test="proDepId != null" >
+        pro_dep_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="depId != null" >
+        dep_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="placeId != null" >
+        #{placeId,jdbcType=INTEGER},
+      </if>
+      <if test="proDepId != null" >
+        #{proDepId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="depId != null" >
+        #{depId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDepS" >
+    update dg_item_pro_dep_s
+    <set >
+      <if test="placeId != null" >
+        place_id = #{placeId,jdbcType=INTEGER},
+      </if>
+      <if test="proDepId != null" >
+        pro_dep_id = #{proDepId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="depId != null" >
+        dep_id = #{depId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDepS" >
+    update dg_item_pro_dep_s
+    set place_id = #{placeId,jdbcType=INTEGER},
+      pro_dep_id = #{proDepId,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=INTEGER},
+      dep_id = #{depId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+   <select id="selectByPlaceParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_pro_dep_s
+    where pro_dep_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_pro_dep_s where pro_dep_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  <delete id="deleteAll">
+    delete from dg_item_pro_dep_s
+    where 1=1
+  </delete>
+  
+  <select id="selectByEarchId" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from dg_item_pro_dep_s
+    where place_id = #{area_id,jdbcType=INTEGER} and pro_dep_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_pro_dep_s
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+    <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_pro_dep_s(place_id, pro_dep_id, 
+      item_id, dep_id)    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.placeId,jdbcType=INTEGER}, #{item.proDepId,jdbcType=INTEGER}, 
+      #{item.itemId,jdbcType=INTEGER}, #{item.depId,jdbcType=INTEGER})
+    </foreach>  
+  </insert>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.inve.DgSupplierMapper">
+<resultMap type="com.yqsh.diningsys.web.model.inve.DgSupplier"
+		   id="DgSupplier">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="superNo" column="superNo" jdbcType="VARCHAR"/>
+        <result property="supName" column="supName" jdbcType="VARCHAR"/>
+        <result property="contactName" column="contactName" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="fax" column="fax" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_InveItems_Column">
+  	id,supName,contactName,phone,fax,email,address,level,state,remark,operUser,createDate,superNo
+  </sql>
+	 <insert id="insert" parameterType="DgSupplier">
+	    insert into dg_inve_supplier
+	    (
+	    id,supName,contactName,phone,
+	    fax,email,address,level,
+	    state,remark,operUser,createDate,
+	    superNo
+	    )
+	    values(
+	    #{id},#{supName},#{contactName},#{phone},
+	    #{fax},#{email},#{address},#{level},
+	    #{state},#{remark},#{operUser},#{createDate},
+	    #{superNo}
+	    )
+	</insert>
+	<update id="update" parameterType="DgSupplier">
+		update dg_inve_supplier
+		set supName=#{supName},
+	 		contactName=#{contactName},
+	 		phone=#{phone},
+	 		fax=#{fax},
+	  		email=#{email},
+			address=#{address},
+	  		level=#{level},
+	  		remark=#{remark}
+	  		where id=#{id}
+	</update>
+	<!-- 逻辑删除处理 -->
+	<delete id="delete" parameterType="map">
+		update dg_inve_supplier
+		set 
+			state=#{state}
+	  		where id in
+	  	<foreach item="ids" index="index" collection="id" open="(" separator="," close=")">  
+	  		 #{ids}
+	 	</foreach> 
+	</delete>
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="DgSupplier" parameterType="DgSupplier">
+		SELECT <include refid="Base_InveItems_Column"/>
+		FROM dg_inve_supplier
+		<where>
+			<if test="supName!=null and supName!=''">
+				AND supName like concat('%',#{supName},'%')
+			</if>
+			<if test="superNo!=null and superNo!=''">
+				AND superNo=#{superNo}
+			</if>
+			AND state=0 
+		</where> 
+		 ORDER BY createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgSupplier">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from dg_inve_supplier 
+	  	 <where>
+	        <if test="supName != null and supName != ''">
+	          AND supName like concat('%',#{supName},'%')
+	        </if>
+	        <if test="superNo!=null and superNo!=''">
+				AND superNo=#{superNo}
+			</if>
+			   AND state=0 
+	      </where>
+		 ORDER BY createDate DESC
+    </select>
+	<select id="get" parameterType="string" resultType="DgSupplier">
+	    SELECT * from dg_inve_supplier where id = #{id}
+	</select>
+	<!-- 根据条件获取供应商信息 ，不分页-->
+    <select id="findListData" resultType="DgSupplier" parameterType="DgSupplier">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_supplier
+    	WHERE 1=1
+    	<if test="state!=null and state!=''">
+    		AND state=#{state}
+    	</if>
+    </select>
+    <!-- 根据条件排序查询一条数据 -->
+    <select id="findLastOne" resultType="DgSupplier" parameterType="DgSupplier">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_supplier
+    	<where>
+    		<if test="state!=null and state!=''">
+    		AND state=#{state}
+    	</if>
+    	<if test="superNo!=null and superNo!=''">
+			AND superNo=#{superNo}
+		</if>
+    	</where>
+    	ORDER BY createDate DESC limit 1
+    </select>
+</mapper>

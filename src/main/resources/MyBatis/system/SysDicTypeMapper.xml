@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysDicTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysDicType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dic_type_name" property="dicTypeName" jdbcType="VARCHAR" />
+    <result column="dic_type_code" property="dicTypeCode" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dic_type_name, dic_type_code, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_dic_type
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_dic_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysDicType" >
+    insert into sys_dic_type ( dic_type_name, dic_type_code)
+    values (#{dicTypeName,jdbcType=VARCHAR}, #{dicTypeCode,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.SysDicType" >
+    insert into sys_dic_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="dicTypeName != null" >
+        dic_type_name,
+      </if>
+      <if test="dicTypeCode != null" >
+        dic_type_code,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="dicTypeName != null" >
+        #{dicTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="dicTypeCode != null" >
+        #{dicTypeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysDicType" >
+    update sys_dic_type
+    <set >
+      <if test="dicTypeName != null" >
+        dic_type_name = #{dicTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="dicTypeCode != null" >
+        dic_type_code = #{dicTypeCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysDicType" >
+    update sys_dic_type
+    set dic_type_name = #{dicTypeName,jdbcType=VARCHAR},
+      dic_type_code = #{dicTypeCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByPrimaryKeys" parameterType="list">
+    DELETE from sys_dic_type where id IN
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+
+  <select id="selectByConAndPage" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT * from sys_dic_type
+    <where>
+      <if test="sSearch != null and sSearch != ''">
+        dic_type_name like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or dic_type_code like '%'+#{sSearch,jdbcType=INTEGER}+'%'
+      </if>
+      <if test="sSearch != null and sSearch != ''">
+        or convert(create_time,DATE) like '%'+#{sSearch,jdbcType=VARCHAR}+'%'
+      </if>
+    </where>
+    <if test="orderCol != null and orderCol != ''">
+      order by ${orderCol}  ${sSortDir_0}
+    </if>
+  </select>
+
+  <select id="getAllDicType" resultType="SysDicType">
+    select * from sys_dic_type
+  </select>
+
+</mapper>

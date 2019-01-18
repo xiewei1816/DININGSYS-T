@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgPlacePriceSMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePriceS" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="place_id" property="placeId" jdbcType="INTEGER" />
+    <result column="place_price_id" property="placePriceId" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, place_id, place_price_id, item_id, price
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_place_price_s
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_place_price_s
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePriceS" >
+    insert into dg_place_price_s (id, place_id, place_price_id, 
+      item_id, price)
+    values (#{id,jdbcType=INTEGER}, #{placeId,jdbcType=INTEGER}, #{placePriceId,jdbcType=INTEGER}, 
+      #{itemId,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePriceS" >
+    insert into dg_place_price_s
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="placeId != null" >
+        place_id,
+      </if>
+      <if test="placePriceId != null" >
+        place_price_id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="placeId != null" >
+        #{placeId,jdbcType=INTEGER},
+      </if>
+      <if test="placePriceId != null" >
+        #{placePriceId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePriceS" >
+    update dg_place_price_s
+    <set >
+      <if test="placeId != null" >
+        place_id = #{placeId,jdbcType=INTEGER},
+      </if>
+      <if test="placePriceId != null" >
+        place_price_id = #{placePriceId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePriceS" >
+    update dg_place_price_s
+    set place_id = #{placeId,jdbcType=INTEGER},
+      place_price_id = #{placePriceId,jdbcType=INTEGER},
+      item_id = #{itemId,jdbcType=INTEGER},
+      price = #{price,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <select id="selectByPlacePriceId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_place_price_s
+    where place_price_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+   <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_place_price_s where place_price_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  <delete id="deleteAll">
+    delete from dg_place_price_s
+    where 1=1
+  </delete>
+  
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_place_price_s
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="selectByItemIdAndPriceId" resultMap="BaseResultMap" parameterType="Map">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_place_price_s
+    where place_id = #{placeId,jdbcType=INTEGER} and item_id = #{itemId,jdbcType=INTEGER}
+  </select>
+  
+    <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_place_price_s(place_id, place_price_id, 
+      item_id, price)  values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+		(#{item.placeId,jdbcType=INTEGER}, #{item.placePriceId,jdbcType=INTEGER}, 
+      #{item.itemId,jdbcType=INTEGER}, #{item.price,jdbcType=DOUBLE})
+    </foreach>  
+  </insert>
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_place_price_s 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_place_price_s
+        (
+		    id,place_id,place_price_id,item_id,price
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.placeId">#{im.placeId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.placePriceId">#{im.placePriceId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.price">#{im.price}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

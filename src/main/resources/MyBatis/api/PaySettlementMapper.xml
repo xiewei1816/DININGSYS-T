@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.PaySettlementMapper">
+
+    <insert id="insertClearingWater" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into dg_reception_clearing_water(
+        cw_num,consumption_amount,zero_amount,fixed_discount,amounts_receivable,
+        paid_amount,change_amount,clearing_time,clearing_bis,clearing_operator,
+        clearing_pos,zero_settlement,statement_label,clearing_notes,clearing_member,clearing_state,
+        general_proportions,single_proportions,pay_type,before_discounts_amount,total_discount_amount) VALUES(#{cwNum,jdbcType=VARCHAR},#{conAmount,jdbcType=DOUBLE},
+        #{zeroAmount,jdbcType=DOUBLE},#{fixedDiscount,jdbcType=DOUBLE},#{amountsReceivable,jdbcType=DOUBLE},#{paidAmount,jdbcType=DOUBLE},
+        #{changeAmount,jdbcType=DOUBLE},#{clearingTime,jdbcType=TIMESTAMP},#{clearingBis,jdbcType=INTEGER},#{clearingOperator,jdbcType=VARCHAR},
+        #{clearingPos,jdbcType=VARCHAR},#{zeroSettlement,jdbcType=INTEGER},#{statementLabel,jdbcType=VARCHAR},#{clearingNotes,jdbcType=VARCHAR},
+        #{hyzfId,jdbcType=VARCHAR},#{clearingState,jdbcType=INTEGER},#{generalProportions,jdbcType=DOUBLE},
+        #{singleProportions,jdbcType=DOUBLE},#{payType,jdbcType=INTEGER},
+        #{beforeDiscountsAmount,jdbcType=DOUBLE},#{totalDiscountAmount,jdbcType=DOUBLE})
+    </insert>
+
+    <insert id="insertAdvacePayClearingWater" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into dg_reception_clearing_water(
+        fixed_discount,
+        clearing_state,general_proportions,single_proportions,pay_type) VALUES(
+        #{fixedDiscount,jdbcType=DOUBLE},
+        #{clearingState,jdbcType=INTEGER},#{generalProportions,jdbcType=DOUBLE},#{singleProportions,jdbcType=DOUBLE},#{payType,jdbcType=DOUBLE})
+    </insert>
+
+    <insert id="insertClearingWayData" parameterType="map">
+        insert into
+        dg_ow_clearingway(cw_id,settlement_amount,conversion_amount,notes,cw_code,non_zero_amount,foreign_pay,cw_time,cons_id) VALUES
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            ( #{clearingId,jdbcType=INTEGER},#{item.payMoney,jdbcType=DOUBLE},
+            #{item.conversionMoney,jdbcType=DOUBLE},#{item.notes,jdbcType=VARCHAR},#{item.payCode,jdbcType=VARCHAR},#{item.nonZeroMoney,jdbcType=DOUBLE},#{item.foreginPay,jdbcType=DOUBLE},#{item.cwTime,jdbcType=TIMESTAMP},#{item.memberConsId,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <insert id="insertInvoicing" parameterType="map">
+        insert into dg_ow_receipt VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{cwId,jdbcType=INTEGER},#{item.receiptDenomination,jdbcType=INTEGER},
+            #{item.receiptCount,jdbcType=INTEGER},#{item.receiptAmount,jdbcType=INTEGER},#{item.receiptNum,jdbcType=VARCHAR},#{item.notes,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <insert id="insertPayWay" parameterType="map">
+        insert into dg_ow_clearingway(cw_id,settlement_amount,conversion_amount,cw_code,foreign_pay,cw_time)
+        VALUES (#{cwId,jdbcType=INTEGER},#{settlementAmount,jdbcType=DOUBLE},#{conversionAmount,jdbcType=NUMERIC},#{cwCode,jdbcType=VARCHAR},0,#{cwTime,jdbcType=VARCHAR})
+    </insert>
+    
+    
+    <insert id="insertSgdskj" parameterType="map">
+        insert into dg_ow_sgds_kj(type,user_id,coupon_id,cw_id,denomination,purpose,pay_money,time)
+        VALUES (#{type,jdbcType=INTEGER},#{user_id,jdbcType=VARCHAR},#{coupon_id,jdbcType=VARCHAR},#{cw_id,jdbcType=INTEGER},
+        #{denomination,jdbcType=DOUBLE},#{purpose,jdbcType=INTEGER},#{pay_money,jdbcType=DOUBLE},#{time,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="modifyItemFileAdd" parameterType="map">
+      update dg_ow_consumer_details set item_pay_money = #{itemFinalPrice,jdbcType=DOUBLE},discount_money = #{discountMoney,jdbcType=DECIMAL},settlement_status = 1
+      ,subtotal = #{subtotal,jdbcType=DOUBLE} <!-- "subtotal" create by xiewei 20181120 -->
+      ,item_file_number = #{itemFileNumber,jdbcType=DOUBLE}
+       ,couponNum = #{couponNum,jdbcType=DOUBLE}
+      where item_file_id = #{itemId,jdbcType=INTEGER} and ow_id = #{serviceId,jdbcType=INTEGER}
+    </update>
+
+
+    <update id="modifyItemFileSub" parameterType="map">
+        update dg_ow_consumer_details set item_pay_money = #{itemFinalPrice,jdbcType=DOUBLE},discount_money = #{discountMoney,jdbcType=DECIMAL},settlement_status = 1
+        ,subtotal = #{subtotal,jdbcType=DOUBLE}
+        where item_file_id = #{itemId,jdbcType=INTEGER} and back_ow_id = #{serviceId,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyItemFileDiscount" parameterType="map">
+      update dg_ow_consumer_details set item_pay_money = #{itemFinalPrice,jdbcType=DOUBLE}
+      where item_file_id = #{itemId,jdbcType=INTEGER} and (ow_id = #{serviceId,jdbcType=INTEGER} or back_ow_id = #{serviceId,jdbcType=INTEGER})
+    </update>
+
+    <update id="modifyOpenWaterState" parameterType="map">
+      UPDATE dg_open_water set ow_state = #{owState,jdbcType=INTEGER},clearing_water_id = #{cwId,jdbcType=INTEGER},
+        service_charge = #{serviceCharge,jdbcType=DOUBLE},
+        private_room_cost = #{privareRoomCosts,jdbcType=DOUBLE},
+        modify_service_charge = #{openWater.modifyServiceCharge,jdbcType=DOUBLE},
+        free_servce_charge = #{openWater.freeServceCharge,jdbcType=INTEGER},
+        free_min_spend = #{openWater.freeMinSpend,jdbcType=INTEGER},
+        free_private_room = #{openWater.freePrivateRoom,jdbcType=INTEGER},
+        modify_private_room = #{openWater.modifyPrivateRoom,jdbcType=DOUBLE},
+        minimum_consumption = #{openWater.minimumConsumption,jdbcType=DOUBLE},
+        minimum_charge_complete = #{minimumChargeComplete,jdbcType=DOUBLE},
+        discount_costs = #{discountCosts,jdbcType=DOUBLE}
+        ,subtotal = #{finalItemCostSum,jdbcType=DOUBLE} <!-- "subtotal" create by xiewei 20181120 -->
+      where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+
+    <update id="modifySeatState" parameterType="map">
+      UPDATE dg_consumer_seat set seat_state = #{state,jdbcType=INTEGER},last_open_time = null where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifySeatStateForMD" parameterType="map">
+        UPDATE dg_consumer_seat set seat_state = #{state,jdbcType=INTEGER} where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyOpenWaterAdvancePayInfo" parameterType="map">
+      UPDATE dg_open_water
+      <set>
+        <if test="owState != null and owState != ''">
+            ow_state = #{owState,jdbcType=INTEGER},
+        </if>
+        <if test="cwId != null and cwId != ''">
+            clearing_water_id = #{cwId,jdbcType=INTEGER},
+        </if>
+        service_charge = #{serviceCharge,jdbcType=DOUBLE},
+        private_room_cost = #{privareRoomCosts,jdbcType=DOUBLE},
+        modify_service_charge = #{openWater.modifyServiceCharge,jdbcType=DOUBLE},
+        free_servce_charge = #{openWater.freeServceCharge,jdbcType=INTEGER},
+        free_min_spend = #{openWater.freeMinSpend,jdbcType=INTEGER},
+        free_private_room = #{openWater.freePrivateRoom,jdbcType=INTEGER},
+        modify_private_room = #{openWater.modifyPrivateRoom,jdbcType=DOUBLE}
+    </set>
+      where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+
+    <update id="modifyOpenWAterCancelAdvancePay" parameterType="map">
+        update dg_open_water set modify_service_charge = NULL ,free_servce_charge = NULL ,
+        free_min_spend = NULL ,free_private_room = NULL ,modify_private_room = NULL,ow_state = #{state,jdbcType=INTEGER},clearing_water_id = null
+        where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+
+    <update id="modifyClearingWaterState" parameterType="map">
+        UPDATE dg_reception_clearing_water set clearing_state = 5 where id = #{cwId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateProportionByCwId" parameterType="java.lang.Integer">
+        update dg_reception_clearing_water set general_proportions = NULL ,single_proportions = NULL ,fixed_discount = NULL
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deletePayWayInfoByCwId" parameterType="java.lang.Integer">
+        delete from dg_ow_clearingway where cw_id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteInvoicingByCwId" parameterType="java.lang.Integer">
+        delete from dg_ow_receipt where cw_id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="delTrashClearingWater">
+        delete from dg_reception_clearing_water where id = #{cwId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectSeatOpenWater" parameterType="java.lang.Integer" resultType="map">
+        select id from dg_open_water where seat_id = #{id,jdbcType=INTEGER} and ow_state in (1,3,8,9)
+    </select>
+
+    <select id="selectOpenWaterByCwId" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where clearing_water_id = #{cwId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAllPayOpenWaterBySeatId" resultType="java.util.Map" parameterType="map">
+        select * from dg_open_water where seat_id = #{seatId,jdbcType=INTEGER} where transfer_target is not null and ow_state = 3
+    </select>
+
+    <select id="selectAllItemBigType" resultType="DgItemFileType">
+        select * from dg_item_file_type where parent_id = 0
+    </select>
+
+    <select id="selectClearingWaterById" parameterType="java.lang.Integer"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        SELECT * from dg_reception_clearing_water where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectPayWayByCwId" parameterType="java.lang.Integer" resultType="map">
+        SELECT doc.*,dsw.name as payWayName from dg_ow_clearingway doc left join dg_settlement_way dsw on doc.cw_code = dsw.number where cw_id =  #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectInvoicingByCwId" parameterType="java.lang.Integer"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwReceipt">
+        SELECT * from dg_ow_receipt where cw_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectClearingWaterByCwNum" parameterType="string"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        select * from dg_reception_clearing_water where cw_num = #{jsNum,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectDistinctSeatId" resultType="java.lang.Integer">
+        select DISTINCT seat_id from dg_open_water where id in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </select>
+
+
+</mapper>

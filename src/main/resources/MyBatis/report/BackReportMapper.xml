@@ -1,0 +1,2289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.report.BackReportMapper">
+
+    <select id="countNumberOfMeals" parameterType="map" resultType="integer">
+        SELECT IFNULL(sum(dow.people_count),0.0) as peopleCount from
+		(select people_count,first_time from dg_open_water
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select people_count,first_time from dg_open_water_${tableDate}
+		    </foreach>
+		 ) dow
+        <where>
+            <if test="startTime != null">
+                and first_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and first_time <![CDATA[<]]> #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="countNumberOfMealsBy24Hour" resultType="java.util.Map">
+        SELECT   CONCAT(HOUR(first_time), ':00-', HOUR(first_time)+1, ':00') AS hours,sum(people_count) AS `peopleCount`
+        FROM
+        (select people_count,first_time from dg_open_water
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select people_count,first_time from dg_open_water_${tableDate}
+		    </foreach>
+		 ) dow
+        <where>
+            <if test="startTime != null and startTime != ''">
+                first_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and first_time <![CDATA[<]]> #{endTime}
+            </if>
+        </where>
+        GROUP BY hours
+        UNION
+        SELECT   CONCAT(Hour, ':00-', Hour+1, ':00') AS hours,sum(people_count) AS `peopleCount`
+        FROM
+		(select people_count,first_time from dg_open_water
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select people_count,first_time from dg_open_water_${tableDate}
+		    </foreach>
+		 ) dow
+        RIGHT JOIN (
+        SELECT  0 AS Hour
+        UNION ALL SELECT  1 UNION ALL SELECT  2 UNION ALL SELECT  3
+        UNION ALL SELECT  4 UNION ALL SELECT  5 UNION ALL SELECT  6
+        UNION ALL SELECT  7 UNION ALL SELECT  8 UNION ALL SELECT  9
+        UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12
+        UNION ALL SELECT 13 UNION ALL SELECT 14 UNION ALL SELECT 15
+        UNION ALL SELECT 16 UNION ALL SELECT 17 UNION ALL SELECT 18
+        UNION ALL SELECT 19 UNION ALL SELECT 20 UNION ALL SELECT 21
+        UNION ALL SELECT 22 UNION ALL SELECT 23
+        )      AS AllHours ON HOUR(first_time) = Hour
+        where
+        (1=1  or first_time IS NULL)
+        <if test="startTime != null">
+            and first_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and first_time <![CDATA[<]]> #{endTime}
+        </if>
+        GROUP BY hours
+        ORDER BY hours
+    </select>
+
+    <select id="queryItemFileTypeIndex" resultType="java.util.Map" parameterType="map">
+        SELECT A.*, A.zqje - A.zhje AS zrje, CAST(zhje / itemFileNumber AS DECIMAL(18, 2)) AS avgPrice, CAST(zhje - zzfy AS DECIMAL(18, 2)) AS pxje
+        FROM (SELECT SUM(CAST(dif.standard_price AS DECIMAL(18, 2)) * docd.item_file_number) AS zqje, SUM(CAST(docd.item_file_number AS DECIMAL(18, 2))) AS itemFileNumber, SUM(CAST(docd.subtotal AS DECIMAL(18, 2))) AS zhje, SUM(CAST(docd.production_costs AS DECIMAL(18, 2))) AS zzfy, dift.name
+        , dift.num
+        FROM
+        (select id,clearing_time,clearing_state from dg_reception_clearing_water
+            <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+              select id,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+            </foreach>
+        ) drcw
+        left join
+        (select id,clearing_water_id from dg_open_water
+            <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+              select id,clearing_water_id from dg_open_water_${tableDate}
+            </foreach>
+        ) dow on drcw.id = dow.clearing_water_id
+        left join
+        (select id,ow_id from dg_ow_service_form
+            <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+              select id,ow_id from dg_ow_service_form_${tableDate}
+            </foreach>
+        ) dosf on dow.id = dosf.ow_id
+        left join
+        (SELECT item_file_id, item_file_number, subtotal, production_costs, ow_id FROM dg_ow_consumer_details
+            <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+                select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details_${tableDate}
+            </foreach>
+        )docd on dosf.id = docd.ow_id
+        LEFT JOIN dg_item_file dif ON docd.item_file_id = dif.id
+        LEFT JOIN dg_item_file_type dift ON dif.ppdl_id = dift.id
+        WHERE drcw.clearing_state = 2
+        <if test="startTime != null">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and drcw.clearing_time <![CDATA[<]]> #{endTime}
+        </if>
+        GROUP BY dift.name, dift.num
+        ) A where zqje is not null
+        <!--select A.*,A.zqje-A.zhje as zrje, cast(zhje/itemFileNumber as decimal(18,2)) avgPrice,
+        cast(zhje-zzfy as DECIMAL(18,2)) as pxje
+        from (
+        select sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as zqje,
+        sum(cast(docd.item_file_number as DECIMAL(18,2))) as itemFileNumber,
+        sum(cast(docd.subtotal as DECIMAL(18,2))) as zhje,
+        sum(cast(docd.production_costs as DECIMAL(18,2))) as zzfy,
+        dift.name,dift.num
+        from
+        (select id,service_time from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,service_time from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf
+        LEFT JOIN
+        (select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        ) docd
+        on dosf.id = docd.ow_id
+        LEFT JOIN dg_item_file dif on docd.item_file_id = dif.id
+        LEFT JOIN dg_item_file_type dift on dif.ppdl_id = dift.id
+        where dif.delFlag = '0' and docd.ow_id is not null
+        <if test="startTime != null">
+            and dosf.service_time<![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and dosf.service_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dift.name,dift.num
+        )A-->
+    </select>
+    <select id="queryItemFileTypeSmall" resultType="java.util.Map" parameterType="map">
+        select A.*,A.zqje-A.zhje as zrje, cast(zhje/itemFileNumber as decimal(18,2)) avgPrice,
+        cast(zhje-zzfy as DECIMAL(18,2)) as pxje
+        from (
+        select sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as zqje,
+        sum(cast(docd.item_file_number as DECIMAL(18,2))) as itemFileNumber,
+        sum(cast(docd.subtotal as DECIMAL(18,2))) as zhje,
+        sum(cast(docd.production_costs as DECIMAL(18,2))) as zzfy,
+        dift2.name as smallName,
+        dift.name,dift.num,dift2.num as smallNum
+        from
+        (select id,clearing_time,clearing_state from dg_reception_clearing_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+        </foreach>
+        ) drcw
+        left join
+        (select id,clearing_water_id from dg_open_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,clearing_water_id from dg_open_water_${tableDate}
+        </foreach>
+        ) dow on drcw.id = dow.clearing_water_id
+        left join
+        (select id,ow_id from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,ow_id from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf on dow.id = dosf.ow_id
+        left join
+        (SELECT item_file_id, item_file_number, subtotal, production_costs, ow_id FROM dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        )docd on dosf.id = docd.ow_id
+        LEFT JOIN dg_item_file dif on docd.item_file_id = dif.id
+        LEFT JOIN dg_item_file_type dift on dif.ppdl_id = dift.id
+        LEFT JOIN dg_item_file_type dift2 on dif.ppxl_id = dift2.id
+        where docd.ow_id is not null and dif.ppxl_id in (select id from dg_item_file_type where parent_id in (select id from dg_item_file_type where num = #{bigNum,jdbcType=VARCHAR}))
+        and drcw.clearing_state = 2
+        <if test="startTime != null">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and drcw.clearing_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dift.name,smallName,dift.num,smallNum
+        )A
+
+        <!--select A.*,A.zqje-A.zhje as zrje, cast(zhje/itemFileNumber as decimal(18,2)) avgPrice,
+        cast(zhje-zzfy as DECIMAL(18,2)) as pxje
+        from (
+        select sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as zqje,
+        sum(cast(docd.item_file_number as DECIMAL(18,2))) as itemFileNumber,
+        sum(cast(docd.subtotal as DECIMAL(18,2))) as zhje,
+        sum(cast(docd.production_costs as DECIMAL(18,2))) as zzfy,
+        dift2.name as smallName,
+        dift.name,dift.num,dift2.num as smallNum
+        from
+        (select id,service_time from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,service_time from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf
+
+        LEFT JOIN
+        (select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        ) docd
+        on dosf.id = docd.ow_id
+        LEFT JOIN dg_item_file dif on docd.item_file_id = dif.id
+        LEFT JOIN dg_item_file_type dift on dif.ppdl_id = dift.id
+        LEFT JOIN dg_item_file_type dift2 on dif.ppxl_id = dift2.id
+        where dif.delFlag = '0' and docd.ow_id is not null and dif.ppxl_id in (select id from dg_item_file_type where parent_id in (select id from dg_item_file_type where num = #{bigNum,jdbcType=VARCHAR}))
+        <if test="startTime != null">
+            and dosf.service_time<![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and dosf.service_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dift.name,smallName,dift.num,smallNum
+        )A-->
+    </select>
+
+    <select id="queryItemFileTypeItem" resultType="java.util.Map" parameterType="map">
+        select A.*,A.zqje-A.zhje as zrje, cast(zhje/itemFileNumber as decimal(18,2)) avgPrice,
+        cast(zhje-zzfy as DECIMAL(18,2)) as pxje
+        from (
+        select dif.name as itemFileName,dif.num as itemFileNum,
+        dif.unit AS unit,dif.standard_price AS standardPrice,
+        sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as zqje,
+        sum(cast(docd.item_file_number as DECIMAL(18,2))) as itemFileNumber,
+        sum(cast(docd.subtotal as DECIMAL(18,2))) as zhje,
+        sum(cast(docd.production_costs as DECIMAL(18,2))) as zzfy,
+        dift2.name as smallName,
+        dift.name,dift.num,dift2.num as smallNum
+        from
+        (select id,clearing_time,clearing_state from dg_reception_clearing_water
+            <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+                select id,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate}
+            </foreach>
+        )drcw
+        left join
+        (select id,clearing_water_id from dg_open_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,clearing_water_id from dg_open_water_${tableDate}
+        </foreach>
+        ) dow on drcw.id = dow.clearing_water_id
+        left join
+        (select id,ow_id from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,ow_id from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf on dow.id = dosf.ow_id
+        left join
+        (SELECT item_file_id, item_file_number, subtotal, production_costs, ow_id FROM dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        )docd on dosf.id = docd.ow_id
+        LEFT JOIN dg_item_file dif on docd.item_file_id = dif.id
+        LEFT JOIN dg_item_file_type dift on dif.ppdl_id = dift.id
+        LEFT JOIN dg_item_file_type dift2 on dif.ppxl_id = dift2.id
+        where docd.ow_id is not null and dif.id in (select id from dg_item_file where ppxl_id in (select id from dg_item_file_type where num = #{smallNum,jdbcType=VARCHAR}))
+        and drcw.clearing_state = 2
+        <if test="startTime != null">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and drcw.clearing_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dif.name,dif.num,dift.name,smallName,dift.num,smallNum
+        )A
+        <!--select A.*,A.zqje-A.zhje as zrje, cast(zhje/itemFileNumber as decimal(18,2)) avgPrice,
+        select A.*,A.zqje-A.zhje as zrje, cast(zhje/itemFileNumber as decimal(18,2)) avgPrice,
+        cast(zhje-zzfy as DECIMAL(18,2)) as pxje
+        from (
+        select dif.name as itemFileName,dif.num as itemFileNum,
+        dif.unit AS unit,dif.standard_price AS standardPrice,
+        sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as zqje,
+        sum(cast(docd.item_file_number as DECIMAL(18,2))) as itemFileNumber,
+        sum(cast(docd.subtotal as DECIMAL(18,2))) as zhje,
+        sum(cast(docd.production_costs as DECIMAL(18,2))) as zzfy,
+        dift2.name as smallName,
+        dift.name,dift.num,dift2.num as smallNum
+        from
+        (select id,service_time from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,service_time from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf
+        LEFT JOIN
+        (select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select item_file_id,item_file_number,subtotal,production_costs,ow_id from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        ) docd
+        on dosf.id = docd.ow_id
+        LEFT JOIN dg_item_file dif on docd.item_file_id = dif.id
+        LEFT JOIN dg_item_file_type dift on dif.ppdl_id = dift.id
+        LEFT JOIN dg_item_file_type dift2 on dif.ppxl_id = dift2.id
+        where dif.delFlag = '0' and docd.ow_id is not null and dif.id in (select id from dg_item_file where ppxl_id in (select id from dg_item_file_type where num = #{smallNum,jdbcType=VARCHAR}))
+        <if test="startTime != null">
+            and dosf.service_time<![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and dosf.service_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dif.name,dif.num,dift.name,smallName,dift.num,smallNum
+        )A-->
+    </select>
+
+    <select id="queryItemFileTypeOpenWaters" resultType="java.util.Map" parameterType="map">
+        select A.*,A.zqje-A.zhje as zrje,A.zhje-A.zzfy as pxje from (
+        select dosf.service_num ,dow.ow_num,drcw.cw_num,dif.id as itemFileId,dif.num,dif.name,docd.item_file_number,
+        cast(docd.item_file_number as DECIMAL(18,2)) * dif.standard_price as zqje,
+        cast(docd.subtotal as DECIMAL(18,2)) as zhje,
+        cast(docd.production_costs as DECIMAL(18,2)) as zzfy,
+        date_format(dosf.service_time,'%m-%d %T') as service_time,
+        date_format(drcw.clearing_time,'%m-%d %T') as clearing_time,dp.name as posName,
+        dcs.name as seatName,
+        cast(docd.item_pay_money as DECIMAL(18,2)) as mdje,
+        dosf.id as serviceId,dca.name as areaName
+        from
+        (select id,cw_num,clearing_time,clearing_pos,clearing_state from dg_reception_clearing_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,cw_num,clearing_time,clearing_pos,clearing_state from dg_reception_clearing_water_${tableDate}
+        </foreach>
+        ) drcw
+        left JOIN
+        (select id,ow_num,clearing_water_id,seat_id from dg_open_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,ow_num,clearing_water_id,seat_id from dg_open_water_${tableDate}
+        </foreach>
+        ) dow on drcw.id = dow.clearing_water_id
+        left JOIN
+        (select id,service_time,service_num,ow_id from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,service_time,service_num,ow_id from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf on dosf.ow_id = dow.id
+        left join
+        (select ow_id,item_file_id,item_file_number,subtotal,production_costs,item_pay_money from dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select ow_id,item_file_id,item_file_number,subtotal,production_costs,item_pay_money from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        ) docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id
+        left join dg_pos dp on drcw.clearing_pos = dp.id
+        left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+        left join dg_consumption_area dca on  dcs.cons_area = dca.id
+        where dif.num = #{itemFileNum} and drcw.clearing_state = 2
+        <if test="startTime != null">
+            and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and drcw.clearing_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dosf.service_num
+        ) A
+
+        <!--select A.*,A.zqje-A.zhje as zrje,A.zhje-A.zzfy as pxje from (
+        select dosf.service_num ,dow.ow_num,drcw.cw_num,dif.id as itemFileId,dif.num,dif.name,docd.item_file_number,
+        cast(docd.item_file_number as DECIMAL(18,2)) * dif.standard_price as zqje,
+        cast(docd.subtotal as DECIMAL(18,2)) as zhje,
+        cast(docd.production_costs as DECIMAL(18,2)) as zzfy,
+        date_format(dosf.service_time,'%m-%d %T') as service_time,
+        date_format(drcw.clearing_time,'%m-%d %T') as clearing_time,dp.name as posName,
+        dcs.name as seatName,
+        cast(docd.item_pay_money as DECIMAL(18,2)) as mdje,
+        dosf.id as serviceId,dca.name as areaName
+        from dg_item_file dif
+        left join (select ow_id,item_file_id,item_file_number,subtotal,production_costs,item_pay_money from dg_ow_consumer_details
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select ow_id,item_file_id,item_file_number,subtotal,production_costs,item_pay_money from dg_ow_consumer_details_${tableDate}
+        </foreach>
+        ) docd on dif.id = docd.item_file_id
+        left join (select id,service_time,service_num,ow_id from dg_ow_service_form
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,service_time,service_num,ow_id from dg_ow_service_form_${tableDate}
+        </foreach>
+        ) dosf on docd.ow_id = dosf.id
+        left join (select id,ow_num,clearing_water_id,seat_id from dg_open_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,ow_num,clearing_water_id,seat_id from dg_open_water_${tableDate}
+        </foreach>
+        ) dow on dosf.ow_id = dow.id
+        left join (select id,cw_num,clearing_time,clearing_pos from dg_reception_clearing_water
+        <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+            select id,cw_num,clearing_time,clearing_pos from dg_reception_clearing_water_${tableDate}
+        </foreach>
+        ) drcw on dow.clearing_water_id = drcw.id
+        left join dg_pos dp on drcw.clearing_pos = dp.id
+        left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+        left join dg_consumption_area dca on  dcs.cons_area = dca.id
+        where dif.delFlag = '0' and dif.num = #{itemFileNum} &lt;!&ndash; and drcw.clearing_state = 2 &ndash;&gt;
+        <if test="startTime != null">
+            and dosf.service_time<![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and dosf.service_time <![CDATA[<]]> #{endTime}
+        </if>
+        group by dosf.service_num
+        ) A-->
+    </select>
+
+    <select id="selectCountServiceNumByServiceWater" resultType="java.lang.Integer" parameterType="string">
+        select a.id from
+	        (select id,ow_id from dg_ow_service_form
+			    union all
+			 select id,ow_id from dg_ow_service_form_${tableDate}
+			 ) a
+        where a.ow_id = (
+          select b.ow_id from
+	          (select id,ow_id from dg_ow_service_form
+			    union all
+			   select id,ow_id from dg_ow_service_form_${tableDate}
+			  ) b
+          where b.id = #{serviceId}
+        )
+    </select>
+
+    <select id="selectServiceDetailByServiceId" parameterType="string" resultType="java.util.Map">
+        select dosf.*,dow.open_bis,DG_FU_getUserName(su.emp_code) as empName,DG_FU_getPosName(dow.open_pos) as posName ,
+        case when dosf.service_type = 1 then '开单客位加单' when dosf.service_type = 2 then '加单' when dosf.service_type = 3 then '赠单' WHEN
+        dosf.service_type = 4 then '退单' WHEN dosf.service_type = 5 then '减少人数减单' when dosf.service_type = 6 then '增加人数加单' when
+        dosf.service_type = 7 then '更换客位' WHEN dosf.service_type = 8 then '单品转台' END as serviceTypeName,DATE_FORMAT(dosf.service_time,'%Y-%m-%d %H:%i:%s') as serviceTime
+        from
+        	(select * from dg_ow_service_form
+			    union all
+			 select * from dg_ow_service_form_${tableDate}
+			 ) dosf
+        left join
+        	(select * from dg_open_water
+			    union all
+			 select * from dg_open_water_${tableDate}
+			 ) dow on dosf.waiter_id = dow.id
+        left join sys_user su on dosf.waiter_id = su.id
+        where dosf.id = #{serviceId}
+    </select>
+
+    <select id="dataSearchDetailsNext" parameterType="integer"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select docd.*,dif.name as itemFileName from
+        	(select * from dg_ow_consumer_details
+			    union all
+			 select * from dg_ow_consumer_details_${tableDate}
+			 ) docd
+         left join dg_item_file dif on docd.item_file_id = dif.id
+         where ow_id = #{serviceId}
+    </select>
+
+    <sql id="convertRowToColumnClearingWaySql">
+        SELECT dpc.cKeyWD, cw_id, conversion_amount, notes, non_zero_amount, foreign_pay, cw_time, 
+		CASE WHEN dpc.cKeyWD = 'XJ' THEN SUM(settlement_amount) END AS XJ, 
+		CASE WHEN dpc.cKeyWD = 'ZP' THEN SUM(settlement_amount) END AS ZP, 
+		CASE WHEN dpc.cKeyWD = 'XYK' THEN SUM(settlement_amount) END AS XYK, 
+		CASE WHEN dpc.cKeyWD = 'HYK' THEN SUM(settlement_amount) END AS HYK, 
+		CASE WHEN dpc.cKeyWD = 'YFK' THEN SUM(settlement_amount) END AS YFK, 
+		CASE WHEN dpc.cKeyWD = 'QT' THEN SUM(settlement_amount) END AS QT, 
+		CASE WHEN dpc.cKeyWD = 'YQ' THEN SUM(settlement_amount) END AS YQ,
+		CASE WHEN dpc.cKeyWD = 'GZ' THEN SUM(settlement_amount) END AS GZ, 
+		CASE WHEN dpc.cKeyWD = 'QTJZ' THEN SUM(settlement_amount) END AS QTJZ
+		FROM dg_ow_clearingway doC
+		LEFT JOIN dg_reception_clearing_water drcw ON doc.cw_id = drcw.id
+		LEFT JOIN dg_settlement_way dsw ON doc.cw_code = dsw.number
+		LEFT JOIN dg_public_code0 dpc ON dsw.type = dpc.id
+		GROUP BY doc.cw_code,drcw.id
+    </sql>
+
+    <sql id="selectClearingWaterChequeMoney">
+        select A.cw_id,sum(A.cheque) as allCheque from (
+          select cw_id, receipt_count * receipt_amount as cheque from dg_ow_receipt)A group by A.cw_id
+    </sql>
+
+   <!-- 提供结账单查询页码 -->
+	<select id="countStatementListByPage" resultType="integer" parameterType="Statement">
+	select count(0) from (
+        <if test="flag == true">
+            select
+            drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+            drcw.amounts_receivable,
+            drcw.change_amount,
+            drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+            drcw.clearing_pos,
+            drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+            dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+            DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+            DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+            dow.id as dowId,
+            clearingWay.payInfo
+            from dg_reception_clearing_water drcw
+            RIGHT join dg_open_water dow on drcw.id = dow.clearing_water_id
+            left join (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from dg_reception_clearing_water drcw
+            LEFT JOIN dg_open_water dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+            GROUP BY drcw.id
+            ) dow2 ON drcw.id = dow2.clearing_water_id
+            left join (
+            select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from dg_reception_clearing_water drcw
+            LEFT JOIN dg_ow_clearingway doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where drcw.clearing_state = 2
+            group by drcw.id
+            ) clearingWay on drcw.id=clearingWay.id
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join dg_consumption_area dca on dcs.cons_area = dca.id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            left join dg_ow_discount dod on drcw.id = dod.cw_id
+            left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="consumerArea != null and consumerArea != ''">
+                and dca.id = #{consumerArea,jdbcType=INTEGER}
+            </if>
+            <if test="bis != null and bis != ''">
+                and tbb.id = #{bis,jdbcType=INTEGER}
+            </if>
+            <if test="pos != null and pos != ''">
+                and dp.id = #{pos,jdbcType=INTEGER}
+            </if>
+            <if test="clearingNum != null and clearingNum != ''">
+                and drcw.cw_num like concat('%',#{clearingNum},'%')
+            </if>
+            GROUP BY dow.team_members order by drcw.clearing_time
+        </if>
+        <if test="flag == false">
+            select
+            drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+            drcw.amounts_receivable,
+            drcw.change_amount,
+            drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+            drcw.clearing_pos,
+            drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+            dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+            DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+            DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+            dow.id as dowId,
+            clearingWay.payInfo
+            from (select id,cw_num,consumption_amount,zero_amount,fixed_discount,paid_amount,amounts_receivable,
+            change_amount,clearing_time,clearing_bis,clearing_operator,clearing_pos,clearing_state from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select id,cw_num,consumption_amount,zero_amount,fixed_discount,paid_amount,amounts_receivable,
+                change_amount,clearing_time,clearing_bis,clearing_operator,clearing_pos,clearing_state from dg_reception_clearing_water_${suffix}
+            </foreach>
+            <where>
+                <if test="startTime != null">
+                    and clearing_time <![CDATA[>=]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and clearing_time <![CDATA[<=]]> #{endTime}
+                </if>
+            </where>
+            ) drcw
+            RIGHT join (select id,item_costs_sum,first_time,people_count,discount_costs,clearing_water_id,seat_id,team_members from dg_open_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select id,item_costs_sum,first_time,people_count,discount_costs,clearing_water_id,seat_id,team_members from dg_open_water_${suffix}
+            </foreach>
+            ) dow on drcw.id = dow.clearing_water_id
+            left join
+            (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from
+            (select id,clearing_state from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,clearing_state from dg_reception_clearing_water_${suffix}
+                </foreach>
+                <where>
+                    <if test="startTime != null">
+                        and clearing_time <![CDATA[>=]]> #{startTime}
+                    </if>
+                    <if test="endTime != null">
+                        and clearing_time <![CDATA[<=]]> #{endTime}
+                    </if>
+                </where>
+            ) drcw
+            LEFT JOIN
+            (select id,ow_num,clearing_water_id,seat_id from dg_open_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,ow_num,clearing_water_id,seat_id from dg_open_water_${suffix}
+                </foreach>
+            ) dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+            GROUP BY drcw.id
+            ) dow2 ON drcw.id = dow2.clearing_water_id
+            left join (
+            select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from
+                (select id,clearing_state from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,clearing_state from dg_reception_clearing_water_${suffix}
+                </foreach>
+                    <where>
+                        <if test="startTime != null">
+                            and clearing_time <![CDATA[>=]]> #{startTime}
+                        </if>
+                        <if test="endTime != null">
+                            and clearing_time <![CDATA[<=]]> #{endTime}
+                        </if>
+                    </where>
+                ) drcw
+            LEFT JOIN
+                (select cw_id,cw_code,conversion_amount from dg_ow_clearingway
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select cw_id,cw_code,conversion_amount from dg_ow_clearingway_${suffix}
+                </foreach>
+                ) doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where drcw.clearing_state = 2
+            group by drcw.id
+            ) clearingWay on drcw.id=clearingWay.id
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join dg_consumption_area dca on dcs.cons_area = dca.id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            left join dg_ow_discount dod on drcw.id = dod.cw_id
+            left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="consumerArea != null and consumerArea != ''">
+                and dca.id = #{consumerArea,jdbcType=INTEGER}
+            </if>
+            <if test="bis != null and bis != ''">
+                and tbb.id = #{bis,jdbcType=INTEGER}
+            </if>
+            <if test="pos != null and pos != ''">
+                and dp.id = #{pos,jdbcType=INTEGER}
+            </if>
+            <if test="clearingNum != null and clearingNum != ''">
+                and drcw.cw_num like concat('%',#{clearingNum},'%')
+            </if>
+            GROUP BY dow.team_members order by drcw.clearing_time
+        </if>
+        ) tb
+    </select>
+    <!-- 提供结账单分页查询 -->
+	<select id="selectStatementListByPage" parameterType="Statement" resultType="Statement">
+        <if test="flag == true">
+            select
+            drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+            drcw.amounts_receivable,
+            drcw.change_amount,
+            drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+            drcw.clearing_pos,
+            drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+            dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+            DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+            DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+            dow.id as dowId,
+            clearingWay.payInfo
+            from dg_reception_clearing_water drcw
+            RIGHT join dg_open_water dow on drcw.id = dow.clearing_water_id
+            left join (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from dg_reception_clearing_water drcw
+            LEFT JOIN dg_open_water dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            GROUP BY drcw.id
+            ) dow2 ON drcw.id = dow2.clearing_water_id
+            left join (
+            select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from dg_reception_clearing_water drcw
+            LEFT JOIN dg_ow_clearingway doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            group by drcw.id
+            ) clearingWay on drcw.id=clearingWay.id
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join dg_consumption_area dca on dcs.cons_area = dca.id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            left join dg_ow_discount dod on drcw.id = dod.cw_id
+            left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="consumerArea != null and consumerArea != ''">
+                and dca.id = #{consumerArea,jdbcType=INTEGER}
+            </if>
+            <if test="bis != null and bis != ''">
+                and tbb.id = #{bis,jdbcType=INTEGER}
+            </if>
+            <if test="pos != null and pos != ''">
+                and dp.id = #{pos,jdbcType=INTEGER}
+            </if>
+            <if test="clearingNum != null and clearingNum != ''">
+                and drcw.cw_num like concat('%',#{clearingNum},'%')
+            </if>
+            GROUP BY dow.team_members
+            <choose>
+		      	<when test="sidx != null and sidx != ''">
+		      		order by ${sidx}  ${sord}
+		      	</when>
+		      	<otherwise>
+		      		order by drcw.clearing_time desc
+		      	</otherwise>
+		    </choose>
+            limit #{startRow},#{endRow}
+        </if>
+        <if test="flag == false">
+            select
+            drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+            drcw.amounts_receivable,
+            drcw.change_amount,
+            drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+            drcw.clearing_pos,
+            drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+            dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+            DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+            DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+            dow.id as dowId,
+            clearingWay.payInfo
+            from (select id,cw_num,consumption_amount,zero_amount,fixed_discount,paid_amount,amounts_receivable,
+            change_amount,clearing_time,clearing_bis,clearing_operator,clearing_pos,clearing_state from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select id,cw_num,consumption_amount,zero_amount,fixed_discount,paid_amount,amounts_receivable,
+                change_amount,clearing_time,clearing_bis,clearing_operator,clearing_pos,clearing_state from dg_reception_clearing_water_${suffix}
+            </foreach>
+            <where>
+                <if test="startTime != null">
+                    and clearing_time <![CDATA[>=]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and clearing_time <![CDATA[<=]]> #{endTime}
+                </if>
+            </where>
+            ) drcw
+            RIGHT join (select id,item_costs_sum,first_time,people_count,discount_costs,clearing_water_id,seat_id,team_members from dg_open_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select id,item_costs_sum,first_time,people_count,discount_costs,clearing_water_id,seat_id,team_members from dg_open_water_${suffix}
+            </foreach>
+            ) dow on drcw.id = dow.clearing_water_id
+            left join
+            (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from
+            (select id,clearing_state from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,clearing_state from dg_reception_clearing_water_${suffix}
+                </foreach>
+                <where>
+                    <if test="startTime != null">
+                        and clearing_time <![CDATA[>=]]> #{startTime}
+                    </if>
+                    <if test="endTime != null">
+                        and clearing_time <![CDATA[<=]]> #{endTime}
+                    </if>
+                </where>
+            ) drcw
+            LEFT JOIN
+            (select id,ow_num,clearing_water_id,seat_id from dg_open_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,ow_num,clearing_water_id,seat_id from dg_open_water_${suffix}
+                </foreach>
+            ) dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+            GROUP BY drcw.id
+            ) dow2 ON drcw.id = dow2.clearing_water_id
+            left join (
+            select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from
+                (select id,clearing_state from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,clearing_state from dg_reception_clearing_water_${suffix}
+                </foreach>
+                    <where>
+                        <if test="startTime != null">
+                            and clearing_time <![CDATA[>=]]> #{startTime}
+                        </if>
+                        <if test="endTime != null">
+                            and clearing_time <![CDATA[<=]]> #{endTime}
+                        </if>
+                    </where>
+                ) drcw
+            LEFT JOIN
+                (select cw_id,cw_code,conversion_amount from dg_ow_clearingway
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select cw_id,cw_code,conversion_amount from dg_ow_clearingway_${suffix}
+                </foreach>
+                ) doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where drcw.clearing_state = 2
+            group by drcw.id
+            ) clearingWay on drcw.id=clearingWay.id
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join dg_consumption_area dca on dcs.cons_area = dca.id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            left join dg_ow_discount dod on drcw.id = dod.cw_id
+            left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="consumerArea != null and consumerArea != ''">
+                and dca.id = #{consumerArea,jdbcType=INTEGER}
+            </if>
+            <if test="bis != null and bis != ''">
+                and tbb.id = #{bis,jdbcType=INTEGER}
+            </if>
+            <if test="pos != null and pos != ''">
+                and dp.id = #{pos,jdbcType=INTEGER}
+            </if>
+            <if test="clearingNum != null and clearingNum != ''">
+                and drcw.cw_num like concat('%',#{clearingNum},'%')
+            </if>
+            GROUP BY dow.team_members
+            <choose>
+		      	<when test="sidx != null and sidx != ''">
+		      		order by ${sidx}  ${sord}
+		      	</when>
+		      	<otherwise>
+		      		order by drcw.clearing_time desc
+		      	</otherwise>
+		    </choose>
+            limit #{startRow},#{endRow}
+        </if>
+    </select>
+    <!-- 提供结账单导出查询 -->
+    <select id="statementQuery" parameterType="map" resultType="map">
+        <if test="flag == true">
+            select
+            drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+            drcw.amounts_receivable,
+            drcw.change_amount,
+            drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+            drcw.clearing_pos,
+            drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+            dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+            DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+            DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+            dow.id as dowId,
+            clearingWay.payInfo
+            from dg_reception_clearing_water drcw
+            RIGHT join dg_open_water dow on drcw.id = dow.clearing_water_id
+            left join (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from dg_reception_clearing_water drcw
+            LEFT JOIN dg_open_water dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+            GROUP BY drcw.id
+            ) dow2 ON drcw.id = dow2.clearing_water_id
+            left join (
+            select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from dg_reception_clearing_water drcw
+            LEFT JOIN dg_ow_clearingway doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where drcw.clearing_state = 2
+            group by drcw.id
+            ) clearingWay on drcw.id=clearingWay.id
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join dg_consumption_area dca on dcs.cons_area = dca.id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            left join dg_ow_discount dod on drcw.id = dod.cw_id
+            left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="consumerArea != null and consumerArea != ''">
+                and dca.id = #{consumerArea,jdbcType=INTEGER}
+            </if>
+            <if test="bis != null and bis != ''">
+                and tbb.id = #{bis,jdbcType=INTEGER}
+            </if>
+            <if test="pos != null and pos != ''">
+                and dp.id = #{pos,jdbcType=INTEGER}
+            </if>
+            <if test="clearingNum != null and clearingNum != ''">
+                and drcw.cw_num like concat('%',#{clearingNum},'%')
+            </if>
+            GROUP BY dow.team_members order by drcw.clearing_time
+        </if>
+        <if test="flag == false">
+            select
+            drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+            drcw.amounts_receivable,
+            drcw.change_amount,
+            drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+            drcw.clearing_pos,
+            drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+            dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+            DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+            DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+            dow.id as dowId,
+            clearingWay.payInfo
+            from (select id,cw_num,consumption_amount,zero_amount,fixed_discount,paid_amount,amounts_receivable,
+            change_amount,clearing_time,clearing_bis,clearing_operator,clearing_pos,clearing_state from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select id,cw_num,consumption_amount,zero_amount,fixed_discount,paid_amount,amounts_receivable,
+                change_amount,clearing_time,clearing_bis,clearing_operator,clearing_pos,clearing_state from dg_reception_clearing_water_${suffix}
+            </foreach>
+            <where>
+                <if test="startTime != null">
+                    and clearing_time <![CDATA[>=]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and clearing_time <![CDATA[<=]]> #{endTime}
+                </if>
+            </where>
+            ) drcw
+            RIGHT join (select id,item_costs_sum,first_time,people_count,discount_costs,clearing_water_id,seat_id,team_members from dg_open_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select id,item_costs_sum,first_time,people_count,discount_costs,clearing_water_id,seat_id,team_members from dg_open_water_${suffix}
+            </foreach>
+            ) dow on drcw.id = dow.clearing_water_id
+            left join
+            (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from
+            (select id,clearing_state from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,clearing_state from dg_reception_clearing_water_${suffix}
+                </foreach>
+                <where>
+                    <if test="startTime != null">
+                        and clearing_time <![CDATA[>=]]> #{startTime}
+                    </if>
+                    <if test="endTime != null">
+                        and clearing_time <![CDATA[<=]]> #{endTime}
+                    </if>
+                </where>
+            ) drcw
+            LEFT JOIN
+            (select id,ow_num,clearing_water_id,seat_id from dg_open_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,ow_num,clearing_water_id,seat_id from dg_open_water_${suffix}
+                </foreach>
+            ) dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+            GROUP BY drcw.id
+            ) dow2 ON drcw.id = dow2.clearing_water_id
+            left join (
+            select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from
+                (select id,clearing_state from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select id,clearing_state from dg_reception_clearing_water_${suffix}
+                </foreach>
+                    <where>
+                        <if test="startTime != null">
+                            and clearing_time <![CDATA[>=]]> #{startTime}
+                        </if>
+                        <if test="endTime != null">
+                            and clearing_time <![CDATA[<=]]> #{endTime}
+                        </if>
+                    </where>
+                ) drcw
+            LEFT JOIN
+                (select cw_id,cw_code,conversion_amount from dg_ow_clearingway
+                <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                    select cw_id,cw_code,conversion_amount from dg_ow_clearingway_${suffix}
+                </foreach>
+                ) doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where drcw.clearing_state = 2
+            group by drcw.id
+            ) clearingWay on drcw.id=clearingWay.id
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join dg_consumption_area dca on dcs.cons_area = dca.id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            left join dg_ow_discount dod on drcw.id = dod.cw_id
+            left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+            where drcw.clearing_state = 2
+            <if test="startTime != null">
+                and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="consumerArea != null and consumerArea != ''">
+                and dca.id = #{consumerArea,jdbcType=INTEGER}
+            </if>
+            <if test="bis != null and bis != ''">
+                and tbb.id = #{bis,jdbcType=INTEGER}
+            </if>
+            <if test="pos != null and pos != ''">
+                and dp.id = #{pos,jdbcType=INTEGER}
+            </if>
+            <if test="clearingNum != null and clearingNum != ''">
+                and drcw.cw_num like concat('%',#{clearingNum},'%')
+            </if>
+            GROUP BY dow.team_members order by drcw.clearing_time
+        </if>
+
+        <!--select * from (
+            <foreach collection="tableSuffixList" item="suffix" separator="union all">
+                select
+                drcw.cw_num,sum(cast(dow.item_costs_sum as decimal(18,2))) as pxjgh,drcw.consumption_amount,drcw.zero_amount,drcw.fixed_discount,drcw.paid_amount,
+                drcw.amounts_receivable,
+                drcw.change_amount,
+                drcw.clearing_time,drcw.clearing_bis,drcw.clearing_operator,
+                drcw.clearing_pos,
+                drcw.clearing_state,dow2.ow_num,dow.first_time,dow2.seatName,sum(dow.people_count) as people_count,
+                dow.discount_costs,dod.discount_info,dod.authorized_person_name,DG_FU_getPosName(drcw.clearing_pos) as posName,
+                DG_FU_getUserName(drcw.clearing_operator) as operatorName,DATE_FORMAT(drcw.clearing_time, '%m-%d %T') as clearingTime,
+                DATE_FORMAT(dow.first_time, '%m-%d %T') as firstTime,tbb.bis_name,
+                dow.id as dowId,
+                clearingWay.payInfo
+                from dg_reception_clearing_water_${suffix} drcw
+                RIGHT join dg_open_water_${suffix} dow on drcw.id = dow.clearing_water_id
+                left join (select group_concat(ow_num) as ow_num,clearing_water_id,GROUP_CONCAT(DG_FU_getSeatName(dow.seat_id)) AS seatName from dg_reception_clearing_water_${suffix} drcw
+                LEFT JOIN dg_open_water_${suffix} dow  ON dow.clearing_water_id = drcw.id where drcw.clearing_state = 2
+                GROUP BY drcw.id
+                ) dow2 ON drcw.id = dow2.clearing_water_id
+                left join (
+                select group_concat(concat(dsw.name,':',doc.conversion_amount)) as payInfo,drcw.id from dg_reception_clearing_water_${suffix} drcw
+                LEFT JOIN dg_ow_clearingway_${suffix} doc  ON doc.cw_id = drcw.id left join dg_settlement_way dsw on doc.cw_code = dsw.number
+                where drcw.clearing_state = 2
+                group by drcw.id
+                ) clearingWay on drcw.id=clearingWay.id
+                left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+                left join dg_consumption_area dca on dcs.cons_area = dca.id
+                left join dg_pos dp on drcw.clearing_pos = dp.id
+                left join dg_ow_discount dod on drcw.id = dod.cw_id
+                left join t_b_bis tbb on drcw.clearing_bis = tbb.id
+                where drcw.clearing_state = 2
+                <if test="startTime != null">
+                    and drcw.clearing_time <![CDATA[>=]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+                </if>
+                <if test="consumerArea != null and consumerArea != ''">
+                    and dca.id = #{consumerArea,jdbcType=INTEGER}
+                </if>
+                <if test="bis != null and bis != ''">
+                    and tbb.id = #{bis,jdbcType=INTEGER}
+                </if>
+                <if test="pos != null and pos != ''">
+                    and dp.id = #{pos,jdbcType=INTEGER}
+                </if>
+                <if test="clearingNum != null and clearingNum != ''">
+                    and drcw.cw_num like concat('%',#{clearingNum},'%')
+                </if>
+                GROUP BY dow.team_members
+            </foreach>
+        ) as tempTable order by clearingTime-->
+    </select>
+
+    <select id="openDayOpeningAmount" resultType="java.util.Map" parameterType="map">
+        <if test="flag == true">
+            select * from (SELECT
+            SUM(CAST(yeze AS DECIMAL(18, 2)) - CAST(zl AS DECIMAL(18, 2))) AS yeze,
+            SUM(CAST(zl AS DECIMAL(18, 2))) AS zl,
+            SUM(CAST(yhje AS DECIMAL(18, 2))) AS yhje,
+            SUM(CAST(mlje AS DECIMAL(18, 2))) AS mlje,
+            SUM(CAST(deyh AS DECIMAL(18, 2))) AS deyh,
+            SUM(CAST(fpje AS DECIMAL(18, 2))) AS fpje
+            FROM
+            (
+            SELECT
+            drcw.id,
+            drcw.paid_amount AS yeze,
+            ifnull(drcw.change_amount, 0) AS zl,
+            dow.discount_costs AS yhje,
+            drcw.zero_amount AS mlje,
+            drcw.fixed_discount AS deyh,
+            cq.allCheque AS fpje
+            FROM
+            (select * from dg_reception_clearing_water where cw_num IS NOT NULL
+            AND clearing_state = 2
+            AND clearing_time <![CDATA[>=]]> #{startTime}
+            AND clearing_time <![CDATA[<=]]> #{endTime}) drcw
+            LEFT JOIN dg_open_water dow ON drcw.id = dow.clearing_water_id
+            LEFT JOIN dg_ow_receipt dor ON drcw.id = dor.cw_id
+            LEFT JOIN dg_consumer_seat dcs ON dcs.id = dow.seat_id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN (
+            SELECT
+            A.cw_id,
+            SUM(A.cheque) AS allCheque
+            FROM
+            (
+            SELECT
+            cw_id,
+            receipt_count * receipt_amount AS cheque
+            FROM
+            dg_ow_receipt
+            ) A
+            GROUP BY
+            A.cw_id
+            ) cq ON drcw.id = cq.cw_id
+            GROUP BY
+            drcw.id
+            ) A) t1,
+            (select cast(SUM(A.zs_subtotal) as decimal(18,2)) AS zdyhje <!-- A.zs_item_final_price -->
+            from (select * from dg_ow_consumer_details where ow_id in(
+            select id from dg_ow_service_form where ow_id in(
+            select id from dg_open_water where clearing_water_id in (
+            select id from dg_reception_clearing_water where clearing_state = 2
+            AND clearing_time <![CDATA[>=]]> #{startTime}
+            AND clearing_time <![CDATA[<=]]> #{endTime}))))A  where <!-- A.is_price_cal = 1
+			AND --> A.notes = 3
+            AND A.settlement_status = 1) t2,
+
+            (select cast(SUM(dif.standard_price * A.item_file_number) - SUM(A.subtotal) as decimal(18,2)) AS cxyhje
+            from (select * from dg_ow_consumer_details where ow_id in(
+            select id from dg_ow_service_form where ow_id in(
+            select id from dg_open_water where clearing_water_id in (
+            select id from dg_reception_clearing_water where clearing_state = 2
+            AND clearing_time <![CDATA[>=]]> #{startTime}
+            AND clearing_time <![CDATA[<=]]> #{endTime}))))A left join dg_item_file dif on A.item_file_id = dif.id where <!-- A.is_price_cal = 1
+			AND --> A.notes &lt;&gt; 3
+            AND A.settlement_status = 1)t3
+        </if>
+        <if test="flag == false">
+            select * from (SELECT
+            SUM(CAST(yeze AS DECIMAL(18, 2)) - CAST(zl AS DECIMAL(18, 2))) AS yeze,
+            SUM(CAST(zl AS DECIMAL(18, 2))) AS zl,
+            SUM(CAST(yhje AS DECIMAL(18, 2))) AS yhje,
+            SUM(CAST(mlje AS DECIMAL(18, 2))) AS mlje,
+            SUM(CAST(deyh AS DECIMAL(18, 2))) AS deyh,
+            SUM(CAST(fpje AS DECIMAL(18, 2))) AS fpje
+            FROM
+            (
+            SELECT
+            drcw.id,
+            drcw.paid_amount AS yeze,
+            ifnull(drcw.change_amount, 0) AS zl,
+            dow.discount_costs AS yhje,
+            drcw.zero_amount AS mlje,
+            drcw.fixed_discount AS deyh,
+            cq.allCheque AS fpje
+            FROM
+            (select *
+            	from (select id,paid_amount,change_amount,zero_amount,fixed_discount,cw_num,clearing_state,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,paid_amount,change_amount,zero_amount,fixed_discount,cw_num,clearing_state,clearing_time from dg_reception_clearing_water_${suffix}
+            </foreach>
+            ) d1 where cw_num IS NOT NULL
+            AND clearing_state = 2
+            AND clearing_time <![CDATA[>=]]> #{startTime}
+            AND clearing_time <![CDATA[<=]]> #{endTime}) drcw
+            LEFT JOIN (select discount_costs,clearing_water_id,seat_id from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select discount_costs,clearing_water_id,seat_id from dg_open_water_${suffix}
+            </foreach>
+            )dow ON drcw.id = dow.clearing_water_id
+            LEFT JOIN (select cw_id from dg_ow_receipt
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select cw_id from dg_ow_receipt_${suffix}
+            </foreach>
+            )dor ON drcw.id = dor.cw_id
+            LEFT JOIN dg_consumer_seat dcs ON dcs.id = dow.seat_id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN (
+            SELECT
+            A.cw_id,
+            SUM(A.cheque) AS allCheque
+            FROM
+            (
+            SELECT
+            cw_id,
+            receipt_count * receipt_amount AS cheque
+            FROM
+            dg_ow_receipt
+            ) A
+            GROUP BY
+            A.cw_id
+            ) cq ON drcw.id = cq.cw_id
+            GROUP BY
+            drcw.id
+            ) A) t1,
+            (select cast(SUM(A.zs_subtotal) as decimal(18,2)) AS zdyhje <!-- A.zs_item_final_price -->
+            from (select zs_subtotal,ow_id,notes,settlement_status from dg_ow_consumer_details
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select zs_subtotal,ow_id,notes,settlement_status from dg_ow_consumer_details_${suffix}
+            </foreach>
+            where ow_id in(
+            select id from (select id,ow_id from dg_ow_service_form
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,ow_id from dg_ow_service_form_${suffix}
+            </foreach>
+            )te1_1 where ow_id in(
+            select id from (select id,clearing_water_id from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_water_id from dg_open_water_${suffix}
+            </foreach>
+            )te2_2 where clearing_water_id in (
+            select id from  (select id,clearing_state,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_state,clearing_time from dg_reception_clearing_water_${suffix}
+            </foreach>
+            )te3_3 where clearing_state = 2
+            AND clearing_time <![CDATA[>=]]> #{startTime}
+            AND clearing_time <![CDATA[<=]]> #{endTime}))))A  where <!-- A.is_price_cal = 1
+			AND --> A.notes = 3
+            AND A.settlement_status = 1) t2,
+
+            (select cast(SUM(dif.standard_price * A.item_file_number) - SUM(A.subtotal) as decimal(18,2)) AS cxyhje
+            from (select item_file_number,subtotal,ow_id,item_file_id,notes,settlement_status from dg_ow_consumer_details
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select item_file_number,subtotal,ow_id,item_file_id,notes,settlement_status from dg_ow_consumer_details_${suffix}
+            </foreach>
+            where ow_id in(
+            select id from (select id,ow_id from dg_ow_service_form
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,ow_id from dg_ow_service_form_${suffix}
+            </foreach>
+            )te1 where ow_id in(
+            select id from (select id,clearing_water_id from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_water_id from dg_open_water_${suffix}
+            </foreach>
+            )te2 where clearing_water_id in (
+            select id from (select id,clearing_state,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_state,clearing_time from dg_reception_clearing_water_${suffix}
+            </foreach>
+            )te3 where clearing_state = 2
+            AND clearing_time <![CDATA[>=]]> #{startTime}
+            AND clearing_time <![CDATA[<=]]> #{endTime}))))A left join dg_item_file dif on A.item_file_id = dif.id where <!-- A.is_price_cal = 1
+			AND --> A.notes &lt;&gt; 3
+            AND A.settlement_status = 1)t3
+        </if>
+        <!-- SELECT
+        SUM(CAST(yeze AS DECIMAL(18, 2)) - CAST(zl AS DECIMAL(18, 2))) AS yeze,
+        SUM(CAST(zl AS DECIMAL(18, 2))) AS zl,
+        SUM(CAST(yhje AS DECIMAL(18, 2))) AS yhje,
+        SUM(CAST(mlje AS DECIMAL(18, 2))) AS mlje,
+        SUM(CAST(cxyhje AS DECIMAL(18, 2))) AS cxyhje,
+        SUM(CAST(deyh AS DECIMAL(18, 2))) AS deyh,
+        SUM(CAST(fpje AS DECIMAL(18, 2))) AS fpje,
+        SUM(CAST(zdyhje AS DECIMAL(18, 2))) AS zdyhje
+        FROM
+        (
+        SELECT
+        drcw.id,
+        drcw.paid_amount AS yeze,
+        ifnull(drcw.change_amount,0) AS zl,
+        dow.discount_costs AS yhje,
+        drcw.zero_amount AS mlje,
+        SUM(dif.standard_price * docd.item_file_number) - sum(docd.subtotal) AS cxyhje,
+        drcw.fixed_discount AS deyh,
+        cq.allCheque AS fpje,
+        SUM(docd2.zs_item_final_price) AS zdyhje
+        FROM
+        dg_reception_clearing_water drcw
+        LEFT JOIN dg_open_water dow ON drcw.id = dow.clearing_water_id
+        LEFT JOIN dg_ow_service_form dosf ON dosf.ow_id = dow.id
+        LEFT JOIN (SELECT *
+        FROM dg_ow_consumer_details
+        WHERE is_price_cal = 1
+        AND notes &lt;&gt; 3
+        AND settlement_status = 1
+        ) docd ON docd.ow_id = dosf.id
+        LEFT JOIN (SELECT *
+        FROM dg_ow_consumer_details
+        WHERE is_price_cal = 1
+        AND notes = 3
+        AND settlement_status = 1
+        ) docd2 ON docd2.ow_id = dosf.id
+        LEFT JOIN dg_item_file dif ON docd.item_file_id = dif.id
+        LEFT JOIN dg_ow_receipt dor ON drcw.id = dor.cw_id
+        LEFT JOIN dg_consumer_seat dcs ON dcs.id = dow.seat_id
+        LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+        left join (<include refid="selectClearingWaterChequeMoney"/>) cq on drcw.id = cq.cw_id
+        WHERE drcw.cw_num IS NOT NULL and drcw.clearing_state = 2
+        <if test="timeType == 1">
+            and drcw.clearing_time >= #{startTime}
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="timeType == 2">
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="bis != null">
+            and drcw.clearing_bis = #{bis}
+        </if>
+        <if test="pos != null">
+            and drcw.clearing_pos = #{pos}
+        </if>
+        <if test="area != null">
+            and dca.id = #{area}
+        </if>
+        GROUP BY drcw.id
+        ) A -->
+
+    </select>
+
+    <select id="openDayBillInfo" resultType="java.util.Map" parameterType="map">
+        <if test="flag == true">
+            SELECT
+            A.*, B.*, D.*, E.*, F.*, G.*
+            FROM
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT drcw.id),0) AS normalOpenWaterCount
+            FROM
+            dg_reception_clearing_water drcw
+            LEFT JOIN dg_open_water dow ON drcw.id = dow.clearing_water_id
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            WHERE
+            drcw.clearing_state = 2
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) A,
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT drcw.id),0) AS fwjsCount
+            FROM
+            dg_reception_clearing_water drcw
+            LEFT JOIN dg_open_water dow ON drcw.id = dow.clearing_water_id
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            WHERE
+            drcw.clearing_state = 3
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) B,
+            (
+            SELECT
+            ifnull(SUM(people_count),0) AS jcrs
+            FROM
+            dg_open_water dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN dg_reception_clearing_water drcw ON dow.clearing_water_id = drcw.id
+            WHERE
+            1 = 1
+            <if test="timeType == 1">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) D,
+            (
+            SELECT
+            ifnull(SUM(people_count),0) AS jsrs
+            FROM
+            dg_open_water dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN dg_reception_clearing_water drcw ON dow.clearing_water_id = drcw.id
+            WHERE
+            dow.ow_state IN (2, 6)
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) E,
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT dow.id),0) AS sbill
+            FROM
+            dg_open_water dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            WHERE
+            ow_state = 7
+            <if test="timeType == 1">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) F,
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT dow.id),0) AS noramlOpenWater
+            FROM
+            dg_open_water dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN dg_reception_clearing_water drcw ON dow.clearing_water_id = drcw.id
+            WHERE
+            dow.ow_state != 7
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) G
+        </if>
+        <if test="flag == false">
+            SELECT
+            A.*, B.*, D.*, E.*, F.*, G.*
+            FROM
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT drcw.id),0) AS normalOpenWaterCount
+            FROM(
+            select id,clearing_state,clearing_time from dg_reception_clearing_water
+                <foreach collection="tableSuffixList" separator="union all" item="suffix" open="union all">
+                    select id,clearing_state,clearing_time from dg_reception_clearing_water_${suffix}
+                </foreach>
+            ) drcw
+            LEFT JOIN (
+                    select clearing_water_id,seat_id from dg_open_water
+                        <foreach collection="tableSuffixList" separator="union all" item=" suffix" open="union all">
+                            select clearing_water_id,seat_id from  dg_open_water_${suffix}
+                        </foreach>
+                  ) dow ON drcw.id = dow.clearing_water_id
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            WHERE
+            drcw.clearing_state = 2
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) A,
+            (
+                SELECT
+                ifnull(COUNT(DISTINCT drcw.id),0) AS fwjsCount
+                FROM
+                (select id,clearing_state,clearing_time from dg_reception_clearing_water
+                  <foreach collection="tableSuffixList" separator="union all" item=" suffix" open="union all">
+                      select id,clearing_state,clearing_time from  dg_reception_clearing_water_${suffix}
+                  </foreach>
+                ) drcw
+                LEFT JOIN (select clearing_water_id,seat_id from dg_open_water
+                <foreach collection="tableSuffixList" separator="union all" item=" suffix" open="union all">
+                    select clearing_water_id,seat_id from  dg_open_water_${suffix}
+                </foreach>
+                  ) dow ON drcw.id = dow.clearing_water_id
+                LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+                LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+                WHERE
+                drcw.clearing_state = 3
+                <if test="timeType == 1">
+                    and drcw.clearing_time >= #{startTime}
+                    and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+                </if>
+                <if test="timeType == 2">
+                    and dow.first_time >= #{startTime}
+                    and dow.first_time <![CDATA[<=]]> #{endTime}
+                </if>
+                <if test="pos != null">
+                    and dow.open_pos = #{pos}
+                </if>
+                <if test="area != null">
+                    and dca.id = #{area}
+                </if>
+            ) B,
+            (
+                SELECT
+                ifnull(SUM(people_count),0) AS jcrs
+                FROM(select people_count,seat_id,clearing_water_id,first_time from dg_open_water
+                    <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                        select people_count,seat_id,clearing_water_id,first_time from  dg_open_water_${suffix}
+                    </foreach>
+                )dow
+                LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+                LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+                LEFT JOIN (select id from dg_reception_clearing_water
+                  <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                      select id from  dg_reception_clearing_water_${suffix}
+                  </foreach>
+                ) drcw ON dow.clearing_water_id = drcw.id
+                WHERE
+                1 = 1
+                <if test="timeType == 1">
+                    and dow.first_time >= #{startTime}
+                    and dow.first_time <![CDATA[<=]]> #{endTime}
+                </if>
+                <if test="timeType == 2">
+                    and dow.first_time >= #{startTime}
+                    and dow.first_time <![CDATA[<=]]> #{endTime}
+                </if>
+                <if test="pos != null">
+                    and dow.open_pos = #{pos}
+                </if>
+                <if test="area != null">
+                    and dca.id = #{area}
+                </if>
+            ) D,
+            (
+            SELECT
+            ifnull(SUM(people_count),0) AS jsrs
+            FROM
+            (select people_count,seat_id,clearing_water_id,ow_state from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select people_count,seat_id,clearing_water_id,ow_state from  dg_open_water_${suffix}
+            </foreach>
+            )dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN (select id,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_time from  dg_reception_clearing_water_${suffix}
+            </foreach>
+            ) drcw ON dow.clearing_water_id = drcw.id
+            WHERE
+            dow.ow_state IN (2, 6)
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) E,
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT dow.id),0) AS sbill
+            FROM
+            (select id,seat_id,ow_state,first_time from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,seat_id,ow_state,first_time from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            WHERE
+            ow_state = 7
+            <if test="timeType == 1">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) F,
+            (
+            SELECT
+            ifnull(COUNT(DISTINCT dow.id),0) AS noramlOpenWater
+            FROM
+            (select id,seat_id,clearing_water_id,ow_state from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,seat_id,clearing_water_id,ow_state from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            LEFT JOIN dg_consumer_seat dcs ON dow.seat_id = dcs.id
+            LEFT JOIN dg_consumption_area dca ON dcs.cons_area = dca.id
+            LEFT JOIN (select id,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_time from dg_reception_clearing_water_${suffix}
+            </foreach>
+            ) drcw ON dow.clearing_water_id = drcw.id
+            WHERE
+            dow.ow_state != 7
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) G
+        </if>
+    </select>
+
+    <select id="openDayClearingWay" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+        <!-- select
+            sum(if(cw_code='RMB',cast(settlement_amount as DECIMAL (18,2)) - CAST(change_amount AS DECIMAL(18, 2)),0)) as 'RMB' ,
+            sum(if(cw_code='CREDIT_CARD',cast(settlement_amount as DECIMAL (18,2)),0)) as 'CREDIT_CARD' ,
+            sum(if(cw_code='HYGZ',cast(settlement_amount as DECIMAL (18,2)),0)) as 'HYGZ' ,
+            sum(if(cw_code='HYZF',cast(settlement_amount as DECIMAL (18,2)),0)) as 'HYZF' ,
+            sum(if(cw_code='WECHAT',cast(settlement_amount as DECIMAL (18,2)),0)) as 'WECHAT' ,
+            sum(if(cw_code='ALIPAY',cast(settlement_amount as DECIMAL (18,2)),0)) as 'ALIPAY' ,
+            sum( if(cw_code='CHECK',cast(settlement_amount as DECIMAL (18,2)),0)) as 'CHECK'
+        from (
+        select doc.*,drcw.* from dg_reception_clearing_water drcw
+        left join dg_open_water dow on drcw.id = dow.clearing_water_id
+        left join dg_ow_clearingway doc on doc.cw_id = drcw.id
+        left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+        left join dg_consumption_area dca on dcs.cons_area =dca.id
+        where drcw.cw_num is not null and drcw.clearing_state = 2
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+        group by drcw.id
+        ) A -->
+        <if test="flag == true">
+            select dsw.name as seName,sum(cast(doc.settlement_amount as decimal(18,2))) as settlementAmount from dg_ow_clearingway doc
+            left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where cw_id in (
+            select drcw.id from dg_reception_clearing_water drcw
+            left join dg_open_water dow on drcw.id = dow.clearing_water_id
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where drcw.cw_num is not null and drcw.clearing_state = 2
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) and  doc.cw_code = #{cwCode} group by seName
+        </if>
+        <if test="flag == false">
+            select dsw.name as seName,sum(cast(doc.settlement_amount as decimal(18,2))) as settlementAmount
+            from (select settlement_amount,cw_id,cw_code from dg_ow_clearingway
+            <foreach collection="tableSuffixList" open="union all" item="suffix" separator="union all">
+                select settlement_amount,cw_id,cw_code from dg_ow_clearingway_${suffix}
+            </foreach>
+            ) doc
+            left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            where cw_id in (
+            select drcw.id from (select id,cw_num,clearing_state,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,cw_num,clearing_state,clearing_time from dg_reception_clearing_water_${suffix}
+            </foreach>
+            ) drcw
+            left join (select clearing_water_id,seat_id from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select clearing_water_id,seat_id from dg_open_water_${suffix}
+            </foreach>
+            )dow on drcw.id = dow.clearing_water_id
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where drcw.cw_num is not null and drcw.clearing_state = 2
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="timeType == 1">
+                and drcw.clearing_time >= #{startTime}
+                and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="timeType == 2">
+                and dow.first_time >= #{startTime}
+                and dow.first_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            ) and  doc.cw_code = #{cwCode} group by seName
+        </if>
+    </select>
+
+    <select id="openDayCashPledgeQuery" resultType="java.util.Map" parameterType="map">
+        <if test="flag == true">
+            select A.*,B.*,C.* from
+            (
+            select sum(cast(dcp1.cp_money as DECIMAL(18,2))) as djyj from dg_cash_pledge  dcp1 LEFT JOIN dg_open_water dow on dcp1.ow_num = dow.ow_num
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where cp_type = '0'
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )A,
+            (
+            select sum(cast(dcp1.cp_money as DECIMAL(18,2))) as ytyj from dg_cash_pledge  dcp1 LEFT JOIN dg_open_water dow on dcp1.ow_num = dow.ow_num
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where cp_type = '1'
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )B,
+            (
+            select sum(cast(dow.subtotal as DECIMAL(18,2))) as sbillSubtotal from dg_open_water dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where handingsbill_time is not NULL
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )C
+        </if>
+        <if test="flag == false">
+            select A.*,B.*,C.* from
+            (
+            select sum(cast(dcp1.cp_money as DECIMAL(18,2))) as djyj from dg_cash_pledge  dcp1 LEFT JOIN
+            (select * from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select * from dg_open_water_${suffix}
+            </foreach>
+            )dow on dcp1.ow_num = dow.ow_num
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where cp_type = '0'
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )A,
+            (
+            select sum(cast(dcp1.cp_money as DECIMAL(18,2))) as ytyj from dg_cash_pledge  dcp1 LEFT JOIN
+            (select * from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select * from dg_open_water_${suffix}
+            </foreach>
+            )dow on dcp1.ow_num = dow.ow_num
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where cp_type = '1'
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )B,
+            (
+            select sum(cast(dow.subtotal as DECIMAL(18,2))) as sbillSubtotal from
+            (select * from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select * from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where handingsbill_time is not NULL
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )C
+        </if>
+    </select>
+
+    <select id="openDaySpecialItem" resultType="java.util.Map" parameterType="map">
+        <if test="flag == true">
+            SELECT A.*,B.*,C.*,D.*,E.* from
+            (select ifnull(sum(cast(dow.minimum_consumption as DECIMAL(18,2))),0) as freeMinSpeed from dg_open_water dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where free_min_spend = 1
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )A,
+            (select ifnull(sum(cast(dow.private_room_cost as DECIMAL(18,2))),0) as freePrivateRoom from dg_open_water dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where free_private_room = 1
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )B,
+            (select ifnull(sum(cast(dow.service_charge as DECIMAL(18,2))),0) as freeServiceCharge from dg_open_water dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where free_servce_charge = 1
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )C,
+            (select ifnull(sum(cast(dow.private_room_cost as DECIMAL(18,2))),0) as allPrivateRoom from
+            dg_open_water dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )D,
+            (select ifnull(sum(cast(dow.item_costs_sum as DECIMAL(18,2))),0) as itemCostsSum from
+            dg_open_water dow
+            left join dg_reception_clearing_water drcw on dow.clearing_water_id = drcw.id
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime} and dow.clearing_water_id is not null 
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )E
+        </if>
+        <if test="flag == false">
+            SELECT A.*,B.*,C.*,D.*,E.* from
+            (select ifnull(sum(cast(dow.minimum_consumption as DECIMAL(18,2))),0) as freeMinSpeed from
+            (select minimum_consumption,seat_id,free_min_spend,first_time from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select minimum_consumption,seat_id,free_min_spend,first_time from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where free_min_spend = 1
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )A,
+            (select ifnull(sum(cast(dow.private_room_cost as DECIMAL(18,2))),0) as freePrivateRoom from
+            (select private_room_cost,seat_id,free_private_room,first_time from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select private_room_cost,seat_id,free_private_room,first_time from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where free_private_room = 1
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )B,
+            (select ifnull(sum(cast(dow.service_charge as DECIMAL(18,2))),0) as freeServiceCharge from
+            (select service_charge,seat_id,free_servce_charge,first_time from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select service_charge,seat_id,free_servce_charge,first_time from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where free_servce_charge = 1
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )C,
+            (select ifnull(sum(cast(dow.private_room_cost as DECIMAL(18,2))),0) as allPrivateRoom from
+            (select private_room_cost,seat_id,first_time from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select private_room_cost,seat_id,first_time from dg_open_water_${suffix}
+            </foreach>
+            )dow
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )D,
+            (select ifnull(sum(cast(dow.item_costs_sum as DECIMAL(18,2))),0) as itemCostsSum from
+            (select item_costs_sum,seat_id,first_time,clearing_water_id from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select item_costs_sum,seat_id,first_time,clearing_water_id from dg_open_water_${suffix}
+            </foreach>
+            )dow 
+            left join (select clearing_time,id from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select clearing_time,id from dg_reception_clearing_water_${suffix}
+            </foreach>
+            )drcw on dow.clearing_water_id = drcw.id
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_consumption_area dca on dcs.cons_area =dca.id
+            where drcw.clearing_time >= #{startTime}
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime}  and dow.clearing_water_id is not null 
+            <if test="pos != null">
+                and dow.open_pos = #{pos}
+            </if>
+            <if test="area != null">
+                and dca.id = #{area}
+            </if>
+            )E
+        </if>
+    </select>
+
+    <select id="openDaySpeedAreaRoomCosts" resultType="java.util.Map" parameterType="map">
+        select name,case when roomCosts is null then 0.0 else roomCosts end as roomCosts from (
+        select dca.name,sum(cast(dow.private_room_cost as DECIMAL(18,2))) roomCosts from
+        (
+        select seat_id,case when modify_private_room is not null then modify_private_room else private_room_cost end as  private_room_cost
+        from dg_open_water where free_private_room is null
+        and first_time >= #{startTime}
+        and first_time <![CDATA[<=]]> #{endTime}
+        <if test="pos != null">
+            and open_pos = #{pos}
+        </if>
+        ) dow
+        left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+        right join dg_consumption_area dca on dcs.cons_area = dca.id
+        where dca.del_flag = 0
+        <if test="area != null">
+            and dca.id = #{area}
+        </if>
+        group by dca.name
+        )A
+    </select>
+
+    <select id="openDayItemSaleInfo" resultType="map">
+        select dift.name as pxdlName,dift2.name as pxxlName,sum(docd.item_file_number) as itemFileNumber,
+        <!-- sum(cast(docd.subtotal as DECIMAL(18,2))) as itemFileSale -->
+        sum(cast(docd.item_pay_money as DECIMAL(18,2)) * docd.item_file_number) as itemFileSale
+        from dg_open_water dow
+        left join dg_reception_clearing_water drcw on dow.clearing_water_id = drcw.id
+        left join dg_ow_service_form dosf on dow.id = dosf.ow_id
+        left join dg_ow_consumer_details docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id
+        left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+        left join dg_consumption_area dca on dcs.cons_area =dca.id
+        left join dg_item_file_type dift on dif.ppdl_id = dift.id
+        left join dg_item_file_type dift2 on dif.ppxl_id = dift2.id
+        where drcw.clearing_state = 2 and drcw.cw_num is not null
+        <if test="timeType == 1">
+            and drcw.clearing_time >= #{startTime}
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="timeType == 2">
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="pos != null">
+            and dow.open_pos = #{pos}
+        </if>
+        <if test="area != null">
+            and dca.id = #{area}
+        </if>
+        GROUP BY pxdlName,pxxlName
+        HAVING pxdlName is not null and pxxlName is not null
+    </select>
+    
+    <!-- 品项销售统计计入、不计入详情 -->
+    <select id="itemFileDataSaleStatistical" resultType="map">
+        <if test="flag == true">
+            select 
+            dif.name as itemFileName,
+            sum(docd.item_file_number) as itemFileNumber,
+            sum(cast(docd.item_pay_money as DECIMAL(18,2)) * docd.item_file_number) as finalPrice,
+            sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as standardPrice
+            from dg_reception_clearing_water drcw
+            left join dg_ow_clearingway doc on drcw.id = doc.cw_id
+			left join dg_settlement_way dsw on doc.cw_code = dsw.number
+            left join dg_open_water dow on dow.clearing_water_id = drcw.id
+            left join dg_ow_service_form dosf on dow.id = dosf.ow_id
+            left join dg_ow_consumer_details docd on dosf.id = docd.ow_id
+            left join dg_item_file dif on docd.item_file_id = dif.id
+            where drcw.clearing_state = 2 and dif.name is not null
+            and drcw.clearing_time between #{startTime} and #{endTime}
+            <if test="searchType == 1">
+            	and (dosf.service_type != 3 and dsw.notActualIncomeRatio != 100) <!-- 计入收入 -->
+            </if>
+            <if test="searchType == 2">
+            	and dosf.service_type = 3  <!-- 赠送 -->
+            </if>
+            <if test="searchType == 3">
+            	and dsw.notActualIncomeRatio = 100 <!-- 宴请 -->
+            </if>
+            GROUP BY itemFileName
+            order by itemFileNumber desc
+        </if>
+        <if test="flag == false">
+            select 
+			dif.name as itemFileName,
+            sum(docd.item_file_number) as itemFileNumber,
+            sum(cast(docd.item_pay_money as DECIMAL(18,2)) * docd.item_file_number) as finalPrice,
+            sum(cast(dif.standard_price as DECIMAL(18,2)) * docd.item_file_number) as standardPrice
+            from
+            (select id,clearing_state,cw_num,clearing_time from dg_reception_clearing_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_state,cw_num,clearing_time from dg_reception_clearing_water_${suffix}
+            </foreach>
+            ) drcw
+            LEFT JOIN
+            (select cw_id,cw_code from dg_ow_clearingway
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select cw_id,cw_code from dg_ow_clearingway_${suffix}
+            </foreach>
+            )doc ON drcw.id = doc.cw_id
+            LEFT JOIN dg_settlement_way dsw on doc.cw_code = dsw.number
+            LEFT JOIN
+            (select id,clearing_water_id,seat_id from dg_open_water
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,clearing_water_id,seat_id from dg_open_water_${suffix}
+            </foreach>
+            )dow ON dow.clearing_water_id = drcw.id
+            LEFT JOIN (select id,ow_id,service_type from dg_ow_service_form
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select id,ow_id,service_type from dg_ow_service_form_${suffix}
+            </foreach>
+            ) dosf ON dow.id = dosf.ow_id
+            LEFT JOIN (select item_file_id,ow_id,item_file_number,item_pay_money from dg_ow_consumer_details
+            <foreach collection="tableSuffixList" item="suffix" separator=" union all" open="union all">
+                select item_file_id,ow_id,item_file_number,item_pay_money from dg_ow_consumer_details_${suffix}
+            </foreach>
+            ) docd ON dosf.id = docd.ow_id
+            left join dg_item_file dif on docd.item_file_id = dif.id
+            where drcw.clearing_state = 2 and dif.name is not null
+            and drcw.clearing_time between #{startTime} and #{endTime}
+            <if test="searchType == 1">
+            	and (dosf.service_type != 3 and dsw.notActualIncomeRatio != 100) <!-- 计入收入 -->
+            </if>
+            <if test="searchType == 2">
+            	and dosf.service_type = 3  <!-- 赠送 -->
+            </if>
+            <if test="searchType == 3">
+            	and dsw.notActualIncomeRatio = 100 <!-- 宴请 -->
+            </if>
+            GROUP BY itemFileName
+            order by itemFileNumber desc
+        </if>
+    </select>
+
+    <select id="openDayNumberOfMeals" resultType="java.util.Map">
+        select sum(dow.people_count) as numberOfMealsPeopleCount,open_bis as numberOfMealsBisName from dg_reception_clearing_water drcw
+        left join dg_open_water dow on dow.clearing_water_id = drcw.id
+        left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+        left join dg_consumption_area dca on dcs.cons_area =dca.id
+        where dow.open_bis is not null and dow.open_bis != '' and drcw.clearing_state = 2
+        <if test="timeType == 1">
+            and drcw.clearing_time >= #{startTime}
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="timeType == 2">
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="pos != null">
+            and dow.open_pos = #{pos}
+        </if>
+        <if test="area != null">
+            and dca.id = #{area}
+        </if>
+        GROUP BY dow.open_bis
+    </select>
+
+    <select id="openDayItemSaleRMBInfo" resultType="java.util.Map">
+        select dift.name as pxdlName,dift2.name as pxxlName,sum(docd.item_file_number) as itemFileNumber,
+        <!-- sum(cast(docd.subtotal as DECIMAL(18,2))) as itemFileSale  -->
+        sum(cast(docd.item_pay_money as DECIMAL(18,2)) * docd.item_file_number) as itemFileSale
+        from dg_reception_clearing_water drcw
+        left join dg_ow_clearingway doc on drcw.id = doc.cw_id
+        left join dg_open_water dow on dow.clearing_water_id = drcw.id
+        left join dg_ow_service_form dosf on dow.id = dosf.ow_id
+        left join dg_ow_consumer_details docd on dosf.id = docd.ow_id
+        left join dg_item_file dif on docd.item_file_id = dif.id
+        left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+        left join dg_consumption_area dca on dcs.cons_area =dca.id
+        left join dg_item_file_type dift on dif.ppdl_id = dift.id
+        left join dg_item_file_type dift2 on dif.ppxl_id = dift2.id
+        where drcw.clearing_state = 2 and drcw.cw_num is not null and doc.cw_code = 'RMB'
+        <if test="timeType == 1">
+            and drcw.clearing_time >= #{startTime}
+            and drcw.clearing_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="timeType == 2">
+            and dow.first_time >= #{startTime}
+            and dow.first_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="pos != null">
+            and dow.open_pos = #{pos}
+        </if>
+        <if test="area != null">
+            and dca.id = #{area}
+        </if>
+        GROUP BY pxdlName,pxxlName
+        HAVING pxdlName is not null and pxxlName is not null
+    </select>
+
+    <select id="selectCountServiceNumByOpenWater" parameterType="map" resultType="java.lang.Integer">
+        select id from (select * from dg_ow_service_form
+        <foreach collection="tableSuffixList" item="suffix" separator="union all" open=" union all">
+            SELECT * from dg_ow_service_form_${suffix}
+        </foreach>
+        ) A where ow_id = (
+          select id from (select * from dg_open_water
+        <foreach collection="tableSuffixList" item="suffix" separator="union all" open=" union all">
+            SELECT * from dg_open_water_${suffix}
+        </foreach>
+        ) B where ow_num = #{openWater}
+        ) order by id
+    </select>
+
+    <select id="selectServiceDetailByServiceId_new" resultType="java.util.Map">
+        select dosf.*,dow.open_bis,DG_FU_getUserName(su.emp_code) as empName,DG_FU_getPosName(dow.open_pos) as posName ,
+        case when dosf.service_type = 1 then '开单客位加单' when dosf.service_type = 2 then '加单' when dosf.service_type = 3 then '赠单' WHEN
+        dosf.service_type = 4 then '退单' WHEN dosf.service_type = 5 then '减少人数减单' when dosf.service_type = 6 then '增加人数加单' when
+        dosf.service_type = 7 then '更换客位' WHEN dosf.service_type = 8 then '单品转台' END as serviceTypeName,DATE_FORMAT(dosf.service_time,'%Y-%m-%d %H:%i:%s') as serviceTime
+        from (select * from dg_ow_service_form
+        <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+            select * from dg_ow_service_form_${suffix}
+        </foreach>
+        ) dosf
+        left join (select * from dg_open_water
+        <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+            select * from dg_open_water_${suffix}
+        </foreach>
+        )dow on dosf.waiter_id = dow.id
+        left join sys_user su on dosf.waiter_id = su.id
+        where dosf.id = #{serviceId}
+    </select>
+
+    <select id="dataSearchDetailsNext_new"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select docd.*,dif.name as itemFileName from (select * from dg_ow_consumer_details
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select * from dg_ow_consumer_details_${suffix}
+            </foreach>
+        ) docd left join dg_item_file dif on docd.item_file_id = dif.id
+         where ow_id = #{serviceId}
+    </select>
+
+    <select id="selectOpenWaterId" resultType="java.lang.Integer">
+        select id from dg_open_water
+            <where>
+                <if test="startTime != null and startTime != ''">
+                    and first_time <![CDATA[>=]]> #{startTime}
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    and first_time <![CDATA[<]]> #{endTime}
+                </if>
+            </where>
+         <foreach collection="tableDateList" item="suffix" separator=" union all" open=" union all">
+             select id from dg_open_water_${suffix}
+             <where>
+                 <if test="startTime != null and startTime != ''">
+                     and first_time <![CDATA[>=]]> #{startTime}
+                 </if>
+                 <if test="endTime != null and endTime != ''">
+                     and first_time <![CDATA[<]]> #{endTime}
+                 </if>
+             </where>
+         </foreach>
+    </select>
+
+    <select id="selectServiceId" resultType="java.lang.Integer">
+        select id from dg_ow_service_form
+        <if test="openWaterId.size() > 0">
+            where ow_id in
+            <foreach collection="openWaterId" open="(" separator="," item="id" close=")">
+                #{id}
+            </foreach>
+        </if>
+        <foreach collection="tableDateList" item="suffix" separator=" union all" open=" union all">
+            select id from dg_ow_service_form_${suffix}
+            <if test="openWaterId.size() > 0">
+                where ow_id in
+                <foreach collection="openWaterId" open="(" separator="," item="id" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </foreach>
+    </select>
+</mapper>

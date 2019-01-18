@@ -1,0 +1,4 @@
+dg_print_manager 增加字段 dp int 11, copies int 11
+
+alter table dg_print_manager add dp int(11);
+alter table dg_print_manager add copies int(11);

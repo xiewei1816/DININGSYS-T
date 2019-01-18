@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.report.BusinessAnalysisMapper" >
+   <!--营业收入分析报表(本月)-->
+   <select id="selectBusinessAnalysisBy" parameterType="String" resultType="map">
+    	select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as ys, <!--应收金额-->
+			IFNULL(sum(cast(drcw.paid_amount as DECIMAL(18,2))),0) as ss, <!--实收金额-->
+			IFNULL(sum(cast(drcw.change_amount as DECIMAL(18,2))),0) as zl, <!--找零金额-->
+			IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as de, <!--定额优惠-->
+			IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as ml, <!--抹零金额-->
+			IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as xf, <!--消费金额-->
+			IFNULL(sum(cast(drcw.coupon_amount as DECIMAL(18,2))),0) as zs, <!--赠卷金额-->
+			'本月累计' as name
+		from 
+			(select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state from dg_reception_clearing_water 
+			union all
+			select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw
+		 where DATE_FORMAT(drcw.clearing_time, '%Y-%m' ) = DATE_FORMAT(#{searchDate} 
+		, '%Y-%m' ) and drcw.clearing_state = 2
+   </select>
+   <!--营业收入分析报表(本日)-->
+   <select id="selectBusinessAnalysisBr" parameterType="String" resultType="map">
+    	select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as ys, <!--应收金额-->
+			IFNULL(sum(cast(drcw.paid_amount as DECIMAL(18,2))),0) as ss, <!--实收金额-->
+			IFNULL(sum(cast(drcw.change_amount as DECIMAL(18,2))),0) as zl, <!--找零金额-->
+			IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as de, <!--定额优惠-->
+			IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as ml, <!--抹零金额-->
+			IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as xf, <!--消费金额-->
+			IFNULL(sum(cast(drcw.coupon_amount as DECIMAL(18,2))),0) as zs, <!--赠卷金额-->
+			'本日累计' as name
+		from 
+			(select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state from dg_reception_clearing_water 
+			union all
+			select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d') = #{searchDate}   and drcw.clearing_state = 2
+   </select>
+   <!--营业收入分析报表(昨天)-->
+   <select id="selectBusinessAnalysisZt" parameterType="String" resultType="map">
+    	select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as ys, <!--应收金额-->
+			IFNULL(sum(cast(drcw.paid_amount as DECIMAL(18,2))),0) as ss, <!--实收金额-->
+			IFNULL(sum(cast(drcw.change_amount as DECIMAL(18,2))),0) as zl, <!--找零金额-->
+			IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as de, <!--定额优惠-->
+			IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as ml, <!--抹零金额-->
+			IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as xf, <!--消费金额-->
+			IFNULL(sum(cast(drcw.coupon_amount as DECIMAL(18,2))),0) as zs, <!--赠卷金额-->
+			'上日合计' as name
+		from 
+			(select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state from dg_reception_clearing_water 
+			union all
+			select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state from dg_reception_clearing_water_${tableDate} 
+			) drcw
+		where  to_days(#{searchDate}) - to_days(drcw.clearing_time) = 1 
+		and drcw.clearing_state = 2
+   </select>
+   <!--营业收入分析报表(市别)-->
+   <select id="selectBusinessAnalysisSb" parameterType="String" resultType="map">
+    	select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as ys, <!--应收金额-->
+			IFNULL(sum(cast(drcw.paid_amount as DECIMAL(18,2))),0) as ss, <!--实收金额-->
+			IFNULL(sum(cast(drcw.change_amount as DECIMAL(18,2))),0) as zl, <!--找零金额-->
+			IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as de, <!--定额优惠-->
+			IFNULL(sum(cast(drcw.zero_amount as DECIMAL(18,2))),0) as ml, <!--抹零金额-->
+			IFNULL(sum(cast(drcw.consumption_amount as DECIMAL(18,2))),0) as xf, <!--消费金额-->
+			IFNULL(sum(cast(drcw.coupon_amount as DECIMAL(18,2))),0) as zs, <!--赠卷金额-->
+			bis.bis_name as name
+		from 
+			(select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state,clearing_bis from dg_reception_clearing_water 
+			union all
+			select amounts_receivable,paid_amount,change_amount,fixed_discount,zero_amount,consumption_amount,coupon_amount,clearing_time,clearing_state,clearing_bis from dg_reception_clearing_water_${tableDate} 
+			) drcw
+		LEFT JOIN t_b_bis bis on drcw.clearing_bis = bis.id 
+		where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d' ) = #{searchDate} and bis.is_del = '0' and drcw.clearing_state = 2 
+		group by drcw.clearing_bis
+   </select>
+   
+   <!--营业收入分析(当天就餐人数/人均消费)-->
+   <select id="selectBusinessAnalysisYxxiBr" parameterType="String" resultType="map">
+    	select IFNULL(sum(cast(drcw.amounts_receivable as DECIMAL(18,2))),0) as ys, <!--应收金额-->
+    		IFNULL(sum(cast(drcw.fixed_discount as DECIMAL(18,2))),0) as de, <!--定额优惠-->
+			IFNULL(sum(cast(drcw.coupon_amount as DECIMAL(18,2))),0) as zs, <!--赠卷金额-->
+			'本日累计' as name
+		from dg_open_water dow left join dg_reception_clearing_water drcw where DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d') = #{searchDate} 
+		and drcw.clearing_state = 2
+   </select>
+</mapper>

@@ -1,0 +1,25 @@
+dg_ow_consumer_details 增加字段couponVal varchar  couponBfPrice double couponNum int
+增加表 dg_water_coupon
+
+
+
+alter table dg_ow_consumer_details add couponVal varchar(100);
+alter table dg_ow_consumer_details add couponBfPrice double(11,2);
+alter table dg_ow_consumer_details add couponNum int(11);
+DROP TABLE IF EXISTS `dg_water_coupon`;
+CREATE TABLE `dg_water_coupon` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `owId` int(11) DEFAULT NULL COMMENT '营业流水id',
+  `couponVal` varchar(255) DEFAULT NULL COMMENT '券值',
+  `yhMoney` decimal(11,2) DEFAULT NULL COMMENT '优惠金额',
+  `cwId` int(11) DEFAULT NULL COMMENT '结账单id',
+  `createTime` datetime DEFAULT NULL COMMENT '创建日期',
+  `useTime` datetime DEFAULT NULL COMMENT '使用时间',
+  `state` int(11) DEFAULT NULL COMMENT '状态 0未使用 1已使用',
+  `couponType` int(11) DEFAULT NULL COMMENT '券类型',
+  `pxdzYhSutotal` decimal(11,2) DEFAULT NULL COMMENT '品项打折优惠',
+  `zyhdYhSutotal` decimal(11,2) DEFAULT NULL COMMENT '重要活动优惠',
+  `hyYhSutotal` decimal(11,2) DEFAULT NULL COMMENT '会员优惠合计',
+  `couponInfo` varchar(1000) DEFAULT NULL COMMENT '券信息',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;

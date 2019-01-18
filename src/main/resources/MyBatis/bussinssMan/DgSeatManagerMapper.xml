@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgSeatManagerMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgSeatManager" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="zdxf" property="zdxf" jdbcType="INTEGER" />
+    <result column="zdxf_type" property="zdxfType" jdbcType="INTEGER" />
+    <result column="zdxf_money" property="zdxfMoney" jdbcType="DOUBLE" />
+    <result column="fwf" property="fwf" jdbcType="INTEGER" />
+    <result column="fwf_type" property="fwfType" jdbcType="INTEGER" />
+    <result column="fwf_gd" property="fwfGd" jdbcType="DOUBLE" />
+    <result column="fwf_xf_ratio" property="fwfXfRatio" jdbcType="INTEGER" />
+    <result column="fwf_con_free" property="fwfConFree" jdbcType="DOUBLE" />
+    <result column="fwf_sx" property="fwfSx" jdbcType="DOUBLE" />
+    <result column="fwf_people" property="fwfPeople" jdbcType="DOUBLE" />
+    <result column="qssc" property="qssc" jdbcType="INTEGER" />
+    <result column="qssc_tx" property="qsscTx" jdbcType="INTEGER" />
+    <result column="bff" property="bff" jdbcType="INTEGER" />
+    <result column="bff_gd" property="bffGd" jdbcType="DOUBLE" />
+    <result column="bff_people" property="bffPeople" jdbcType="DOUBLE" />
+    <result column="bff_gd_pro" property="bffGdPro" jdbcType="INTEGER" />
+    <result column="bff_week_pro" property="bffWeekPro" jdbcType="INTEGER" />
+    <result column="bff_item_id" property="bffItemId" jdbcType="INTEGER" />
+    <result column="bff_con_free" property="bffConFree" jdbcType="DOUBLE" />
+    <result column="bff_timing" property="bffTiming" jdbcType="INTEGER" />
+    <result column="seat_id" property="seatId" jdbcType="INTEGER" />
+    <result column="name" property="bffItemName" jdbcType="INTEGER" />
+    <result column="bff_week_pro_d" property="bffWeekProD" jdbcType="VARCHAR" />
+    <result column="seatCode" property="seatCode" jdbcType="VARCHAR" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+    <result column="areaString" property="areaString" jdbcType="VARCHAR" />
+    <result column="itemCount" property="itemCount" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, zdxf, zdxf_type, zdxf_money, fwf, fwf_type, fwf_gd, fwf_xf_ratio, fwf_con_free, 
+    fwf_sx, fwf_people, qssc, qssc_tx, bff, bff_gd, bff_people, bff_gd_pro, bff_week_pro, 
+    bff_item_id, bff_con_free, bff_timing, seat_id,bff_week_pro_d
+  </sql>
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.zdxf as zdxf, 
+    a.zdxf_type as zdxf_type, 
+    a.zdxf_money as zdxf_money, 
+    a.fwf as fwf, 
+    a.fwf_type as fwf_type, 
+    a.fwf_gd as fwf_gd, 
+    a.fwf_xf_ratio as fwf_xf_ratio, 
+    a.fwf_con_free as fwf_con_free, 
+    a.fwf_sx as fwf_sx, 
+    a.fwf_people as fwf_people, 
+    a.qssc as qssc, 
+    a.qssc_tx as qssc_tx, 
+    a.bff as bff, 
+    a.bff_gd as bff_gd, 
+    a.bff_people as bff_people, 
+    a.bff_gd_pro as bff_gd_pro, 
+    a.bff_week_pro as bff_week_pro, 
+    a.bff_item_id as bff_item_id, 
+    a.bff_con_free as bff_con_free, 
+    a.bff_timing as bff_timing, 
+    a.seat_id as seat_id,
+    a.bff_week_pro_d as bff_week_pro_d,
+    b.name as name,
+    c.name as seatName,
+    c.number as seatCode
+  </sql>
+  <sql id="Detail_Column_List" >
+    a.id as id, 
+    a.zdxf as zdxf, 
+    a.zdxf_type as zdxf_type, 
+    a.zdxf_money as zdxf_money, 
+    a.fwf as fwf, 
+    a.fwf_type as fwf_type, 
+    a.fwf_gd as fwf_gd, 
+    a.fwf_xf_ratio as fwf_xf_ratio, 
+    a.fwf_con_free as fwf_con_free, 
+    a.fwf_sx as fwf_sx, 
+    a.fwf_people as fwf_people, 
+    a.qssc as qssc, 
+    a.qssc_tx as qssc_tx, 
+    a.bff as bff, 
+    a.bff_gd as bff_gd, 
+    a.bff_people as bff_people, 
+    a.bff_gd_pro as bff_gd_pro, 
+    a.bff_week_pro as bff_week_pro, 
+    a.bff_item_id as bff_item_id, 
+    a.bff_con_free as bff_con_free, 
+    a.bff_timing as bff_timing, 
+    a.seat_id as seat_id,
+    a.bff_week_pro_d as bff_week_pro_d,
+    b.name as name,
+    c.name as seatName,
+    c.number as seatCode,
+    d.name as areaString,
+   	e.ecount as itemCount
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_seat_manager a left join dg_item_file b on a.bff_item_id = b.id 
+    left join dg_consumer_seat c on a.seat_id = c.id 
+    where a.id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_seat_manager
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatManager" >
+    insert into dg_seat_manager (id, zdxf, zdxf_type, 
+      zdxf_money, fwf, fwf_type, 
+      fwf_gd, fwf_xf_ratio, fwf_con_free, 
+      fwf_sx, fwf_people, qssc, 
+      qssc_tx, bff, bff_gd, 
+      bff_people, bff_gd_pro, bff_week_pro, 
+      bff_item_id, bff_con_free, bff_timing, 
+      seat_id,bff_week_pro_d)
+    values (#{id,jdbcType=INTEGER}, #{zdxf,jdbcType=INTEGER}, #{zdxfType,jdbcType=INTEGER}, 
+      #{zdxfMoney,jdbcType=DOUBLE}, #{fwf,jdbcType=INTEGER}, #{fwfType,jdbcType=INTEGER}, 
+      #{fwfGd,jdbcType=DOUBLE}, #{fwfXfRatio,jdbcType=INTEGER}, #{fwfConFree,jdbcType=DOUBLE}, 
+      #{fwfSx,jdbcType=DOUBLE}, #{fwfPeople,jdbcType=DOUBLE}, #{qssc,jdbcType=INTEGER}, 
+      #{qsscTx,jdbcType=INTEGER}, #{bff,jdbcType=INTEGER}, #{bffGd,jdbcType=DOUBLE}, 
+      #{bffPeople,jdbcType=DOUBLE}, #{bffGdPro,jdbcType=INTEGER}, #{bffWeekPro,jdbcType=INTEGER}, 
+      #{bffItemId,jdbcType=INTEGER}, #{bffConFree,jdbcType=DOUBLE}, #{bffTiming,jdbcType=INTEGER}, 
+      #{seatId,jdbcType=INTEGER}, #{bffWeekProD,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatManager" >
+    insert into dg_seat_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="zdxf != null" >
+        zdxf,
+      </if>
+      <if test="zdxfType != null" >
+        zdxf_type,
+      </if>
+      <if test="zdxfMoney != null" >
+        zdxf_money,
+      </if>
+      <if test="fwf != null" >
+        fwf,
+      </if>
+      <if test="fwfType != null" >
+        fwf_type,
+      </if>
+      <if test="fwfGd != null" >
+        fwf_gd,
+      </if>
+      <if test="fwfXfRatio != null" >
+        fwf_xf_ratio,
+      </if>
+      <if test="fwfConFree != null" >
+        fwf_con_free,
+      </if>
+      <if test="fwfSx != null" >
+        fwf_sx,
+      </if>
+      <if test="fwfPeople != null" >
+        fwf_people,
+      </if>
+      <if test="qssc != null" >
+        qssc,
+      </if>
+      <if test="qsscTx != null" >
+        qssc_tx,
+      </if>
+      <if test="bff != null" >
+        bff,
+      </if>
+      <if test="bffGd != null" >
+        bff_gd,
+      </if>
+      <if test="bffPeople != null" >
+        bff_people,
+      </if>
+      <if test="bffGdPro != null" >
+        bff_gd_pro,
+      </if>
+      <if test="bffWeekPro != null" >
+        bff_week_pro,
+      </if>
+      <if test="bffItemId != null" >
+        bff_item_id,
+      </if>
+      <if test="bffConFree != null" >
+        bff_con_free,
+      </if>
+      <if test="bffTiming != null" >
+        bff_timing,
+      </if>
+      <if test="seatId != null" >
+        seat_id,
+      </if>
+       <if test="bffWeekProD != null" >
+        bff_week_pro_d,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="zdxf != null" >
+        #{zdxf,jdbcType=INTEGER},
+      </if>
+      <if test="zdxfType != null" >
+        #{zdxfType,jdbcType=INTEGER},
+      </if>
+      <if test="zdxfMoney != null" >
+        #{zdxfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="fwf != null" >
+        #{fwf,jdbcType=INTEGER},
+      </if>
+      <if test="fwfType != null" >
+        #{fwfType,jdbcType=INTEGER},
+      </if>
+      <if test="fwfGd != null" >
+        #{fwfGd,jdbcType=DOUBLE},
+      </if>
+      <if test="fwfXfRatio != null" >
+        #{fwfXfRatio,jdbcType=INTEGER},
+      </if>
+      <if test="fwfConFree != null" >
+        #{fwfConFree,jdbcType=DOUBLE},
+      </if>
+      <if test="fwfSx != null" >
+        #{fwfSx,jdbcType=DOUBLE},
+      </if>
+      <if test="fwfPeople != null" >
+        #{fwfPeople,jdbcType=DOUBLE},
+      </if>
+      <if test="qssc != null" >
+        #{qssc,jdbcType=INTEGER},
+      </if>
+      <if test="qsscTx != null" >
+        #{qsscTx,jdbcType=INTEGER},
+      </if>
+      <if test="bff != null" >
+        #{bff,jdbcType=INTEGER},
+      </if>
+      <if test="bffGd != null" >
+        #{bffGd,jdbcType=DOUBLE},
+      </if>
+      <if test="bffPeople != null" >
+        #{bffPeople,jdbcType=DOUBLE},
+      </if>
+      <if test="bffGdPro != null" >
+        #{bffGdPro,jdbcType=INTEGER},
+      </if>
+      <if test="bffWeekPro != null" >
+        #{bffWeekPro,jdbcType=INTEGER},
+      </if>
+      <if test="bffItemId != null" >
+        #{bffItemId,jdbcType=INTEGER},
+      </if>
+      <if test="bffConFree != null" >
+        #{bffConFree,jdbcType=DOUBLE},
+      </if>
+      <if test="bffTiming != null" >
+        #{bffTiming,jdbcType=INTEGER},
+      </if>
+      <if test="seatId != null" >
+        #{seatId,jdbcType=INTEGER},
+      </if>
+       <if test="bffWeekProD != null" >
+        #{bffWeekProD,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatManager" >
+    update dg_seat_manager
+    <set >
+      <if test="zdxf != null" >
+        zdxf = #{zdxf,jdbcType=INTEGER},
+      </if>
+      <if test="zdxfType != null" >
+        zdxf_type = #{zdxfType,jdbcType=INTEGER},
+      </if>
+      <if test="zdxfMoney != null" >
+        zdxf_money = #{zdxfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="fwf != null" >
+        fwf = #{fwf,jdbcType=INTEGER},
+      </if>
+      <if test="fwfType != null" >
+        fwf_type = #{fwfType,jdbcType=INTEGER},
+      </if>
+      <if test="fwfGd != null" >
+        fwf_gd = #{fwfGd,jdbcType=DOUBLE},
+      </if>
+      <if test="fwfXfRatio != null" >
+        fwf_xf_ratio = #{fwfXfRatio,jdbcType=INTEGER},
+      </if>
+      <if test="fwfConFree != null" >
+        fwf_con_free = #{fwfConFree,jdbcType=DOUBLE},
+      </if>
+      <if test="fwfSx != null" >
+        fwf_sx = #{fwfSx,jdbcType=DOUBLE},
+      </if>
+      <if test="fwfPeople != null" >
+        fwf_people = #{fwfPeople,jdbcType=DOUBLE},
+      </if>
+      <if test="qssc != null" >
+        qssc = #{qssc,jdbcType=INTEGER},
+      </if>
+      <if test="qsscTx != null" >
+        qssc_tx = #{qsscTx,jdbcType=INTEGER},
+      </if>
+      <if test="bff != null" >
+        bff = #{bff,jdbcType=INTEGER},
+      </if>
+      <if test="bffGd != null" >
+        bff_gd = #{bffGd,jdbcType=DOUBLE},
+      </if>
+      <if test="bffPeople != null" >
+        bff_people = #{bffPeople,jdbcType=DOUBLE},
+      </if>
+      <if test="bffGdPro != null" >
+        bff_gd_pro = #{bffGdPro,jdbcType=INTEGER},
+      </if>
+      <if test="bffWeekPro != null" >
+        bff_week_pro = #{bffWeekPro,jdbcType=INTEGER},
+      </if>
+      <if test="bffItemId != null" >
+        bff_item_id = #{bffItemId,jdbcType=INTEGER},
+      </if>
+      <if test="bffConFree != null" >
+        bff_con_free = #{bffConFree,jdbcType=DOUBLE},
+      </if>
+      <if test="bffTiming != null" >
+        bff_timing = #{bffTiming,jdbcType=INTEGER},
+      </if>
+      <if test="seatId != null" >
+        seat_id = #{seatId,jdbcType=INTEGER},
+      </if>
+        <if test="bffWeekProD != null" >
+        bff_week_pro_d = #{bffWeekProD,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatManager" >
+    update dg_seat_manager
+    set zdxf = #{zdxf,jdbcType=INTEGER},
+      zdxf_type = #{zdxfType,jdbcType=INTEGER},
+      zdxf_money = #{zdxfMoney,jdbcType=DOUBLE},
+      fwf = #{fwf,jdbcType=INTEGER},
+      fwf_type = #{fwfType,jdbcType=INTEGER},
+      fwf_gd = #{fwfGd,jdbcType=DOUBLE},
+      fwf_xf_ratio = #{fwfXfRatio,jdbcType=INTEGER},
+      fwf_con_free = #{fwfConFree,jdbcType=DOUBLE},
+      fwf_sx = #{fwfSx,jdbcType=DOUBLE},
+      fwf_people = #{fwfPeople,jdbcType=DOUBLE},
+      qssc = #{qssc,jdbcType=INTEGER},
+      qssc_tx = #{qsscTx,jdbcType=INTEGER},
+      bff = #{bff,jdbcType=INTEGER},
+      bff_gd = #{bffGd,jdbcType=DOUBLE},
+      bff_people = #{bffPeople,jdbcType=DOUBLE},
+      bff_gd_pro = #{bffGdPro,jdbcType=INTEGER},
+      bff_week_pro = #{bffWeekPro,jdbcType=INTEGER},
+      bff_item_id = #{bffItemId,jdbcType=INTEGER},
+      bff_con_free = #{bffConFree,jdbcType=DOUBLE},
+      bff_timing = #{bffTiming,jdbcType=INTEGER},
+      seat_id = #{seatId,jdbcType=INTEGER},
+      bff_week_pro_d = #{bffWeekProD,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectBySeatId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_seat_manager a left join dg_item_file b on a.bff_item_id = b.id 
+    left join dg_consumer_seat c on a.seat_id = c.id 
+    where a.seat_id = #{id,jdbcType=INTEGER}
+  </select>
+    
+  <select id="selectDetailBySeatId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Detail_Column_List" />
+    from dg_consumer_seat c
+    left join dg_seat_manager a on a.seat_id = c.id 
+    left join dg_consumption_area d on d.id = c.cons_area
+    left join dg_item_file b on a.bff_item_id = b.id 
+    left join (select seat_id,count(*) as ecount from dg_seat_item group by seat_id) e on a.seat_id = e.seat_id
+    where d.id = #{id,jdbcType=INTEGER} and c.del_flag in(0) and d.del_flag in(0)
+  </select>
+  
+    <select id="selectAllDetailBySeatId" resultMap="BaseResultMap">
+    select 
+    <include refid="Detail_Column_List" />
+    from dg_consumer_seat c
+    left join dg_seat_manager a on a.seat_id = c.id 
+    left join dg_consumption_area d on d.id = c.cons_area
+    left join dg_item_file b on a.bff_item_id = b.id 
+    <!-- left join dg_consumption_area d on d.id = c.cons_area -->
+    left join (select seat_id,count(*) as ecount from dg_seat_item group by seat_id) e on a.seat_id = e.seat_id
+    where c.del_flag in(0) and d.del_flag in(0)
+  </select>
+  
+   <select id="getCountByAreaId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+	count(*)
+	from dg_consumer_seat b
+	left join dg_seat_manager a on b.id = a.seat_id
+	left JOIN dg_consumption_area c on c.id = b.cons_area
+    where c.id = #{id,jdbcType=INTEGER} and c.del_flag in(0) and b.del_flag in(0)
+  </select>
+  <select id="getAllCount" resultType="java.lang.Integer" >
+    select 
+	count(*)
+	from dg_consumer_seat b
+	left join dg_seat_manager a on b.id = a.seat_id
+	left JOIN dg_consumption_area c on c.id = b.cons_area
+	where c.del_flag in(0) and b.del_flag in(0)
+  </select>
+  
+  <delete id="deleteBySeatIds" parameterType="DgConsumerSeat">
+	delete from dg_seat_manager where seat_id in 
+	<foreach item="id" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{id}  
+	 </foreach>  
+  </delete>
+</mapper>

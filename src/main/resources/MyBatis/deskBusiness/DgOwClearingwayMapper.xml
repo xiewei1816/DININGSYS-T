@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgOwClearingwayMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway" >
+    <result column="cw_id" property="cwId" jdbcType="INTEGER" />
+    <result column="settlement_amount" property="settlementAmount" jdbcType="DOUBLE" />
+    <result column="conversion_amount" property="conversionAmount" jdbcType="INTEGER" />
+    <result column="notes" property="notes" jdbcType="VARCHAR" />
+    <result column="cw_code" property="cwCode" jdbcType="VARCHAR" />
+    <result column="non_zero_amount" property="nonZeroAmount" jdbcType="DOUBLE" />
+    <result column="foreign_pay" property="foreignPay" jdbcType="DOUBLE" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway" >
+    insert into dg_ow_clearingway (cw_id, settlement_amount, conversion_amount, 
+      notes, cw_code,non_zero_amount,foreign_pay)
+    values (#{cwId,jdbcType=INTEGER}, #{settlementAmount,jdbcType=DOUBLE}, #{conversionAmount,jdbcType=INTEGER}, 
+      #{notes,jdbcType=VARCHAR}, #{cwCode,jdbcType=VARCHAR},#{nonZeroAmount,jdbcType=DOUBLE},#{foreignPay,jdbcType=DOUBLE})
+  </insert>
+</mapper>

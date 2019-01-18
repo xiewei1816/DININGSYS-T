@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.inve.DgWarehouseMapper">
+<resultMap type="com.yqsh.diningsys.web.model.inve.DgWarehouse"
+		   id="DgWarehouse">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="wareNo" column="wareNo" jdbcType="VARCHAR"/>
+        <result property="wareName" column="wareName" jdbcType="VARCHAR"/>
+        <result property="manageName" column="manageName" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+  </resultMap>
+   <sql id="Base_InveItems_Column" >
+    	id ,wareName,manageName,state,remark,operUser,createDate,wareNo 
+  </sql>
+	 <insert id="insert" parameterType="DgWarehouse">
+	    insert into dg_inve_warehouse
+	    (
+	    id,wareName,manageName,state,
+	    remark,operUser,createDate,wareNo
+	    )
+	    values(
+	    #{id},#{wareName},#{manageName},#{state},
+	    #{remark},#{operUser},#{createDate},
+	    #{wareNo}
+	    )
+	</insert>
+	<update id="update" parameterType="DgWarehouse">
+		update dg_inve_warehouse
+		set wareName=#{wareName},
+	 		manageName=#{manageName},
+	  		remark=#{remark}
+	  		where id=#{id}
+	</update>
+	<!-- 逻辑删除处理 -->
+	<delete id="delete" parameterType="map">
+		update dg_inve_warehouse
+		set 
+			state=#{state}
+	  		where id in
+	  	<foreach item="ids" index="index" collection="id" open="(" separator="," close=")">  
+	  		 #{ids}
+	 	</foreach> 
+	</delete>
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="DgWarehouse" parameterType="DgWarehouse">
+		SELECT <include refid="Base_InveItems_Column"/>
+		FROM dg_inve_warehouse
+		WHERE 1=1 
+		<if test="wareName!=null and wareName!=''">
+			AND wareName like  concat('%',#{wareName},'%')
+		</if>
+		<if test="manageName!=null and manageName!=''">
+			AND manageName like concat('%',#{manageName},'%')
+		</if>
+		AND state=0 
+		 ORDER BY createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgWarehouse">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from dg_inve_warehouse 
+	  	 <where>
+	        <if test="wareName!=null and wareName!=''">
+			    AND wareName like concat('%',#{wareName},'%')
+			</if>
+			<if test="manageName!=null and manageName!=''">
+				AND manageName like concat('%',#{manageName},'%')
+			</if>
+	      </where>
+    </select>
+    <!-- 根据条件获取仓库信息 -->
+    <select id="findListData" resultType="DgWarehouse" parameterType="DgWarehouse">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_warehouse
+    	WHERE 1=1
+    	<if test="state!=null and state!=''">
+    		AND state=#{state}
+    	</if>
+    </select>
+	<select id="get" parameterType="string" resultType="DgWarehouse">
+	    SELECT * from dg_inve_warehouse where id = #{id}
+	</select>
+	<!-- 根据条件排序查询一条数据 -->
+	<select id="findLastOne" resultType="DgWarehouse" parameterType="DgWarehouse">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_warehouse
+    	<where>
+    		<if test="state!=null and state!=''">
+    		AND state=#{state}
+    	</if>
+    	<if test="wareNo!=null and wareNo!=''">
+			AND wareNo=#{wareNo}
+		</if>
+    	</where>
+    	ORDER BY createDate DESC limit 1
+    </select>
+    
+    <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_inve_warehouse 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+     insert into dg_inve_warehouse
+	    (
+		    id,wareNo,wareName,manageName,state,remark,operUser,createDate
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.wareNo">#{im.wareNo},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.wareName">#{im.wareName},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.manageName">#{im.manageName},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.state">#{im.state},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.remark">#{im.remark},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.operUser">#{im.operUser},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.createDate">#{im.createDate}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

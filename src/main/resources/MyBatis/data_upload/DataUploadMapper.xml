@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.data_upload.DataUploadMapper">
+
+    <select id="selectSelfYGGL" resultType="com.yqsh.diningsys.web.model.SysUser">
+        SELECT *,#{shopKey} as shopKey from sys_user
+    </select>
+
+
+    <select id="selectSelfPXGLPXDZXLMR" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount">
+        SELECT * from dg_item_type_discount
+    </select>
+    
+    <select id="selectSelfPXGLPXDZFAZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme">
+        SELECT *,#{shopKey} as shopKey from dg_item_discount_programme
+    </select>
+    
+    <select id="selectSelfPXGLPXDZFAFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgrammeS">
+        SELECT * from dg_item_discount_programme_s
+    </select>
+    
+    <select id="selectSelfPXGLPXDZFAXQB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgWeekDiscount">
+        SELECT *,#{shopKey} as shopKey from dg_week_discount
+    </select>
+    
+    <select id="selectSelfPXGLPXDZHYFAZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount">
+        SELECT *,#{shopKey} as shopKey from dg_item_member_discount
+    </select>
+    
+    <select id="selectSelfPXGLPXDZHYFAFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscountS">
+        SELECT * from dg_item_member_discount_s
+    </select>
+    
+    <select id="selectSelfPXGLPXDZYCDJASBZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgForMealTimePrice">
+        SELECT *,#{shopKey} as shopKey from dg_for_meal_time_price
+    </select>
+    
+    <select id="selectSelfPXGLPXDZYCDJASBFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgForMealTimePriceS">
+        SELECT * from dg_for_meal_time_price_s
+    </select>
+    
+    <select id="selectSelfPXGLPXDZYCDJAXFQYZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePrice">
+        SELECT *,#{shopKey} as shopKey from dg_place_price
+    </select>
+    
+    <select id="selectSelfPXGLPXDZYCDJAXFQYFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgPlacePriceS">
+        SELECT * from dg_place_price_s
+    </select>
+    
+    <select id="selectSelfPXGLPXDZYCDJAXQ" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemForWeek">
+        SELECT *,#{shopKey} as shopKey from dg_item_for_week
+    </select>
+    
+    <select id="selectSelfPXGLPXDZCXPX" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgPromotionItem">
+        SELECT *,#{shopKey} as shopKey from dg_promotion_item
+    </select>
+    
+    <select id="selectSelfPXGLPXDZSJPX" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemCurrentPrice">
+        SELECT *,#{shopKey} as shopKey from dg_item_current_price
+    </select>
+    
+    <select id="selectSelfPXGLPXDZJTJG" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPriceLadder">
+        SELECT *,#{shopKey} as shopKey from dg_item_price_ladder
+    </select>
+    
+    <select id="selectSelfPXGLPXDZJGYXJ" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemPricePriority">
+        SELECT *,#{shopKey} as shopKey from dg_item_price_priority
+    </select>
+    
+    <select id="selectSelfPXGLPXDZZYHDZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount">
+        SELECT *,#{shopKey} as shopKey from dg_important_activity_discount
+    </select>
+    
+    <select id="selectSelfPXGLPXDZZYHDFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantAcitivityDiscountS">
+        SELECT * from dg_important_acitivity_discount_s
+    </select>
+
+    <!--费用登记-->
+    <select id="selectSelfFYDJ" resultType="com.yqsh.diningsys.web.model.businessMan.TbFydj">
+        select *,#{shopKey} as shopKey from t_b_fydj
+    </select>
+    <!--消费品项显示设置-->
+    <select id="selectSelfXFPXXS" resultType="com.yqsh.diningsys.web.model.businessMan.DgItemShowRank">
+        select *,#{shopKey} as shopKey from dg_item_show_rank
+    </select>
+    <!--服务员服务客位-->
+    <select id="selectSelfFWYFWKW" resultType="com.yqsh.diningsys.web.model.deskBusiness.ServiceClass">
+        select *,#{shopKey} as shopKey from dg_service_class
+    </select>
+    <!--消费区域管理-->
+    <select id="selectSelfXFQYXSPX" resultType="com.yqsh.diningsys.web.model.businessMan.DgAreaLimitItem">
+        select * from dg_area_limit_item
+    </select>
+    <select id="selectSelfXFQUGL" resultType="com.yqsh.diningsys.web.model.businessMan.DgAreaManager">
+        select * from dg_area_manager
+    </select>
+    <select id="selectSelfKWGL" resultType="com.yqsh.diningsys.web.model.businessMan.DgSeatManager">
+        select * from dg_seat_manager
+    </select>
+    <select id="selectSelfBFFAZB" resultType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme">
+        select *,#{shopKey} as shopKey from dg_seat_charging_scheme
+    </select>
+    <select id="selectSelfBFFAFB" resultType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingSchemeS">
+        select * from dg_seat_charging_scheme_s
+    </select>
+    <!--前台营业设置-->
+    <select id="selectSelfQTYYSZ" resultType="com.yqsh.diningsys.web.model.deskBusiness.DeskBusinessSetting">
+        select *,#{shopKey} as shopKey from desk_business_setting
+    </select>
+
+    <!-- ********************************************BY XW S********************************************** -->
+    <select id="selectSelfPXGQ" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemOutofStock">
+        SELECT * from dg_item_outof_stock
+    </select>
+    <select id="selectSelfPXXLZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimit">
+        SELECT * from dg_item_sale_limit
+    </select>
+    <select id="selectSelfPXXLFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemSaleLimitS">
+        SELECT * from dg_item_sale_limit_s
+    </select>
+    <select id="selectSelfPXTY" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDisable">
+        SELECT * from dg_item_disable
+    </select>
+    <select id="selectSelfTJCP" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgRecommendItem">
+        SELECT * from dg_recommend_item
+    </select>
+    <select id="selectSelfZXCP" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgNewestItem">
+        SELECT * from dg_newest_item
+    </select>
+    <select id="selectSelfPXCPBMZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDepS">
+        SELECT * from dg_item_pro_dep
+    </select>
+    <select id="selectSelfPXCPBMFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep">
+        SELECT * from dg_item_pro_dep_s
+    </select>
+    <select id="selectSelfTSPX" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgSpecialItem">
+        SELECT * from dg_special_item
+    </select>
+    <select id="selectSelfPXCPCS" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemFromCook">
+        SELECT * from dg_item_from_cook
+    </select>
+    <select id="selectSelfZDYJEPXXL" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgGateItemAllowCustom">
+        SELECT * from dg_gate_item_allow_custom
+    </select>
+    <select id="selectSelfZDYJEPX" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemCustomMoney">
+        SELECT * from dg_item_custom_money
+    </select>
+    <select id="selectSelfZDYJEMC" resultType="com.yqsh.diningsys.web.model.deskBusiness.BgItemCustomMoneyName">
+        SELECT * from bg_item_custom_money_name
+    </select>
+    <select id="selectSelfPXCXFAZB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlan">
+        SELECT * from dg_item_gift_plan
+    </select>
+    <select id="selectSelfPXCXFAFB" resultType="com.yqsh.diningsys.web.model.deskBusiness.DgItemGiftPlanS">
+        SELECT * from dg_item_gift_plan_s
+    </select>
+    <!-- ********************************************BY XW D********************************************** -->
+    
+    <!--费用项目-->
+    <select id="selectSelfFYXMLX" resultType="com.yqsh.diningsys.web.model.archive.TbFylx">
+        select *,#{shopKey} as shopKey from t_b_fylx
+    </select>
+    <select id="selectSelfFYXMST" resultType="com.yqsh.diningsys.web.model.archive.TbFyxm">
+        select *,#{shopKey} as shopKey from t_b_fyxm
+    </select>
+    
+    <!--消费区域与客位-->
+    <select id="selectSelfXFQU" resultType="com.yqsh.diningsys.web.model.archive.DgConsumptionArea">
+        select *,#{shopKey} as shopKey from dg_consumption_area
+    </select>
+    <select id="selectSelfKW" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+        select *,#{shopKey} as shopKey from dg_consumer_seat
+    </select>
+    <!--pos档案-->
+    <select id="selectSelfPOS" resultType="com.yqsh.diningsys.web.model.archive.DgPos">
+        select *,#{shopKey} as shopKey from dg_pos
+    </select>
+    <!--结算方式-->
+    <select id="selectSelfJSFSLX" resultType="com.yqsh.diningsys.web.model.archive.DgSettlementWayType">
+        select * from dg_settlement_way_type
+    </select>
+    <select id="selectSelfJSFS" resultType="com.yqsh.diningsys.web.model.archive.DgSettlementWay">
+        select *,#{shopKey} as shopKey from dg_settlement_way
+    </select>
+    <!--制作方法-->
+    <select id="selectSelfZZFSLX" resultType="com.yqsh.diningsys.web.model.archive.DgProMethodsType">
+        select *,#{shopKey} as shopKey from dg_pro_methods_type
+    </select>
+    <select id="selectSelfZZFS" resultType="com.yqsh.diningsys.web.model.archive.DgProMethods">
+        select *,#{shopKey} as shopKey from dg_pro_methods
+    </select>
+    <!--口味要求-->
+    <select id="selectSelfKWYQ" resultType="com.yqsh.diningsys.web.model.archive.DgFlavor">
+        select *,#{shopKey} as shopKey from dg_flavor
+    </select>
+
+
+    <select id="selectSelfSCZT" resultType="com.yqsh.diningsys.web.model.archive.DgServing">
+        select ds.*,#{shopKey} as shopKey from dg_serving ds
+    </select>
+
+    <select id="selectSelfZDYY" resultType="com.yqsh.diningsys.web.model.archive.DgGiftForm">
+        select dgf.*,#{shopKey} as shopKey from dg_gift_form dgf
+    </select>
+
+    <select id="selectSelfZDYYLX" resultType="com.yqsh.diningsys.web.model.archive.DgGiftFormReason">
+        select dgfr.*,#{shopKey} as shopKey from dg_gift_form_reason dgfr
+    </select>
+
+    <select id="selectSelfBMGL" resultType="com.yqsh.diningsys.web.model.archive.TbDep">
+        select tbd.*,#{shopKey} as shopKey from t_b_dep tbd
+    </select>
+
+    <select id="selectSelfYYSB" resultType="com.yqsh.diningsys.web.model.archive.TbBis">
+        select tbb.*,#{shopKey} as shopKey from t_b_bis tbb
+    </select>
+
+    <select id="selectSelfTCYY" resultType="com.yqsh.diningsys.web.model.archive.TbRfc">
+        select tbr.*,#{shopKey} as shopKey from t_b_rfc tbr
+    </select>
+
+    <select id="selectSelfTCYYLX" resultType="com.yqsh.diningsys.web.model.archive.TbRfc">
+        select tbr.*,#{shopKey} as shopKey from t_b_rfct tbr
+    </select>
+
+    <select id="selectSelfZDBZ" resultType="com.yqsh.diningsys.web.model.archive.TbZdbz">
+        select tbz.*,#{shopKey} as shopKey from t_b_zdbz tbz
+    </select>
+
+    <select id="selectSelfGGDM" resultType="com.yqsh.diningsys.web.model.archive.DgPublicCode0">
+        select dpc.*,#{shopKey} as shopKey from dg_public_code0 dpc where cParent != 1
+    </select>
+
+</mapper>

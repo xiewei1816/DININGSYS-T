@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgNonMemberMapper" >
+	<sql id="selectCols">
+		o.id AS "id",
+		o.number AS "number",
+		o.name AS "name",
+		o.mnemonic AS "mnemonic",
+		o.accountType AS "accountType",
+		o.empId AS "empId",
+		o.balance AS "balance",
+		o.repaymentPeriod AS "repaymentPeriod",
+		o.creditLimit AS "creditLimit",
+		o.contacts AS "contacts",
+		o.phone AS "phone",
+		o.address AS "address",
+		o.explains AS "explains",
+		o.isDisable AS "isDisable",
+		o.createTime AS "createTime",
+		o.createUserid AS "createUserid",
+		o.delFlag AS "delFlag",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		be.id AS "emp.id",
+		be.emp_name AS "emp.empName"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.createUserid
+		left join sys_user be on be.id = o.empId
+	</sql>
+	
+	<sql id="queryCriteria">
+		and o.delFlag = 0
+  	 	<if test="conditions != null and conditions != ''">
+          and (o.number like '%${conditions}%' or o.name like '%${conditions}%' or o.mnemonic like '%${conditions}%')
+        </if>
+        <if test="number != null and number != ''">
+          and o.number like '%${number}%'
+        </if>
+        <if test="name != null and name != ''">
+         and o.name like '%${name}%'
+        </if>
+        <if test="checkName != null and checkName != ''">
+         and o.name = #{checkName}
+        </if>
+        <if test="mnemonic != null and mnemonic != ''">
+          and o.mnemonic like '%${mnemonic}%'
+        </if>
+        <if test="accountType != null and accountType != 0">
+          and o.accountType = #{accountType}
+        </if>
+        <if test="empId != null and empId != 0">
+          and o.empId = #{empId}
+        </if>
+        <if test="crStartTime != null and crStartTime != ''">
+         and o.createTime > #{crStartTime}
+        </if>
+        <if test="crEndTime != null and crEndTime != '' ">
+         and o.createTime <![CDATA[<]]> #{crEndTime}
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="DgNonMember" parameterType="DgNonMember">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_non_member o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.createTime desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgNonMember">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_non_member o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getDgNonMemberByID" parameterType="DgNonMember" resultType="DgNonMember">
+		select 
+			<include refid="selectCols"></include>
+		from dg_non_member o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="DgNonMember" resultType="DgNonMember">
+		select 
+			<include refid="selectCols"></include>
+		from dg_non_member o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.createTime desc
+	</select>
+  
+  <insert id="newInsert" parameterType="DgNonMember">
+  	insert into dg_non_member(
+		number,
+		name,
+		mnemonic,
+		accountType,
+		empId,
+		balance,
+		repaymentPeriod,
+		creditLimit,
+		contacts,
+		phone,
+		address,
+		explains,
+		isDisable,
+		createTime,
+		createUserid,
+		delFlag
+  	) values (
+  		#{number},
+		#{name},
+		#{mnemonic},
+		#{accountType},
+		#{empId},
+		#{balance},
+		#{repaymentPeriod},
+		#{creditLimit},
+		#{contacts},
+		#{phone},
+		#{address},
+		#{explains},
+		#{isDisable},
+		#{createTime},
+		#{createUserid},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="DgNonMember">
+  	update dg_non_member set 
+		number = #{number},
+		name = #{name},
+		mnemonic = #{mnemonic},
+		accountType = #{accountType},
+		empId = #{empId},
+		balance = #{balance},
+		repaymentPeriod = #{repaymentPeriod},
+		contacts = #{contacts},
+		phone = #{phone},
+		address = #{address},
+		explains = #{explains},
+		isDisable = #{isDisable}
+	where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="DgNonMember">
+	update dg_non_member set delFlag = 1 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+</mapper>

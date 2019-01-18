@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgSeatDoorinfoMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo" >
+    <result column="id" property="id" jdbcType="INTEGER" />
+    <result column="mac" property="mac" jdbcType="VARCHAR" />
+    <result column="seatId" property="seatid" jdbcType="INTEGER" />
+    <result column="seatName" property="seatName" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo" >
+    insert into dg_seat_doorinfo (id,mac, seatId)
+    values (#{id,jdbcType=INTEGER},#{mac,jdbcType=VARCHAR}, #{seatid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo" >
+    insert into dg_seat_doorinfo
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="mac != null" >
+        mac,
+      </if>
+      <if test="seatid != null" >
+        seatId,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="mac != null" >
+        #{mac,jdbcType=VARCHAR},
+      </if>
+      <if test="seatid != null" >
+        #{seatid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deleteByMac" parameterType="java.util.List" >
+    delete from dg_seat_doorinfo
+    where id in 
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+  
+   <update id="updateByMac" parameterType="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo" >
+	    update dg_seat_doorinfo
+	    set seatId = #{seatid,jdbcType=INTEGER}
+	    where mac = #{mac,jdbcType=VARCHAR}
+  </update>
+
+    <select id="getConsumerSeatInfoByMac" resultType="map" parameterType="string">
+      select s.id,s.name as seatName,s.number,s2.mac,s3.name as areaName,s.seat_state as seatState from dg_consumer_seat s 
+      join dg_seat_doorinfo s2 on s.id = seatId left join 
+      dg_consumption_area s3 on s.cons_area = s3.id
+      where s2.mac = #{mac}
+    </select>
+  
+  <select id="getListByPage" resultMap="BaseResultMap" parameterType="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo">
+  	 SELECT o.id,o.mac, o.seatId,t.name as seatName  
+  	 from dg_seat_doorinfo o left join dg_consumer_seat t on t.id = o.seatId
+  	 <where>
+        <if test="mac != null and mac != ''">
+            o.mac like concat(concat('%', <![CDATA[ #{mac,jdbcType=VARCHAR} ]]>,'%' ))
+        </if>
+     </where>
+     limit #{startRow},#{endRow}
+  </select>
+  
+    <select id="getCount" resultType="Integer" parameterType="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo">
+  	 SELECT count(0)
+  	 from dg_seat_doorinfo
+  	 <where>
+        <if test="mac != null">
+            mac =  <![CDATA[ #{mac,jdbcType=VARCHAR} ]]>
+        </if>
+     </where>
+    </select>
+  
+     <select id="selectById" resultType="com.yqsh.diningsys.web.model.archive.DgSeatDoorinfo" parameterType="Integer">
+  	  SELECT * from dg_seat_doorinfo where id = #{id,jdbcType=INTEGER}
+     </select>
+     <select id="getSeatNotInDoorInfo" resultType="DgConsumerSeat">
+  	  SELECT d.* from dg_consumer_seat d right join dg_consumption_area a on a.id = d.cons_area
+  	  where d.id not in (select seatId from dg_seat_doorinfo where seatId is not null) and d.del_flag = 0
+     </select>
+      <select id="getAllSeat" resultType="DgConsumerSeat">
+  	  SELECT * from dg_consumer_seat where del_flag = 0
+     </select>
+</mapper>

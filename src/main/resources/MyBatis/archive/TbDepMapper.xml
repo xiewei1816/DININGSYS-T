@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbDepMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbDep" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dep_code" property="depCode" jdbcType="VARCHAR" />
+    <result column="dep_name" property="depName" jdbcType="VARCHAR" />
+    <result column="dep_sjm" property="depSjm" jdbcType="VARCHAR" />
+    <result column="dep_department" property="depDepartment" jdbcType="VARCHAR" />
+    <result column="use_type" property="useType" jdbcType="VARCHAR" />
+    <result column="dep_organization" property="depOrganization" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="uuid_key" property="uuidKey" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dep_code, dep_name, dep_sjm, dep_department, use_type, dep_organization, is_del, create_time
+  </sql> 
+  <sql id="selectCols">
+		o.id AS "id",
+		o.dep_code AS "depCode",
+		o.dep_name AS "depName",
+		o.dep_sjm AS "depSjm",
+		(select dep_name from t_b_dep c where c.id = o.dep_department)  AS "depDepartment",
+		c.cName AS "useType",
+		b.org_name AS "depOrganization",
+		o.is_del AS "isDel",
+		o.create_time AS "createTime"
+	</sql>
+	<!-- 分页查询部门信息 -->
+  <select id="getListByPage" resultType="TbDep" parameterType="TbDep">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from t_b_dep o
+  	 left join t_b_org b on b.id = o.dep_organization
+  	 left join dg_public_code0 c on c.id = o.use_type
+  	 <where>
+        <if test="depCode != null and depCode != ''">
+          and o.dep_code = #{depCode}
+        </if>
+        <if test="depName != null and depName != ''">
+         and o.dep_name = #{depName}
+        </if>
+        <if test="depDepartment != null and depDepartment != ''">
+         and o.dep_department = #{depDepartment}
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = #{isDel}
+        </if>
+      </where>
+      <choose>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+<!-- 		limit #{startRow},#{endRow}	 -->
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="TbDep">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_dep o
+  	 left join t_b_org b on b.id = o.dep_organization
+  	 left join dg_public_code0 c on c.id = o.use_type
+  	 <where>
+        <if test="depCode != null and depCode != ''">
+          and o.dep_code = #{depCode}
+        </if>
+        <if test="depName != null and depName != ''">
+         and o.dep_name = #{depName}
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = #{isDel}
+        </if>
+      </where>
+  </select>
+  <!-- 通过部门ID查询部门信息 -->
+  <select id="getDepById" parameterType="TbDep" resultType="TbDep">
+		select 
+		<include refid="Base_Column_List"></include>
+		from t_b_dep where id = #{id}
+	</select>
+	  <!-- 通过部门ID查询关联的部门-->
+  <select id="getDepDepartmentNameById" parameterType="TbDep" resultType="TbDep">
+		select o.id,o.dep_code,o.dep_name,o.dep_sjm,
+		(select dep_name from t_b_dep c where c.id = o.dep_department)  AS "depDepartment",
+		o.use_type,o.dep_organization,o.is_del,o.create_time
+		from t_b_dep o where id = #{id}
+	</select>
+	<!-- 添加部门信息 -->
+	<insert id="newInsert" parameterType="TbDep">
+  	insert into t_b_dep(
+		dep_code,
+		dep_name, 
+		dep_sjm,
+		dep_organization,
+		use_type,
+		dep_department,
+		create_time
+  	) values (
+  		#{depCode},
+		#{depName},
+		#{depSjm},
+		#{depOrganization},
+		#{useType},
+		#{depDepartment},
+		#{createTime}
+  	)
+  </insert>
+  <!-- 根据部门ID修改部门信息 -->
+  <update id="update" parameterType="TbDep">
+  	update t_b_dep set 
+		dep_code = #{depCode},
+		dep_name = #{depName},
+		dep_sjm = #{depSjm},
+		dep_organization = #{depOrganization},
+		use_type = #{useType},
+		dep_department = #{depDepartment}
+	where id = #{id}
+  </update>
+    <!-- 通过上级代码查询最后一条记录获取代码进行叠加算法 -->
+  <select id="getLastDepCode" parameterType="TbDep" resultType="TbDep">
+		select 
+		<include refid="Base_Column_List"></include>
+		from t_b_dep where dep_department = #{depDepartment}
+		ORDER BY dep_code DESC LIMIT 0,1
+	</select>
+  <!-- 部门信息回收站 -->
+  <update id="deleteTrash" parameterType="TbDep">
+	update t_b_dep set is_del = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 还原回收站部门信息 -->
+  <update id="replyDep" parameterType="TbDep">
+	update t_b_dep set is_del = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 删除部门信息 -->
+  <delete id="delete" parameterType="TbDep">
+	delete from t_b_dep where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	<!-- 获取所有部门信息 -->
+	<select id="getAllList" parameterType="TbDep" resultType="TbDep">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from t_b_dep o
+  		 left join t_b_org b on b.id = o.dep_organization
+  		 left join dg_public_code0 c on c.id = o.use_type
+	  	 <where>
+	  	 	<if test="id != null and id != ''">
+	          and o.id = #{id}
+	        </if>
+	         <if test="depCode != null and depCode != ''">
+	          and o.dep_code = #{depCode}
+	        </if>
+	        <if test="depName != null and depName != ''">
+	         and o.dep_name = #{depName}
+	        </if>
+	        <if test="depDepartment != null and depDepartment != ''">
+	         and o.dep_department = #{depDepartment}
+	        </if>
+	        <if test="depOrganization != null and depOrganization != ''">
+	         and o.dep_organization = #{depOrganization}
+	        </if>
+	        <if test="depSjm != null and depSjm != ''">
+	         and o.dep_sjm = #{depSjm}
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and o.is_del = #{isDel}
+	        </if>
+	      </where>
+	      <choose>
+	      	<otherwise>
+	      		order by o.create_time desc
+	      	</otherwise>
+	     </choose>
+	</select>
+	<select id="selectAllDep" resultMap="BaseResultMap">
+		select * from t_b_dep o
+		 <where>
+			<if test="id != null and id != ''">
+	         and o.id = #{id}
+	        </if>
+	        <if test="depDepartment != null and depDepartment != ''">
+	         and o.dep_department = #{depDepartment}
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and o.is_del = '${isDel}'
+       	 	</if>
+	      </where>
+	</select>
+	 <select id="selectSmallDep" resultMap="BaseResultMap" parameterType="map">
+        select 
+		<include refid="selectCols"></include>
+  		 from t_b_dep o 
+  		 left join t_b_org b on b.id = o.dep_organization 
+  		 left join dg_public_code0 c on c.id = o.use_type
+  		 <where>
+	  		<if test="id != null and id != ''">
+	          and o.id = #{id}
+	       	</if>
+	        <if test="depId != null and depId != ''">
+	          and o.dep_department = #{depId}
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	          and o.is_del = #{isDel}
+	        </if>
+      </where>
+    </select>
+    <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM t_b_dep 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into t_b_dep
+        (
+		    id,dep_code,dep_name,dep_sjm,dep_department,use_type,dep_organization,is_del,create_time
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.depCode">#{im.depCode},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.depName">#{im.depName},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.depSjm">#{im.depSjm},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.depDepartment">#{im.depDepartment},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.useType">#{im.useType},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.depOrganization">#{im.depOrganization},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.isDel">#{im.isDel},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.createTime">#{im.createTime}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

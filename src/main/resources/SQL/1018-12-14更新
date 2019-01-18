@@ -1,0 +1,146 @@
+DROP PROCEDURE IF EXISTS `autoThirdWaterCopy`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `autoThirdWaterCopy`()
+BEGIN
+    SET @v_table_date = DATE_FORMAT(NOW(),'%Y_%m');
+    SET @v_old_table_date = DATE_FORMAT(date_sub(NOW(),INTERVAL 1 MONTH),'%Y_%m');
+		SET @now_date = DATE_FORMAT(NOW(),'%Y%m%d');
+
+    SET @v_tablename = CONCAT('dg_pay_water_',@v_table_date);
+    SET @v_old_tablename = CONCAT('dg_pay_water_',@v_old_table_date);
+
+    SET @v_sql = CONCAT('create table if not exists ',@v_tablename ,' like ','dg_pay_water');
+    SET @sql = @v_sql;
+    PREPARE cmd FROM @sql;
+    EXECUTE cmd;
+    DEALLOCATE PREPARE cmd;
+
+    SET @v_sql = CONCAT('create table if not exists ',@v_old_tablename ,' like ','dg_pay_water');
+    SET @sql = @v_sql;
+    PREPARE cmd FROM @sql;
+    EXECUTE cmd;
+    DEALLOCATE PREPARE cmd;
+
+
+		#插入流水
+		set @tempSql = concat('insert ',@v_tablename,' select * from dg_pay_water where date_to_ym_format(createDate) = "',@v_table_date,'" and (TO_DAYS(',@now_date,')- TO_DAYS(createDate)) > 2');
+		set @v_sql=@tempSql;
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+		COMMIT;
+
+
+		#插入流水
+		set @tempSql = concat('insert ',@v_old_tablename,' select * from dg_pay_water where date_to_ym_format(createDate) = "',@v_old_table_date,'" and (TO_DAYS(',@now_date,')- TO_DAYS(createDate)) > 2');
+		set @v_sql=@tempSql;
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+		COMMIT;
+
+
+		set @v_sql = CONCAT('delete  from  dg_pay_water  where  (TO_DAYS(',@now_date,')- TO_DAYS(createDate)) > 2');
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+    COMMIT;
+END
+;;
+DELIMITER ;
+
+
+DROP EVENT IF EXISTS `autoPayWater`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` EVENT `autoPayWater` ON SCHEDULE EVERY 1 DAY STARTS '2017-08-01 15:00:00' ON COMPLETION PRESERVE ENABLE DO call autoThirdWaterCopy()
+;;
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `autoReserveCopy`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `autoReserveCopy`()
+BEGIN
+    SET @v_table_date = DATE_FORMAT(NOW(),'%Y_%m');
+    SET @v_old_table_date = DATE_FORMAT(date_sub(NOW(),INTERVAL 1 MONTH),'%Y_%m');
+		SET @now_date = DATE_FORMAT(NOW(),'%Y%m%d');
+
+    SET @v_sql = CONCAT('create table if not exists dg_reserve_seatids_',@v_table_date ,' like ','dg_reserve_seatids');
+    SET @sql = @v_sql;
+    PREPARE cmd FROM @sql;
+    EXECUTE cmd;
+    DEALLOCATE PREPARE cmd;
+
+    SET @v_sql = CONCAT('create table if not exists dg_reserve_seatids_',@v_old_table_date ,' like ','dg_reserve_seatids');
+    SET @sql = @v_sql;
+    PREPARE cmd FROM @sql;
+    EXECUTE cmd;
+    DEALLOCATE PREPARE cmd;
+
+    SET @v_sql = CONCAT('create table if not exists dg_reserve_manager_',@v_table_date ,' like ','dg_reserve_manager');
+    SET @sql = @v_sql;
+    PREPARE cmd FROM @sql;
+    EXECUTE cmd;
+    DEALLOCATE PREPARE cmd;
+
+    SET @v_sql = CONCAT('create table if not exists dg_reserve_manager_',@v_old_table_date ,' like ','dg_reserve_manager');
+    SET @sql = @v_sql;
+    PREPARE cmd FROM @sql;
+    EXECUTE cmd;
+    DEALLOCATE PREPARE cmd;
+
+
+		set @tempSql = concat('insert  dg_reserve_seatids_',@v_old_table_date,' select dow.* from  dg_reserve_seatids  dow
+				left join dg_reserve_manager drcw on dow.reserve_id = drcw.id where date_to_ym_format(drcw.yd_time) = "',@v_old_table_date,'" and (TO_DAYS(',@now_date,')- TO_DAYS(drcw.yd_time)) > 6');
+		set @v_sql=@tempSql;
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+		COMMIT;
+
+		set @tempSql = concat('insert  dg_reserve_seatids_',@v_table_date,' select dow.* from  dg_reserve_seatids  dow
+				left join dg_reserve_manager drcw on dow.reserve_id = drcw.id where date_to_ym_format(drcw.yd_time) = "',@v_table_date,'" and (TO_DAYS(',@now_date,')- TO_DAYS(drcw.yd_time)) > 6');
+		set @v_sql=@tempSql;
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+		COMMIT;
+
+
+		set @tempSql = concat('insert dg_reserve_manager_',@v_old_table_date,' select * from dg_reserve_manager where date_to_ym_format(yd_time) = "',@v_old_table_date,'" and (TO_DAYS(',@now_date,')- TO_DAYS(yd_time)) > 6');
+		set @v_sql=@tempSql;
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+		COMMIT;
+
+		set @tempSql = concat('insert dg_reserve_manager_',@v_table_date,' select * from dg_reserve_manager where date_to_ym_format(yd_time) = "',@v_table_date,'" and (TO_DAYS(',@now_date,')- TO_DAYS(yd_time)) > 6');
+		set @v_sql=@tempSql;
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+		COMMIT;
+
+		set @v_sql = CONCAT('delete d from dg_reserve_seatids d left join dg_reserve_manager drcw on d.reserve_id = drcw.id  where  (TO_DAYS(',@now_date,')- TO_DAYS(drcw.yd_time)) > 6 ');
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+    COMMIT;
+
+
+		set @v_sql = CONCAT('delete  from  dg_reserve_manager  where  (TO_DAYS(',@now_date,')- TO_DAYS(yd_time)) > 6');
+		prepare cmd from @v_sql;
+		execute cmd;
+		deallocate prepare cmd;
+    COMMIT;
+END
+;;
+DELIMITER ;
+
+DROP EVENT IF EXISTS `autoReserveWater`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` EVENT `autoReserveWater` ON SCHEDULE EVERY 1 DAY STARTS '2017-08-01 15:00:00' ON COMPLETION PRESERVE ENABLE DO call autoReserveCopy()
+;;
+DELIMITER ;
+

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgItemFilePackageMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.DgItemFilePackage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_file_id" property="itemFileId" jdbcType="INTEGER" />
+    <result column="package_type" property="packageType" jdbcType="INTEGER" />
+    <result column="package_banquet" property="packageBanquet" jdbcType="INTEGER" />
+    <result column="package_sum" property="packageSum" jdbcType="INTEGER" />
+    <result column="package_amount_sum" property="packageAmountSum" jdbcType="INTEGER" />
+    <result column="package_standardPrice_sum" property="packageStandardpriceSum" jdbcType="DOUBLE" />
+    <result column="package_standardPrice_sum_num" property="packageStandardpriceSumNum" jdbcType="DOUBLE" />
+    <result column="item_file_addPrice" property="itemFileAddprice" jdbcType="DOUBLE" />
+    <result column="canupdate_item_num" property="canupdateItemNum" jdbcType="INTEGER" />
+    <result column="min_num" property="minNum" jdbcType="INTEGER" />
+    <result column="max_num" property="maxNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_file_id, package_type, package_banquet, package_sum, package_amount_sum, 
+    package_standardPrice_sum, package_standardPrice_sum_num, item_file_addPrice, canupdate_item_num, 
+    min_num, max_num
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_file_package
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_file_package
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFilePackage" >
+    insert into dg_item_file_package (id, item_file_id, package_type, 
+      package_banquet, package_sum, package_amount_sum, 
+      package_standardPrice_sum, package_standardPrice_sum_num, 
+      item_file_addPrice, canupdate_item_num, min_num, 
+      max_num)
+    values (#{id,jdbcType=INTEGER}, #{itemFileId,jdbcType=INTEGER}, #{packageType,jdbcType=INTEGER}, 
+      #{packageBanquet,jdbcType=INTEGER}, #{packageSum,jdbcType=INTEGER}, #{packageAmountSum,jdbcType=INTEGER}, 
+      #{packageStandardpriceSum,jdbcType=DOUBLE}, #{packageStandardpriceSumNum,jdbcType=DOUBLE}, 
+      #{itemFileAddprice,jdbcType=DOUBLE}, #{canupdateItemNum,jdbcType=INTEGER}, #{minNum,jdbcType=INTEGER}, 
+      #{maxNum,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFilePackage" >
+    insert into dg_item_file_package
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemFileId != null" >
+        item_file_id,
+      </if>
+      <if test="packageType != null" >
+        package_type,
+      </if>
+      package_banquet,
+      <if test="packageSum != null" >
+        package_sum,
+      </if>
+      <if test="packageAmountSum != null" >
+        package_amount_sum,
+      </if>
+      <if test="packageStandardpriceSum != null" >
+        package_standardPrice_sum,
+      </if>
+      <if test="packageStandardpriceSumNum != null" >
+        package_standardPrice_sum_num,
+      </if>
+      <if test="itemFileAddprice != null" >
+        item_file_addPrice,
+      </if>
+      canupdate_item_num,
+      <if test="minNum != null" >
+        min_num,
+      </if>
+      <if test="maxNum != null" >
+        max_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemFileId != null" >
+        #{itemFileId,jdbcType=INTEGER},
+      </if>
+      <if test="packageType != null" >
+        #{packageType,jdbcType=INTEGER},
+      </if>
+        #{packageBanquet,jdbcType=INTEGER},
+      <if test="packageSum != null" >
+        #{packageSum,jdbcType=INTEGER},
+      </if>
+      <if test="packageAmountSum != null" >
+        #{packageAmountSum,jdbcType=INTEGER},
+      </if>
+      <if test="packageStandardpriceSum != null" >
+        #{packageStandardpriceSum,jdbcType=DOUBLE},
+      </if>
+      <if test="packageStandardpriceSumNum != null" >
+        #{packageStandardpriceSumNum,jdbcType=DOUBLE},
+      </if>
+      <if test="itemFileAddprice != null" >
+        #{itemFileAddprice,jdbcType=DOUBLE},
+      </if>
+      #{canupdateItemNum,jdbcType=INTEGER},
+      <if test="minNum != null" >
+        #{minNum,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        #{maxNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFilePackage" >
+    update dg_item_file_package
+    <set >
+      <if test="itemFileId != null" >
+        item_file_id = #{itemFileId,jdbcType=INTEGER},
+      </if>
+      <if test="packageType != null" >
+        package_type = #{packageType,jdbcType=INTEGER},
+      </if>
+      package_banquet = #{packageBanquet,jdbcType=INTEGER},
+      <if test="packageSum != null" >
+        package_sum = #{packageSum,jdbcType=INTEGER},
+      </if>
+      <if test="packageAmountSum != null" >
+        package_amount_sum = #{packageAmountSum,jdbcType=INTEGER},
+      </if>
+      <if test="packageStandardpriceSum != null" >
+        package_standardPrice_sum = #{packageStandardpriceSum,jdbcType=DOUBLE},
+      </if>
+      <if test="packageStandardpriceSumNum != null" >
+        package_standardPrice_sum_num = #{packageStandardpriceSumNum,jdbcType=DOUBLE},
+      </if>
+      <if test="itemFileAddprice != null" >
+        item_file_addPrice = #{itemFileAddprice,jdbcType=DOUBLE},
+      </if>
+      canupdate_item_num = #{canupdateItemNum,jdbcType=INTEGER},
+      <if test="minNum != null" >
+        min_num = #{minNum,jdbcType=INTEGER},
+      </if>
+      <if test="maxNum != null" >
+        max_num = #{maxNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.archive.DgItemFilePackage" >
+    update dg_item_file_package
+    set item_file_id = #{itemFileId,jdbcType=INTEGER},
+      package_type = #{packageType,jdbcType=INTEGER},
+      package_banquet = #{packageBanquet,jdbcType=INTEGER},
+      package_sum = #{packageSum,jdbcType=INTEGER},
+      package_amount_sum = #{packageAmountSum,jdbcType=INTEGER},
+      package_standardPrice_sum = #{packageStandardpriceSum,jdbcType=DOUBLE},
+      package_standardPrice_sum_num = #{packageStandardpriceSumNum,jdbcType=DOUBLE},
+      item_file_addPrice = #{itemFileAddprice,jdbcType=DOUBLE},
+      canupdate_item_num = #{canupdateItemNum,jdbcType=INTEGER},
+      min_num = #{minNum,jdbcType=INTEGER},
+      max_num = #{maxNum,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getNextPrimaryKey" resultType="integer">
+    SELECT max(id) from dg_item_file_package
+  </select>
+
+
+  <select id="selectByItemFileId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_file_package
+    where item_file_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_file_package 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_file_package
+        (
+		    id,item_file_id,package_type,package_banquet,
+		    package_sum,package_amount_sum,package_standardPrice_sum,
+		    package_standardPrice_sum_num,item_file_addPrice,
+		    canupdate_item_num,min_num,max_num
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemFileId">#{im.itemFileId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.packageType">#{im.packageType},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.packageBanquet">#{im.packageBanquet},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.packageSum">#{im.packageSum},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.packageAmountSum">#{im.packageAmountSum},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.packageStandardpriceSum">#{im.packageStandardpriceSum},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.packageStandardpriceSumNum">#{im.packageStandardpriceSumNum},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemFileAddprice">#{im.itemFileAddprice},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.canupdateItemNum">#{im.canupdateItemNum},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.min_num">#{im.min_num},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.max_num">#{im.max_num}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

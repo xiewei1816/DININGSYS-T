@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemMemberDiscountSMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscountS" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="consistent" property="consistent" jdbcType="INTEGER" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="num" property="itemCode" jdbcType="VARCHAR" />
+    <result column="tc" property="tc" jdbcType="INTEGER" />
+    <result column="standard_price" property="sPrice" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_id, enable, price, consistent ,p_id
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.item_id as item_id, 
+    a.enable as enable, 
+    a.price as price, 
+    a.consistent as consistent,
+    a.p_id as pId,
+    b.name as name,
+    b.num as num,
+    b.is_tc as tc,
+    b.standard_price as standard_price
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_member_discount_s
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_member_discount_s
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscountS" >
+    insert into dg_item_member_discount_s (id, item_id, enable, 
+      price, consistent,p_id)
+    values (#{id,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, 
+      #{price,jdbcType=DOUBLE}, #{consistent,jdbcType=INTEGER}, #{pId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscountS" >
+    insert into dg_item_member_discount_s
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="consistent != null" >
+        consistent,
+      </if>
+       <if test="pId != null" >
+        p_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="consistent != null" >
+        #{consistent,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscountS" >
+    update dg_item_member_discount_s
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="consistent != null" >
+        consistent = #{consistent,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscountS" >
+    update dg_item_member_discount_s
+    set item_id = #{itemId,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
+      price = #{price,jdbcType=DOUBLE},
+      consistent = #{consistent,jdbcType=INTEGER},
+      p_id = #{pId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="seleByPid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_member_discount_s a left join dg_item_file b on a.item_id = b.id
+    where a.p_id = #{id,jdbcType=INTEGER} and b.yxdz = 1 and b.id not in (select item_id from dg_item_disable where 1=1) and b.delFlag = 0
+  </select>
+  
+          <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_member_discount_s where p_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+  
+  <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_member_discount_s
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+  <select id="selctByPIdAndItemID" resultMap="BaseResultMap" parameterType="Map" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_member_discount_s
+    where p_id = #{pId,jdbcType=INTEGER} and item_id = #{itemId,jdbcType=INTEGER} and enable = 1 
+  </select>
+  
+  <insert id="insertChilds" parameterType="java.util.List" >
+    insert into dg_item_member_discount_s(item_id, enable, 
+      price, consistent,p_id)    values 
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.itemId,jdbcType=INTEGER}, #{item.enable,jdbcType=INTEGER}, 
+      #{item.price,jdbcType=DOUBLE}, #{item.consistent,jdbcType=INTEGER}, #{item.pId,jdbcType=INTEGER})
+    </foreach>  
+  </insert>
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_member_discount_s 
+	</delete>
+  <!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_member_discount_s
+        (
+		    id,item_id,enable,price,consistent,p_id
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.itemId">#{im.itemId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.enable">#{im.enable},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.price">#{im.price},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.consistent">#{im.consistent},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.pId">#{im.pId}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

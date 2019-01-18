@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbFylxMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbFylx" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fylx_num" property="fylxNum" jdbcType="VARCHAR" />
+    <result column="fylx_name" property="fylxName" jdbcType="VARCHAR" />
+    <result column="fylx_organization" property="fylxOrganization" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,fylx_num,fylx_name,fylx_organization,is_del,create_time,update_time
+  </sql> 
+  <sql id="selectCols">
+		o.id AS "id",
+		o.fylx_num AS "fylxNum",
+		o.fylx_name AS "fylxName",
+		b.org_name AS "fylxOrganization",
+		o.is_del AS "isDel",
+		o.create_time AS "createTime",
+		o.update_time AS "updateTime"
+	</sql>
+	<!-- 分页查询退菜原因类型信息 -->
+  <select id="getListByPage" resultType="TbFylx" parameterType="TbFylx">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from t_b_fylx o
+  	 left join t_b_org b on b.id = o.fylx_organization
+  	 <where>
+        <if test="fylxNum != null and fylxNum != ''">
+          and o.fylx_num like '%${fylxNum}%'
+        </if>
+        <if test="fylxName != null and fylxName != ''">
+          and o.fylx_name like '%${fylxName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = '${isDel}'
+        </if>
+      </where>
+      <choose>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+		limit #{startRow},#{endRow}	
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="TbFylx">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_fylx o
+  	 left join t_b_org b on b.id = o.fylx_organization
+  	 <where>
+        <if test="fylxNum != null and fylxNum != ''">
+          and o.fylx_num like '%${fylxNum}%'
+        </if>
+        <if test="fylxName != null and fylxName != ''">
+          and o.fylx_name like '%${fylxName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = '${isDel}'
+        </if>
+      </where>
+  </select>
+  <!-- 通过退菜原因类型ID查询退菜原因类型信息 -->
+  <select id="getFylxById" parameterType="TbFylx" resultType="TbFylx">
+		SELECT 
+		<include refid="Base_Column_List"></include>
+		from t_b_fylx o where o.id = #{id}
+	</select>
+	<select id="getLastFylxCode" parameterType="TbFylx" resultType="TbFylx">
+		select * from t_b_fylx order by fylx_num desc limit 0,1
+	</select>
+	<!-- 添加退菜原因类型信息 -->
+	<insert id="newInsert" parameterType="TbFylx">
+  	insert into t_b_fylx(
+		fylx_num,
+		fylx_name,
+		fylx_organization,
+		create_time,
+		update_time
+  	) values (
+  		#{fylxNum},
+  		#{fylxName},
+		#{fylxOrganization},
+  		#{createTime},
+  		#{updateTime}
+  	)
+  </insert>
+  <!-- 根据退菜原因类型ID修改退菜原因类型信息 -->
+  <update id="update" parameterType="TbFylx">
+  	update t_b_fylx set 
+  		fylx_num = #{fylxNum},
+		fylx_name = #{fylxName},
+		fylx_organization = #{fylxOrganization},
+		update_time = #{updateTime}
+	where id = #{id}
+  </update>
+  <!-- 退菜原因类型信息回收站 -->
+  <update id="deleteTrash" parameterType="TbFylx">
+	update t_b_fylx set is_del = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+	
+  <!-- 还原回收站退菜原因类型信息 -->
+  <update id="replyFylx" parameterType="TbFylx">
+	update t_b_fylx set is_del = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 删除退菜原因类型信息 -->
+  <delete id="delete" parameterType="TbFylx">
+	delete from t_b_fylx where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	<!-- 获取所有退菜原因类型信息 -->
+	<select id="getAllList" parameterType="TbFylx" resultType="TbFylx">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from t_b_fylx o
+  		 left join t_b_org b on b.id = o.fylx_organization
+	  	 <where>
+	        <if test="fylxNum != null and fylxNum != ''">
+	          and o.fylx_num like '%${fylxNum}%'
+	        </if>
+	        <if test="fylxName != null and fylxName != ''">
+	          and o.fylx_name like '%${fylxName}%'
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and o.is_del = '${isDel}'
+	        </if>
+	      </where>
+	      <choose>
+	      	<otherwise>
+	      		order by o.create_time desc
+	      	</otherwise>
+	     </choose>
+	</select>
+</mapper>

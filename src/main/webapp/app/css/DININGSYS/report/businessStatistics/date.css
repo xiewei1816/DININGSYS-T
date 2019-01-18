@@ -1,0 +1,43 @@
+.tableDetails{
+	margin: 10px 10px 0px 10px;
+}
+.tableDetails span{
+	margin: 5px 0px 5px 0px;font-size: 15px;display: inline-block;
+}
+.tableDetails table{
+	width:100%;border: 1px #000 solid;background:#deebf7;
+}
+.tableDetails table th,.tableDetails table td{
+	width: 20%;height: 25px;text-align: center;border: 1px #000 solid;
+}
+.tableMonth{
+	margin: 10px 10px 0px 10px;
+}
+.tableMonth span{
+	margin: 5px 0px 5px 0px;font-size: 15px;display: inline-block;
+}
+.tableMonth table{
+	width:100%;border: 1px #000 solid;background:#deebf7;
+}
+.tableMonth table th,.tableMonth table td{
+	width: 16%;height: 35px;text-align: center;border: 1px #000 solid;
+}
+
+.tableAreaOpenv{
+	margin: 10px 10px 0px 10px;
+}
+.tableAreaOpenv span{
+	margin: 5px 0px 5px 0px;font-size: 15px;display: inline-block;
+}
+.tableAreaOpenv table{
+	width:100%;border: 1px #000 solid;background:#deebf7;
+}
+.tableAreaOpenv table th,.tableAreaOpenv table td{
+	height: 25px;text-align: center;border: 1px #000 solid;
+}
+.tableAreaOpenv .head-mid{
+	width:100%;text-align: center;font-size: 18px;font-weight: 600;display: block;margin: 10px 0px;
+}
+.tableAreaOpenv .title{
+	margin: 5px 100px 5px 0px;font-size: 13px;display:inline-block;
+}

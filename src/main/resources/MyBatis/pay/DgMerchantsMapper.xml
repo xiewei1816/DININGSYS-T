@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.pay.DgMerchantsMapper">
+<resultMap type="com.yqsh.diningsys.web.model.pay.DgMerchants"
+		   id="DgMerchants">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nickName" jdbcType="VARCHAR"/>
+        <result property="orgId" column="orgId" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+        <result property="wxAppId" column="wxAppId" jdbcType="VARCHAR"/>
+        <result property="wxAppSecret" column="wxAppSecret" jdbcType="VARCHAR"/>
+        <result property="wxApiSecretKey" column="wxApiSecretKey" jdbcType="VARCHAR"/>
+        <result property="wxMchId" column="wxMchId" jdbcType="VARCHAR"/>
+        <result property="zfbPid" column="zfbPid" jdbcType="VARCHAR"/>
+        <result property="zfbAppid" column="zfbAppid" jdbcType="VARCHAR"/>
+        <result property="zfbPrivateKey" column="zfbPrivateKey" jdbcType="VARCHAR"/>
+        <result property="zfbPublicKey" column="zfbPrivateKey" jdbcType="VARCHAR"/>
+        <result property="zfbAlipayPublicKey" column="zfbPrivateKey" jdbcType="VARCHAR"/>
+	    <result property="threePartyPayment" column="threePartyPayment" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Columns">
+  		id,nickName,orgId,remark,wxAppId,wxAppSecret,wxApiSecretKey,wxMchId,zfbPid,zfbAppid,zfbPrivateKey,zfbPublicKey,zfbAlipayPublicKey,operUser,createDate,threePartyPayment
+  </sql>
+	 <insert id="insert" parameterType="DgMerchants">
+	    insert into dg_pay_merchants
+	    (
+	    id,nickName,orgId,remark,
+	    wxAppId,wxAppSecret,wxApiSecretKey,wxMchId,
+	    zfbPid,zfbAppid,zfbPrivateKey,zfbPublicKey,
+	    zfbAlipayPublicKey,operUser,createDate,threePartyPayment
+	    )
+	    values(
+	    #{id},#{nickName},#{orgId},#{remark},
+	    #{wxAppId},#{wxAppSecret},#{wxApiSecretKey},#{wxMchId},
+	    #{zfbPid},#{zfbAppid},#{zfbPrivateKey},#{zfbPublicKey},
+	    #{zfbAlipayPublicKey},#{operUser},#{createDate},#{threePartyPayment}
+	    )
+	</insert>
+	<update id="update" parameterType="DgMerchants">
+		update dg_pay_merchants
+		set nickName=#{nickName},
+	  		orgId=#{orgId},
+	  		remark=#{remark},
+	  		wxAppId=#{wxAppId},
+	  		wxAppSecret=#{wxAppSecret},
+	  		wxApiSecretKey=#{wxApiSecretKey},
+	  		wxMchId=#{wxMchId},
+	  		zfbPid=#{zfbPid},
+	  		zfbAppid=#{zfbAppid},
+	  		zfbPrivateKey=#{zfbPrivateKey},
+	  		zfbPublicKey=#{zfbPublicKey},
+	  		zfbAlipayPublicKey=#{zfbAlipayPublicKey},
+	  		createDate=#{createDate},
+			threePartyPayment=#{threePartyPayment},
+	  		operUser=#{operUser}
+	  		where id=#{id}
+	</update>	<!-- 批量删除 -->
+	<delete id="delBatch" parameterType="map">
+		DELETE FROM dg_pay_merchants WHERE id in
+		<foreach collection="listId" item="item" index="index" open="(" close=")" separator=",">
+	  	 		#{item}
+	  	</foreach>
+	</delete>
+
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="DgMerchants" parameterType="DgMerchants">
+		SELECT <include refid="Base_Columns"/>
+		FROM dg_pay_merchants
+		<where>
+			<if test="null!=nickName and nickName!=''">
+				AND nickName like  concat('%',#{nickName},'%')
+			</if>
+		</where> 
+		ORDER BY createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgMerchants">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from dg_pay_merchants 
+	  	 <where>
+			<if test="null!=nickName and nickName!=''">
+				AND nickName like  concat('%',#{nickName},'%')
+			</if>
+		</where> 
+    </select>
+	<select id="get" parameterType="string" resultType="DgMerchants">
+	    SELECT * from dg_pay_merchants where id = #{id}
+	</select>
+	<select id="findOneMerch" parameterType="DgMerchants" resultType="DgMerchants">
+		SELECT <include refid="Base_Columns"/> FROM dg_pay_merchants
+		<where>
+			<if test="null!=orgId and orgId!=''">
+			AND orgId=#{orgId}
+		</if>
+		</where>
+	</select>
+</mapper>

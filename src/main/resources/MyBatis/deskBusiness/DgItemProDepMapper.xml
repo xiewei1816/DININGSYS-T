@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemProDepMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="item_id" property="itemId" jdbcType="INTEGER" />
+    <result column="item_code" property="itemCode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, item_id, item_code
+  </sql>
+  
+  <sql id="Next_Column_List">
+    a.id as id, 
+    a.item_id as item_id, 
+    a.item_code as item_code, 
+    b.name as name
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_pro_dep
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_pro_dep
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep" >
+    insert into dg_item_pro_dep (id, item_id, item_code
+      )
+    values (#{id,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep" >
+    insert into dg_item_pro_dep
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="itemId != null" >
+        item_id,
+      </if>
+      <if test="itemCode != null" >
+        item_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null" >
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        #{itemCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep" >
+    update dg_item_pro_dep
+    <set >
+      <if test="itemId != null" >
+        item_id = #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCode != null" >
+        item_code = #{itemCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep" >
+    update dg_item_pro_dep
+    set item_id = #{itemId,jdbcType=INTEGER},
+      item_code = #{itemCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="getAllData" resultMap="BaseResultMap"  parameterType="java.util.Map">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_pro_dep a left join 
+    dg_item_file b on a.item_id = b.id
+    <where>
+        b.delFlag = '0'
+  	    <if test="name != null and name != ''">
+        		AND b.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="itemCode != null and itemCode != ''">
+        		AND b.num like CONCAT('%',#{itemCode,jdbcType=VARCHAR},'%' )
+        </if>
+         <if test="bId != null and bId != ''">
+        		AND b.ppdl_id  = #{bId,jdbcType=INTEGER}
+        </if>
+         <if test="sId != null and sId != ''">
+        		AND b.ppxl_id  = #{sId,jdbcType=INTEGER}
+        </if>
+     </where>
+     order by a.id desc 
+  </select>
+  
+  
+   <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_pro_dep where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete>
+  
+    <delete id="deleteAll">
+    delete from dg_item_pro_dep
+    where 1=1
+  </delete>
+  
+  <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemProDep" >
+    insert into dg_item_pro_dep (id, item_id, item_code
+      )
+    values (#{id,jdbcType=INTEGER}, #{itemId,jdbcType=INTEGER}, #{itemCode,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+   <select id="getCountByItemId" resultType="java.lang.Integer">
+    select count(*) from dg_item_pro_dep
+    where item_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+    <select id="selectByItemId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_pro_dep
+    where item_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+    <delete id="deleteByItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_pro_dep
+    where item_id = #{id,jdbcType=INTEGER}
+  </delete>
+</mapper>

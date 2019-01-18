@@ -1,0 +1,18 @@
+dg_pay_merchants 增加字段 threePartyPayment verchar 64
+alter table dg_pay_merchants add threePartyPayment varchar(64);
+
+
+CREATE TABLE `p_lcsw_merchant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `merchantNo` varchar(100) DEFAULT '' COMMENT '商户号',
+  `payVer` varchar(100) DEFAULT NULL COMMENT '版本号',
+  `serviceJspayId` varchar(100) DEFAULT NULL COMMENT '统一下单接口类型',
+  `terminalId` varchar(100) DEFAULT NULL COMMENT '终端号',
+  `accessToken` varchar(100) DEFAULT NULL,
+  `serviceSlotCard` varchar(100) DEFAULT NULL COMMENT '刷卡接口类型',
+  `servicePrepay` varchar(100) DEFAULT NULL COMMENT '预下单id',
+  `serviceQuery` varchar(100) DEFAULT NULL COMMENT '查询',
+  `zfbPayType` varchar(100) DEFAULT NULL COMMENT '支付宝支付类型',
+  `wxPayType` varchar(100) DEFAULT NULL COMMENT '微信支付类型',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;

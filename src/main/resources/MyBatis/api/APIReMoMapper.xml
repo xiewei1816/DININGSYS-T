@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.APIReMoMapper">
+
+    <update id="resetSeatState" parameterType="integer">
+        update dg_consumer_seat set seat_state = 1 where id = #{id,jdbcType=INTEGER} and seat_state = 3
+    </update>
+
+    <update id="modifySeatIdentify" parameterType="map">
+        update dg_consumer_seat
+        <set>
+            <if test="isVip != null">
+                vip_identify = #{isVip,jdbcType=INTEGER},
+            </if>
+            <if test="isInternal != null">
+                inset_retention_room = #{isInternal,jdbcType=INTEGER},
+            </if>
+            <if test="seatLable != null">
+                seat_label = #{seatLable,jdbcType=VARCHAR},
+            </if>
+        </set>
+         where id = #{seatId,jdbcType=INTEGER}
+    </update>
+
+    <update id="ReplaceWaiter" parameterType="map">
+      update dg_open_water
+        <set>
+            <if test="newWaiterId != null and newWaiterId != ''">
+                waiter = #{newWaiterId,jdbcType=INTEGER},
+            </if>
+            <if test="newMaketingStaff != null and newMaketingStaff != ''">
+                marketing_staff = #{newMaketingStaff,jdbcType=INTEGER}
+            </if>
+        </set>
+
+      where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+
+    <update id="ReplaceWaiterService" parameterType="map">
+      update dg_ow_service_form set waiter_id = #{newWaiterId,jdbcType=INTEGER} where ow_id = (
+        select id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+      ) and waiter_id = #{oldWaiterId,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyItemFilePrice" parameterType="map">
+      update dg_ow_consumer_details set item_final_price = #{itemFilePrice,jdbcType=DOUBLE},
+      variable_price = 1,initial_price = #{initalPrice,jdbcType=DOUBLE},
+ <!--     item_file_number = #{itemFileNum,jdbcType=INTEGER},
+      item_file_zs = #{itemFileZs,jdbcType=DOUBLE},-->
+      subtotal = #{subtotal,jdbcType=DOUBLE}
+      where item_file_id = #{itemFileId,jdbcType=INTEGER} and ow_id = #{serviceId,jdbcType=INTEGER}
+    </update>
+    
+     <select id="selectItemFileBackOws" parameterType="map" resultType="DgOwConsumerDetails">
+      select * from dg_ow_consumer_details 
+      where item_file_id = #{itemFileId,jdbcType=INTEGER} and back_ow_id = #{serviceId,jdbcType=INTEGER}
+    </select>
+    
+    <select id="selectItemFileByItemId" parameterType="map" resultType="DgOwConsumerDetails">
+      select * from dg_ow_consumer_details 
+      where item_file_id = #{itemFileId,jdbcType=INTEGER} and ow_id = #{serviceId,jdbcType=INTEGER}
+    </select>
+    
+    <update id="modifyItemFileNumber" parameterType="map">
+      update dg_ow_consumer_details set
+      item_file_number = #{itemFileNum,jdbcType=INTEGER},
+      item_file_zs = #{itemFileZs,jdbcType=DOUBLE},
+      subtotal = #{subtotal,jdbcType=DOUBLE}
+      where item_file_id = #{itemFileId,jdbcType=INTEGER} and ow_id = #{serviceId,jdbcType=INTEGER}
+    </update>
+    <update id="modifyDishesFree" parameterType="map">
+        update dg_ow_consumer_details set notes = #{state,jdbcType=VARCHAR}
+        where item_file_id = ${itemFileId} and ow_id = ${serviceId}
+    </update>
+    <update id="modifyOpenWaterState" parameterType="map">
+        update dg_open_water set ow_state = #{state,jdbcType=INTEGER}
+         where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+    <update id="modifyUnlock" parameterType="map">
+        update dg_open_water set ow_state = #{state,jdbcType=INTEGER}
+         where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+    <update id="modifyOpenWaterSubtotal" parameterType="map">
+        update dg_open_water set item_costs_sum = #{itemCostSum},subtotal = #{subtotal} where id = (
+          select ow_id from dg_ow_service_form where id =  #{serviceId}
+        )
+    </update>
+    <update id="updateOpenWaterSubtotal"
+            parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        update dg_open_water set subtotal = #{subtotal},item_costs_sum = #{itemCostsSum} where id = #{id}
+    </update>
+
+    <select id="selectAllLockedData"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select ow_num,DG_FU_getSeatName(seat_id) as seatName,ow_state,DG_FU_getPosName(open_pos) as posName from dg_open_water where ow_state in (3,8,9)
+    </select>
+
+    <insert id="updateOWCustomerInfo" parameterType="map">
+        insert INTO dg_ow_customer_info VALUES
+        <foreach collection="list" item="data" open="(" close=")" separator="),(">
+            #{owId,jdbcType=INTEGER},#{data.ageRange,jdbcType=VARCHAR},#{data.manCount,jdbcType=INTEGER},
+            #{data.femaleCount,jdbcType=INTEGER},#{data.forgenCount,jdbcType=INTEGER},now()
+        </foreach>
+    </insert>
+
+	<select id="selecAllGqxzPx"  resultType="DgItemFile" parameterType="list">
+	    select * from dg_item_file where delFlag = 0 and  yxdz = 1 and id not in (select item_id from dg_item_disable where 1=1)
+	   <if test="list != null">
+	   	    and id not in
+		    <foreach collection="list" item="id" open="(" close=")" separator=",">
+				 #{id,jdbcType=INTEGER}
+			</foreach>
+	   </if>
+	</select>
+
+	<select id="seleTeamMemberCount"  resultType="java.lang.Integer" parameterType="java.lang.String">
+	    select count(*) from dg_open_water where team_members = #{teamMember,jdbcType=VARCHAR}
+	</select>
+	<select id="seleOpenWaterByTeamMember"  resultType="DgOpenWater" parameterType="java.lang.String">
+	    select * from dg_open_water where team_members = #{teamMember,jdbcType=VARCHAR} limit 1
+	</select>
+	
+	<select id="seleAllOpenWaterByTeamMember"  resultType="DgOpenWater" parameterType="java.lang.String">
+	    select dow.*,dcs.name as seatName from dg_open_water dow left join dg_consumer_seat dcs on dow.seat_id = dcs.id where team_members = #{teamMember,jdbcType=VARCHAR}
+	</select>
+</mapper>

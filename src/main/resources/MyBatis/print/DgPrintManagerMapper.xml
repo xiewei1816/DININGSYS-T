@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.print.DgPrintManagerMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.print.DgPrintManager" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="num" property="num" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="disable" property="disable" jdbcType="INTEGER" />
+    <result column="trash" property="trash" jdbcType="INTEGER" />
+    <result column="area_ids" property="areaIds" jdbcType="VARCHAR" />
+    <result column="q_o_z" property="qOZ" jdbcType="INTEGER" />
+    <result column="zt" property="zt" jdbcType="INTEGER" />
+    <result column="wm" property="wm" jdbcType="INTEGER" />
+    <result column="ct" property="ct" jdbcType="INTEGER" />
+    <result column="dp" property="dp" jdbcType="INTEGER" />
+    <result column="copies" property="copies" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, num, type, disable, trash, area_ids, q_o_z ,zt,wm,ct,dp,copies
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_print_manager
+    where 1=1
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_print_manager
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_print_manager
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.print.DgPrintManager" >
+    insert into dg_print_manager (id, name, num, 
+      type, disable, trash, 
+      area_ids, q_o_z ,zt,wm,ct,dp,copies)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{num,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{disable,jdbcType=INTEGER}, #{trash,jdbcType=INTEGER}, 
+      #{areaIds,jdbcType=VARCHAR}, #{qOZ,jdbcType=INTEGER}, #{zt,jdbcType=INTEGER},
+      #{wm,jdbcType=INTEGER}, #{ct,jdbcType=INTEGER}),#{dp,jdbcType=INTEGER}),#{copies,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.print.DgPrintManager" >
+    insert into dg_print_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="disable != null" >
+        disable,
+      </if>
+      <if test="trash != null" >
+        trash,
+      </if>
+      <if test="areaIds != null" >
+        area_ids,
+      </if>
+      <if test="qOZ != null" >
+        q_o_z,
+      </if>
+      <if test="zt != null" >
+        zt,
+      </if>
+      <if test="wm != null" >
+        wm,
+      </if>
+      <if test="ct != null" >
+        ct,
+      </if>
+      <if test="dp != null" >
+        dp,
+      </if>
+      <if test="copies != null" >
+        copies,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        #{disable,jdbcType=INTEGER},
+      </if>
+      <if test="trash != null" >
+        #{trash,jdbcType=INTEGER},
+      </if>
+      <if test="areaIds != null" >
+        #{areaIds,jdbcType=VARCHAR},
+      </if>
+      <if test="qOZ != null" >
+        #{qOZ,jdbcType=INTEGER},
+      </if>
+      <if test="zt != null" >
+        #{zt,jdbcType=INTEGER},
+      </if>
+      <if test="wm != null" >
+        #{wm,jdbcType=INTEGER},
+      </if>
+      <if test="ct != null" >
+        #{ct,jdbcType=INTEGER},
+      </if>
+      <if test="dp != null" >
+        #{dp,jdbcType=INTEGER},
+      </if>
+      <if test="copies != null" >
+        #{copies,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <insert id="insertBackId" parameterType="com.yqsh.diningsys.web.model.print.DgPrintManager" useGeneratedKeys="true" keyProperty="id">
+    insert into dg_print_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="disable != null" >
+        disable,
+      </if>
+      <if test="trash != null" >
+        trash,
+      </if>
+      <if test="areaIds != null" >
+        area_ids,
+      </if>
+      <if test="qOZ != null" >
+        q_o_z,
+      </if>
+      <if test="zt != null" >
+        zt,
+      </if>
+      <if test="wm != null" >
+        wm,
+      </if>
+      <if test="ct != null" >
+        ct,
+      </if>
+      <if test="dp != null" >
+        dp,
+      </if>
+      <if test="copies != null" >
+        copies,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        #{disable,jdbcType=INTEGER},
+      </if>
+      <if test="trash != null" >
+        #{trash,jdbcType=INTEGER},
+      </if>
+      <if test="areaIds != null" >
+        #{areaIds,jdbcType=VARCHAR},
+      </if>
+      <if test="qOZ != null" >
+        #{qOZ,jdbcType=INTEGER},
+      </if>
+      <if test="zt != null" >
+        #{zt,jdbcType=INTEGER},
+      </if>
+      <if test="wm != null" >
+        #{wm,jdbcType=INTEGER},
+      </if>
+      <if test="ct != null" >
+        #{ct,jdbcType=INTEGER},
+      </if>
+      <if test="dp != null" >
+        #{dp,jdbcType=INTEGER},
+      </if>
+      <if test="copies != null" >
+        #{copies,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.print.DgPrintManager" >
+    update dg_print_manager
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        num = #{num,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="disable != null" >
+        disable = #{disable,jdbcType=INTEGER},
+      </if>
+      <if test="trash != null" >
+        trash = #{trash,jdbcType=INTEGER},
+      </if>
+      <if test="areaIds != null" >
+        area_ids = #{areaIds,jdbcType=VARCHAR},
+      </if>
+      <if test="qOZ != null" >
+        q_o_z = #{qOZ,jdbcType=INTEGER},
+      </if>
+      <if test="zt != null" >
+        zt = #{zt,jdbcType=INTEGER},
+      </if>
+      <if test="wm != null" >
+        wm = #{wm,jdbcType=INTEGER},
+      </if>
+      <if test="ct != null" >
+        ct = #{ct,jdbcType=INTEGER},
+      </if>
+      <if test="dp != null" >
+        dp = #{dp,jdbcType=INTEGER},
+      </if>
+      <if test="copies != null" >
+        copies = #{copies,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.print.DgPrintManager" >
+    update dg_print_manager
+    set name = #{name,jdbcType=VARCHAR},
+      num = #{num,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      disable = #{disable,jdbcType=INTEGER},
+      trash = #{trash,jdbcType=INTEGER},
+      area_ids = #{areaIds,jdbcType=VARCHAR},
+      q_o_z = #{qOZ,jdbcType=INTEGER},
+      zt = #{zt,jdbcType=INTEGER},
+      wm = #{wm,jdbcType=INTEGER},
+      ct = #{ct,jdbcType=INTEGER},
+      dp = #{dp,jdbcType=INTEGER},
+      copies = #{copies,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 分页 -->
+  <select id="countAllData" parameterType="com.yqsh.diningsys.web.model.print.DgPrintManager" resultType="java.lang.Integer">
+    select count(id) from dg_print_manager
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="num != null and num != ''">
+               	AND num = #{num,jdbcType=VARCHAR}
+        </if>
+        AND trash = #{trash,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="getAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemDiscountProgramme" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_print_manager
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="num != null and num != ''">
+        		AND num = #{num,jdbcType=VARCHAR}
+        </if>
+        AND trash = #{trash,jdbcType=INTEGER}
+     </where>
+    limit #{startRow},#{endRow}
+  </select>
+  
+  <update id="trash" parameterType="list" >
+    update dg_print_manager
+    set  trash = 1
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="restore" parameterType="list" >
+    update dg_print_manager
+    set  trash = 0
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+      <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_print_manager where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+  
+  
+  <select id="selectZtItem" parameterType="list" resultType="com.yqsh.diningsys.web.model.print.DgPrintManager">
+    select * from dg_print_manager where trash = 0 and disable = 0 and zt = 1
+  </select>
+  
+  <select id="selectAllItemFile" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where  id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach> and delFlag != 1
+  </select>
+  
+  <select id="selectSmallItemFile" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where ppxl_id = #{ppxl_id,jdbcType=INTEGER}  and id not in
+    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach> and delFlag != 1
+  </select>
+  
+  <select id="selectBigItemFile" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where ppdl_id = #{ppdl_id,jdbcType=INTEGER} and  id not in
+     <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach> and delFlag != 1
+  </select>
+  
+  
+   <select id="selectAllItemFileType" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType">
+    select * from dg_item_file_type   where 
+    parent_id != 0 and id not in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  <select id="selectHaveItemType" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType">
+    select * from dg_item_file_type where 
+    id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  <select id="selectSmallItemFileType" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFileType">
+    select * from dg_item_file_type where 
+    parent_id = #{parent_id,jdbcType=INTEGER} 
+    <if test="ids != null and ids.size() > 0">
+        and id not in
+	    <foreach collection="ids" item="id" open="(" close=")" separator=",">
+	      #{id,jdbcType=INTEGER}
+	    </foreach>
+    </if>
+  </select>
+  
+     <!-- 模糊查询 -->
+  <select id="searchVague" parameterType="java.util.HashMap" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where  yxdz = 1 and id not in (select item_id from dg_item_disable where 1=1) and (num like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ) or name like CONCAT('%',#{search,jdbcType=VARCHAR},'%' ))  and id not in
+     <foreach collection="ids" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>  and delFlag != 1
+  </select>
+  
+  <select id="selectHaveItem" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgItemFile">
+    select * from dg_item_file where  id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  
+  <select id="getAreaByIds" parameterType="list" resultType="com.yqsh.diningsys.web.model.archive.DgConsumptionArea">
+    select * from dg_consumption_area where  id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </select>
+  
+  <select id="selectWmItem" parameterType="list" resultType="com.yqsh.diningsys.web.model.print.DgPrintManager">
+    select * from dg_print_manager where trash = 0 and disable = 0 and wm = 1
+  </select>
+</mapper>

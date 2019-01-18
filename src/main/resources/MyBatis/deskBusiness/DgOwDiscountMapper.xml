@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.currentOpenWater.DgOwDiscountMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDiscount" >
+    <result column="discount_info" property="discountInfo" jdbcType="VARCHAR" />
+    <result column="authorized_person" property="authorizedPerson" jdbcType="VARCHAR" />
+    <result column="authorized_person_name" property="authorizedPersonName" jdbcType="VARCHAR" />
+    <result column="ow_id" property="owId" jdbcType="INTEGER" />
+  </resultMap>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDiscount" >
+    insert into dg_ow_discount (discount_info, pre_authorization, authorized_person,
+      authorized_person_name, ow_id)
+    values (#{discountInfo,jdbcType=VARCHAR}, #{authorizedPerson,jdbcType=VARCHAR},
+      #{authorizedPersonName,jdbcType=VARCHAR}, #{owId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDiscount" >
+    insert into dg_ow_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="discountInfo != null" >
+        discount_info,
+      </if>
+      <if test="authorizedPerson != null" >
+        authorized_person,
+      </if>
+      <if test="authorizedPersonName != null" >
+        authorized_person_name,
+      </if>
+      <if test="owId != null" >
+        ow_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="preAuthorization != null" >
+        #{preAuthorization,jdbcType=INTEGER},
+      </if>
+      <if test="discountInfo != null" >
+        #{discountInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="authorizedPersonName != null" >
+        #{authorizedPersonName,jdbcType=VARCHAR},
+      </if>
+      <if test="owId != null" >
+        #{owId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

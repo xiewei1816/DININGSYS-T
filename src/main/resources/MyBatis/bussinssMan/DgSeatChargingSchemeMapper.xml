@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgSeatChargingSchemeMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="type_min_val" property="typeMinVal" jdbcType="INTEGER" />
+    <result column="type_hour_val" property="typeHourVal" jdbcType="INTEGER" />
+    <result column="amount_up_lim" property="amountUpLim" jdbcType="DOUBLE" />
+    <result column="t_long_low_lim" property="tLongLowLim" jdbcType="INTEGER" />
+    <result column="qy_ssdsf" property="qySsdsf" jdbcType="INTEGER" />
+    <result column="ssdsf_min" property="ssdsfMin" jdbcType="INTEGER" />
+    <result column="ssdsf_money" property="ssdsfMoney" jdbcType="DOUBLE" />
+    <result column="trash" property="trash" jdbcType="INTEGER" />
+    <result column="time" property="time" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, code, name, type, type_min_val, type_hour_val, amount_up_lim, t_long_low_lim, 
+    qy_ssdsf, ssdsf_min, ssdsf_money, trash,time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_seat_charging_scheme
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_seat_charging_scheme
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" >
+    insert into dg_seat_charging_scheme (id, code, name, 
+      type, type_min_val, type_hour_val, 
+      amount_up_lim, t_long_low_lim, qy_ssdsf, 
+      ssdsf_min, ssdsf_money, trash,time
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{typeMinVal,jdbcType=INTEGER}, #{typeHourVal,jdbcType=INTEGER}, 
+      #{amountUpLim,jdbcType=DOUBLE}, #{tLongLowLim,jdbcType=INTEGER}, #{qySsdsf,jdbcType=INTEGER}, 
+      #{ssdsfMin,jdbcType=INTEGER}, #{ssdsfMoney,jdbcType=DOUBLE}, #{trash,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" >
+    insert into dg_seat_charging_scheme
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="typeMinVal != null" >
+        type_min_val,
+      </if>
+      <if test="typeHourVal != null" >
+        type_hour_val,
+      </if>
+      <if test="amountUpLim != null" >
+        amount_up_lim,
+      </if>
+      <if test="tLongLowLim != null" >
+        t_long_low_lim,
+      </if>
+      <if test="qySsdsf != null" >
+        qy_ssdsf,
+      </if>
+      <if test="ssdsfMin != null" >
+        ssdsf_min,
+      </if>
+      <if test="ssdsfMoney != null" >
+        ssdsf_money,
+      </if>
+      <if test="trash != null" >
+        trash,
+      </if>
+       <if test="time != null" >
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="typeMinVal != null" >
+        #{typeMinVal,jdbcType=INTEGER},
+      </if>
+      <if test="typeHourVal != null" >
+        #{typeHourVal,jdbcType=INTEGER},
+      </if>
+      <if test="amountUpLim != null" >
+        #{amountUpLim,jdbcType=DOUBLE},
+      </if>
+      <if test="tLongLowLim != null" >
+        #{tLongLowLim,jdbcType=INTEGER},
+      </if>
+      <if test="qySsdsf != null" >
+        #{qySsdsf,jdbcType=INTEGER},
+      </if>
+      <if test="ssdsfMin != null" >
+        #{ssdsfMin,jdbcType=INTEGER},
+      </if>
+      <if test="ssdsfMoney != null" >
+        #{ssdsfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="trash != null" >
+        #{trash,jdbcType=INTEGER},
+      </if>
+       <if test="time != null" >
+        #{time,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" >
+    update dg_seat_charging_scheme
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="typeMinVal != null" >
+        type_min_val = #{typeMinVal,jdbcType=INTEGER},
+      </if>
+      <if test="typeHourVal != null" >
+        type_hour_val = #{typeHourVal,jdbcType=INTEGER},
+      </if>
+      <if test="amountUpLim != null" >
+        amount_up_lim = #{amountUpLim,jdbcType=DOUBLE},
+      </if>
+      <if test="tLongLowLim != null" >
+        t_long_low_lim = #{tLongLowLim,jdbcType=INTEGER},
+      </if>
+      <if test="qySsdsf != null" >
+        qy_ssdsf = #{qySsdsf,jdbcType=INTEGER},
+      </if>
+      <if test="ssdsfMin != null" >
+        ssdsf_min = #{ssdsfMin,jdbcType=INTEGER},
+      </if>
+      <if test="ssdsfMoney != null" >
+        ssdsf_money = #{ssdsfMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="trash != null" >
+        trash = #{trash,jdbcType=INTEGER},
+      </if>
+       <if test="time != null" >
+        time = #{time,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" >
+    update dg_seat_charging_scheme
+    set code = #{code,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      type = #{type,jdbcType=INTEGER},
+      type_min_val = #{typeMinVal,jdbcType=INTEGER},
+      type_hour_val = #{typeHourVal,jdbcType=INTEGER},
+      amount_up_lim = #{amountUpLim,jdbcType=DOUBLE},
+      t_long_low_lim = #{tLongLowLim,jdbcType=INTEGER},
+      qy_ssdsf = #{qySsdsf,jdbcType=INTEGER},
+      ssdsf_min = #{ssdsfMin,jdbcType=INTEGER},
+      ssdsf_money = #{ssdsfMoney,jdbcType=DOUBLE},
+      trash = #{trash,jdbcType=INTEGER},
+      time = #{time,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+   <!-- 分页 -->
+  <select id="countAllData" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" resultType="java.lang.Integer">
+    select count(id) from dg_seat_charging_scheme
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+          AND trash = #{trash,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="getAllData" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_seat_charging_scheme
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+          AND trash = #{trash,jdbcType=INTEGER}
+     </where>
+    limit #{startRow},#{endRow}
+  </select>
+  
+  
+  <select id="seleAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_seat_charging_scheme
+  </select>
+  
+  
+    <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.businessMan.DgSeatChargingScheme" >
+    insert into dg_seat_charging_scheme (id, code, name, 
+      type, type_min_val, type_hour_val, 
+      amount_up_lim, t_long_low_lim, qy_ssdsf, 
+      ssdsf_min, ssdsf_money, trash,time
+      )
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{type,jdbcType=INTEGER}, #{typeMinVal,jdbcType=INTEGER}, #{typeHourVal,jdbcType=INTEGER}, 
+      #{amountUpLim,jdbcType=DOUBLE}, #{tLongLowLim,jdbcType=INTEGER}, #{qySsdsf,jdbcType=INTEGER}, 
+      #{ssdsfMin,jdbcType=INTEGER}, #{ssdsfMoney,jdbcType=DOUBLE}, #{trash,jdbcType=INTEGER},#{time,jdbcType=TIMESTAMP}
+      )
+   </insert>
+  
+  
+  
+      <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_seat_charging_scheme where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+  
+  
+  
+  
+  <update id="trash" parameterType="list" >
+    update dg_seat_charging_scheme
+    set  trash = 1
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="restore" parameterType="list" >
+    update dg_seat_charging_scheme
+    set  trash = 0
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+    <select id="seleAllNotContainSelf"  resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select 
+    <include refid="Base_Column_List" />
+   	 	from dg_seat_charging_scheme where trash = 0 and id != #{id,jdbcType=INTEGER}
+ 	</select>
+</mapper>

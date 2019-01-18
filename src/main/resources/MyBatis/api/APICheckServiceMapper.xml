@@ -1,0 +1,1304 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.api.APICheckServiceMapper">
+
+   <select id="selectSeatHasItem" resultType="map" parameterType="map">
+    select A.*,dif.name from (
+      select item_file_id,sum(item_file_number) as itemFileTotal,item_final_price,sum(subtotal) subtotal,sum(discount) discountTotal,production_costs/item_file_number as singleCosts from dg_ow_consumer_details where ow_id in (
+        select id from dg_ow_service_form where ow_id = (
+          select id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        )
+      ) and notes != '7' GROUP BY item_file_id,singleCosts
+    )A LEFT JOIN dg_item_file dif on A.item_file_id = dif.id where A.itemFileTotal != 0 and dif.delFlag = '0'
+  </select>
+
+   <select id="selectOpenWaterBySeatId" parameterType="map" resultType="map">
+    select a.*,DATE_FORMAT(a.first_time,'%Y-%m-%d %H:%i:%S') as firstTime,b.emp_name as waiterName,c.name as posName,d.name as seatName,su1.emp_name as marketingStaffName,su1.emp_code as marketingStaffCode,
+    d.number as seatNumber
+    from dg_open_water a left join sys_user b
+    on a.waiter = b.id left join dg_pos c on a.open_pos = c.id left join dg_consumer_seat d on
+    a.seat_id = d.id  left join sys_user su1 on a.marketing_staff = su1.id
+    where a.seat_id = #{seatId,jdbcType=INTEGER} and (a.ow_state in (1,3,4,5,8,9)) and
+    (a.transfer_target is null or a.seat_id = (select e.seat_id from dg_open_water e where e.ow_num = a.transfer_target)) 
+    order by if(a.transfer_target is null,0,1),a.transfer_target desc
+  </select>
+
+
+  <select id="selectOpenWaterBySeatIdLastOne" parameterType="map" resultType="map">
+    select a.*,b.emp_name as waiterName,c.name as posName,d.name as seatName,su1.emp_name as marketingStaffName,su1.emp_code as marketingStaffCode 
+    from dg_open_water a left join sys_user b
+    on a.waiter = b.id left join dg_pos c on a.open_pos = c.id left join dg_consumer_seat d on
+    a.seat_id = d.id  left join sys_user su1 on a.marketing_staff = su1.id
+    where a.seat_id = #{seatId,jdbcType=INTEGER} and (a.ow_state in (1,3,8,9)) and 
+    (a.transfer_target is null or a.seat_id = (select e.seat_id from dg_open_water e where e.ow_num = a.transfer_target)) 
+    order by a.id desc limit 1
+  </select>
+  
+  <select id="selectOpenWaterByOwNUm" parameterType="map" resultType="map">
+    select dow.*,dcs.number as seatNum,dcs.name as seatName, dca.number as areaNumber,dca.name as areaName,
+     su.emp_name as waiterName
+    from dg_open_water dow left JOIN dg_consumer_seat dcs on dow.seat_id = dcs.id
+    left join dg_consumption_area dca on dcs.cons_area = dca.id
+    left join sys_user su on dow.waiter = su.id
+    where ow_num = #{owNum,jdbcType=VARCHAR}
+  </select>
+
+    <select id="selectOpenWaterByTransferNum" parameterType="map" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+    select * from dg_open_water where transfer_target = #{transferNum,jdbcType=VARCHAR}
+  </select>
+
+    <select id="selectTeamMembersByTeamCode" parameterType="map" resultType="map">
+    select * from dg_open_water
+    where team_members = #{teamCode,jdbcType=VARCHAR} and ow_num != #{owNum,jdbcType=VARCHAR}
+  </select>
+
+    <select id="openWaterTransfer" statementType="CALLABLE" parameterType="map" resultType="java.lang.Integer">
+    call DG_CS_openWaterTransfer(
+          #{transferOwNum,mode=IN,jdbcType=VARCHAR},
+          #{targetOwNum,mode=IN,jdbcType=VARCHAR},
+          #{opFlag,mode=IN,jdbcType=INTEGER}
+          )
+  </select>
+
+    <delete id="delItemDetail" parameterType="map">
+    delete from dg_ow_consumer_details
+    where item_file_id = #{itemFileId,jdbcType=INTEGER} and ow_id = #{serviceId,jdbcType=INTEGER}
+  </delete>
+    <delete id="delUnUseServieData" parameterType="java.lang.Integer">
+      delete from dg_ow_service_form where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="createSplitItemData"
+            parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+    insert into dg_ow_consumer_details
+    (item_file_id,item_file_number,item_file_zs,production_costs,discount,subtotal,ow_id,
+    guest,notes,item_final_price,is_price_cal,item_pay_money,discount_money,settlement_status)
+    VALUES (#{itemFileId,jdbcType=INTEGER},#{itemFileNumber,jdbcType=INTEGER},#{itemFileZs,jdbcType=DOUBLE},
+    #{productionCosts,jdbcType=DOUBLE},#{discount,jdbcType=DOUBLE},#{subtotal,jdbcType=DOUBLE},
+    #{owId,jdbcType=INTEGER},#{guest,jdbcType=VARCHAR},#{notes,jdbcType=VARCHAR},#{itemFinalPrice,jdbcType=DOUBLE},
+    #{isPriceCal,jdbcType=INTEGER},#{itemPayMoney,jdbcType=DOUBLE},
+    #{discountMoney,jdbcType=NUMERIC},#{settlementStatus,jdbcType=INTEGER}
+    )
+  </insert>
+
+    <insert id="insertChargeback"
+            parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+    insert into dg_ow_consumer_details(item_file_id,item_file_number,item_file_zs,production_costs,discount,subtotal,
+    ow_id,guest,notes,serving_type,serving_type_global,expectations_serving_time,serving_case,is_tc,parent_id,
+    item_final_price,back_ow_id,reminder_number,qc_zt,qc_fs,qc_zhsj,qc_sl,variable_price,initial_price,
+    zs_item_final_price,zs_production_costs,zs_subtotal,is_price_cal,item_pay_money,discount_money,settlement_status)
+    values(#{itemFileId,jdbcType=INTEGER},#{itemFileNumber,jdbcType=INTEGER},null,#{productionCosts,jdbcType=DOUBLE},
+    #{discount,jdbcType=DOUBLE},#{subtotal,jdbcType=DOUBLE},#{owId,jdbcType=INTEGER},#{guest,jdbcType=VARCHAR},#{notes,jdbcType=VARCHAR},#{servingType,jdbcType=INTEGER},#{servingTypeGlobal,jdbcType=INTEGER},
+    #{expectationsServingTime,jdbcType=TIMESTAMP},#{servingCase,jdbcType=INTEGER},#{isTc,jdbcType=INTEGER},#{parentId,jdbcType=INTEGER},#{itemFinalPrice,jdbcType=DOUBLE},
+    #{backOwId,jdbcType=INTEGER},#{reminderNumber,jdbcType=INTEGER},#{qcZt,jdbcType=INTEGER},#{qcFs,jdbcType=INTEGER},#{qcZhsj,jdbcType=TIMESTAMP},#{qcSl,jdbcType=DOUBLE},
+    #{variablePrice,jdbcType=INTEGER},#{initialPrice,jdbcType=DOUBLE},0.0,0.0,0.0,#{isPriceCal,jdbcType=INTEGER}, 0.0,#{discountMoney,jdbcType=NUMERIC},#{settlementStatus,jdbcType=INTEGER})
+</insert>
+    <insert id="insertMultiOtherInfo" parameterType="map">
+      insert into dg_ow_details_other VALUES
+        <foreach collection="list" item="item" open="(" close=")" separator="),(">
+          #{item.sfId,jdbcType=INTEGER},#{item.itemId,jdbcType=INTEGER},#{item.otype,jdbcType=INTEGER},#{item.ocode,jdbcType=VARCHAR},#{item.oname,jdbcType=VARCHAR},
+          #{item.ocosts,jdbcType=DOUBLE},#{item.zzffSf,jdbcType=INTEGER},#{item.zzffSfType,jdbcType=INTEGER}
+      </foreach>
+    </insert>
+    <insert id="insertLockLog" parameterType="map">
+        insert into dg_ow_lockinfo VALUES (#{owNum,jdbcType=VARCHAR},#{state,jdbcType=INTEGER},now(),#{userCode,jdbcType=VARCHAR},#{pos,jdbcType=INTEGER},null)
+    </insert>
+
+    <insert id="insertDiscountData" parameterType="map">
+        insert into dg_ow_discount VALUES(#{discountData,jdbcType=VARCHAR},#{userCode,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR},#{cwId,jdbcType=INTEGER})
+    </insert>
+
+    <insert id="insertFreeDetailInfo">
+        insert into dg_ow_consumer_details(item_file_id, item_file_number, production_costs,discount, subtotal, ow_id,
+          notes,item_final_price, initial_price,zs_item_final_price, zs_production_costs, zs_subtotal)
+         values(#{itemFileId},#{itemFileNumber},#{productionCosts},1,#{subtotal},#{newServiceId},#{notes},
+         #{itemFinalPrice},#{initialPrice},#{zsItemFinalPrice},#{zsProductionCosts},#{zsSubtotal})
+    </insert>
+
+    <select id="selectSeatClosedWater" parameterType="integer" resultType="map">
+        select drcw.* from dg_reception_clearing_water drcw where id in(
+        select clearing_water_id from dg_open_water where ow_state = 2 and seat_id = #{seatId,jdbcType=INTEGER}
+        ) order by drcw.clearing_time ASC
+    </select>
+
+    <update id="hangingSBill" parameterType="map">
+      update dg_open_water set ow_state = 7,handingsbill_time = now() where ow_num = #{owNum,jdbcType=VARCHAR}
+  </update>
+
+    <select id="selectAllSBill" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+      select *,DG_FU_getSeatName(seat_id) as seatName from dg_open_water where ow_state = 7
+  </select>
+
+    <select id="selectAllItemDataAddItem" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" parameterType="map">
+      <!-- select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType ,
+      dif.standard_price as standardPrice
+      from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id
+      where dif.delFlag = '0' and ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (1,2,6)
+      ) and (docd.settlement_status != 1 or docd.settlement_status is null) and docd.is_tc != -1 or docd.is_tc is null-->
+
+      select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+      dif.standard_price as standardPrice from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,3,6)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+      where dif.delFlag = '0'
+  </select>
+
+    <select id="selectOpenWaterClearingWithService"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select docd.*,dif.yxdz as yxdz,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dif.ppxl_id as pxxlId,dift.coupon_code as couponItemType,dif.standard_price as standardPrice,dift.name as pxdlName,DATE_FORMAT(dosf.service_time,'%Y-%m-%d %H:%i:%s') as firstTime from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6,3)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        order by dosf.service_time
+
+        <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,dif.standard_price as standardPrice,dift.name as pxdlName,DATE_FORMAT(dosf.service_time,'%Y-%m-%d %H:%i:%s') as firstTime from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+      where dif.delFlag = '0' and docd.ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (1,2,6,3)
+      ) and (docd.settlement_status != 1 or docd.settlement_status is null) and docd.is_tc != -1 or docd.is_tc is null-->
+    </select>
+
+    <select id="selectClearingItemFileInfosWithService"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+         <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType ,
+         dif.standard_price as standardPrice,dift.name as pxdlName from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id
+      where dif.delFlag = '0' and docd.ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (1,2,6,3)
+      ) and docd.settlement_status = 1 and docd.is_tc != -1 or docd.is_tc is null-->
+
+      select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+        dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6,3)
+        ) and settlement_status = 1  and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        where dif.delFlag = '0'
+    </select>
+
+    <select id="selectFreeItemDataAddItem" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType  from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id
+      where dif.delFlag = '0' and ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type = 3
+      ) and (docd.settlement_status != 1 or docd.settlement_status is null) and docd.is_tc != -1 or docd.is_tc is null-->
+
+        select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType
+        from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+        SELECT id from dg_open_water where ow_num = #{owNum}) and service_type = 3
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        where dif.delFlag = '0'
+    </select>
+
+    <select id="selectAllItemDataReducedItem" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" parameterType="map">
+      select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dif.ppxl_id as pxxlId, dift.coupon_code as couponItemType,dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (4,5)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        order by dosf.service_time
+      <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType ,
+       dif.standard_price as standardPrice,dift.name as pxdlName
+       from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+      where dif.delFlag = '0' and docd.ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (4,5)
+      ) and docd.is_tc != -1 or docd.is_tc is null-->
+  </select>
+
+    <select id="selectClearingItemFileInfosTD"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+          dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id
+        where dif.delFlag = '0' and ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+        SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (4,5)
+        ) and docd.is_tc != -1 or docd.is_tc is null
+
+       <!-- select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+        dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (4,5)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        where dif.delFlag = '0'-->
+    </select>
+
+    <select id="selectAllItemDataAddItemTC" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" parameterType="map">
+      <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType  from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id
+      where dif.delFlag = '0' and ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (1,2,6)
+      ) and (docd.settlement_status != 1 or docd.settlement_status is null)
+       and docd.is_tc != -1  or docd.is_tc is null-->
+
+       select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType
+        from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        where dif.delFlag = '0'
+
+  </select>
+
+    <select id="selectAllItemDataReducedItemTC" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails" parameterType="map">
+      <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType  from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id
+      where dif.delFlag = '0' and ow_id in(
+        select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR}
+        ) and service_type in (4,5)
+      ) and docd.is_tc != -1  or docd.is_tc is null-->
+      select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType
+        from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (4,5)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        where dif.delFlag = '0'
+
+  </select>
+
+    <update id="modifyCancelSBill" parameterType="map">
+        update dg_open_water set ow_state = 1,handingsbill_time = NULL where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+    <update id="setSeatState" parameterType="map">
+        update dg_consumer_seat set seat_state = #{seatState,jdbcType=INTEGER},
+        last_open_time = #{lastOpenTime}
+         where id = #{seatId,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectWxAllCanDiscountItemData" resultType="DgItemFile" parameterType="list">
+        select dif.* from dg_item_file dif left join dg_item_file_type dift on dif.ppdl_id = dift.id
+        where  delFlag = '0' and dift.coupon_code in
+        <foreach collection="lists" close=")" item="list" open="(" separator=",">
+            #{list}
+        </foreach>
+    </select>
+    
+    
+    <select id="selectCloseBillOpenWater" resultType="map" parameterType="map">
+        select
+        a.ow_num as owNum,
+        a.people_count as peopleCount,
+        a.first_time as firstTime,
+        a.open_bis as openBis,
+        a.cr_id as crId,
+        a.ow_state as owState,
+        c.name as posName,
+        d.emp_name as empName,
+        b.name as seatName
+        from
+        dg_open_water a
+        left join dg_consumer_seat b on b.id = a.seat_id
+        left join dg_pos c on c.id = a.open_pos
+        left join sys_user d on d.id = a.waiter
+        where a.ow_state in(1,3,8,9)
+        and b.id = #{seatId,jdbcType=INTEGER}
+    </select>
+    <select id="checkCloseBillOpenWater" resultType="map" parameterType="map">
+        select
+        a.seat_id as seatId,
+        a.ow_num as owNum,
+        a.people_count as peopleCount,
+        a.first_time as firstTime,
+        a.open_bis as openBis,
+        a.cr_id as crId,
+        a.ow_state as owState,
+        c.name as posName,
+        d.emp_name as empName,
+        b.name as seatName
+        from
+        dg_open_water a
+        left join dg_consumer_seat b on b.id = a.seat_id
+        left join dg_pos c on c.id = a.open_pos
+        left join sys_user d on d.id = a.waiter
+        where a.ow_num = #{owNum,jdbcType=VARCHAR}
+    </select>
+    <select id="checkCashPledgeOpenWater" resultType="map" parameterType="map">
+        SELECT a.*
+        from
+        dg_cash_pledge a
+        inner join dg_open_water b on b.ow_num = a.ow_num
+        where a.cp_type = #{cpType,jdbcType=VARCHAR}
+        and a.ow_num = #{owNum,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectDataByServiceIdAndOwId"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select * from dg_ow_consumer_details where item_file_id = #{itemFileId,jdbcType=INTEGER} and ow_id = #{serviceId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectDetailOtherInfo" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDetailsOther">
+        select * from dg_ow_details_other where sf_id = #{serviceId,jdbcType=INTEGER} and item_id = #{itemFileId} and otype = 3
+    </select>
+
+    <select id="selectOpenWaterByItemAndServiceId" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where id = (
+          select ow_id from dg_ow_service_form where id = (select ow_id from dg_ow_consumer_details where ow_id = #{serviceId} and item_file_id = #{itemFileId})
+        )
+    </select>
+
+    <select id="selectAllOpenWaterNum" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR} or transfer_target = #{owNum,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAllOpenWaterByOwNum" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+       select A.*,DG_FU_getPosName(A.open_pos) as posName,DG_FU_getSeatName(A.seat_id) as seatName,dca.name as areaName,su.emp_name as waiterName from (
+            select * from dg_open_water where ow_num = #{owNum,jdbcType=VARCHAR} or transfer_target = #{owNum,jdbcType=VARCHAR} UNION
+            select * from dg_open_water where is_team = 1 and team_members = (select team_members from dg_open_water  where ow_num = #{owNum,jdbcType=VARCHAR})
+       ) A left join (
+          select * from dg_cash_pledge dcp2 where dcp2.ow_num in
+            (
+              select dcp.ow_num from dg_cash_pledge dcp GROUP BY dcp.ow_num HAVING count(ow_num) > 1
+            ) and dcp2.cp_type = '1'
+          ) B on A.ow_num = B.ow_num
+          left join dg_consumer_seat dcs on A.seat_id = dcs.id
+          left join dg_consumption_area dca on dcs.cons_area = dca.id
+          left join sys_user su on A.waiter = su.id
+          where ow_state in (1,3,4,5,8,9)
+    </select>
+
+    <select id="selectAllPayWay" resultType="com.yqsh.diningsys.web.model.archive.DgSettlementWay">
+        select o.*,dpc.cName as typename from dg_settlement_way o
+        left join dg_settlement_way_rank dswr ON dswr.settlementWayId = o.id
+        left join dg_public_code0 dpc on o.type = dpc.id
+        where o.delFlag = 0
+        <if test="list.size()>0">
+            and number not IN
+            <foreach collection="list" open="(" separator="," item="number" close=")">
+                #{number}
+            </foreach>
+        </if>
+        order by dswr.rank asc
+    </select>
+    <select id="selectIsZyhd" resultType="map">
+        select * from dg_important_activity_discount where curdate() BETWEEN start_time and end_time and enable = 1
+    </select>
+
+    <update id="closeBillForOpenWater" parameterType="map">
+        update dg_open_water set ow_state = #{owState,jdbcType=INTEGER} where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+
+    <update id="closeBillForSeat" parameterType="map">
+        update dg_consumer_seat set seat_state = #{seatState,jdbcType=INTEGER},last_open_time = null where id = #{seatId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="modifyOpenWaterTeamInfo" parameterType="map">
+        update dg_open_water set is_team = 1,item_costs_sum = #{openWaterItemSum,jdbcType=DOUBLE},subtotal = #{openWaterSubtotal,jdbcType=DOUBLE} where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="setDetailFree" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        update dg_ow_consumer_details set production_costs = 0.0,subtotal = 0.0,item_final_price = 0.0,
+        zs_item_final_price = #{zsItemFinalPrice},zs_production_costs = #{zsProductionCosts},zs_subtotal = #{zsSubtotal},
+        ow_id = #{newServiceId},notes = #{notes}
+        where item_file_id = #{itemFileId} and ow_id =#{owId}
+    </update>
+
+    <update id="cancelDetailFree" parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        update dg_ow_consumer_details set production_costs = #{productionCosts},subtotal = #{subtotal},item_final_price = #{itemFinalPrice},
+        zs_item_final_price = 0.0,zs_production_costs = 0.0,zs_subtotal = 0.0,ow_id = #{newServiceId},notes = #{notes}
+        where item_file_id = #{itemFileId} and ow_id =#{owId}
+    </update>
+    <update id="modifyBingdingMember" parameterType="map">
+        update dg_open_water set cr_id = #{crId,jdbcType=VARCHAR} where ow_num = #{owNum,jdbcType=VARCHAR}
+    </update>
+
+    <update id="modifyOpenWaterLock" parameterType="map">
+        <if test="type == 1">
+          update dg_open_water set ow_state = 9 where ow_num = #{owNum}
+        </if>
+        <if test="type == 2 ">
+          update dg_open_water set ow_state = 1 where ow_num = #{owNum} and ow_state = 9
+        </if>
+        <if test="type == 3">
+          update dg_open_water set ow_state = 3 where ow_num = #{owNum} and ow_state = 9
+        </if>
+        <if test="type == 4 ">
+            update dg_open_water set ow_state = 4 where ow_num = #{owNum} and ow_state = 9
+        </if>
+        <if test="type == 5 ">
+          update dg_open_water set ow_state = 5 where ow_num = #{owNum} and ow_state = 9
+        </if>
+    </update>
+    <update id="updateAdvancePayClearingWaterDataById" parameterType="map">
+        update dg_reception_clearing_water set fixed_discount = #{fixedDiscount,jdbcType=DOUBLE},
+        general_proportions = #{generalProportions,jdbcType=DOUBLE},
+        single_proportions = #{singleProportions,jdbcType=DOUBLE},
+        pay_type = #{payType,jdbcType=DOUBLE}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyOpenClassWater" parameterType="map">
+        update dg_open_class_water set open_class_water = #{jbWater},
+        end_time = #{endTime},open_class_state = 1,current_wj_amount = #{openData.count},current_wj_deposit = #{depositData.wtDepositData},
+        bbkdrs = #{bilingData.peopleCount},bbkdzs = #{bilingData.count},bbwjje = #{openData.subtotal},bbyjrs = #{closeData.subtotal},
+        bbzdje = #{freeData.subtotal},bbtcje = #{backData.total},xfje = #{clearingMoney.xfje},fwf = #{fwf},bff=#{bff},zdxfbq = #{zdxfbq},
+        ysxj = #{clearingMoney.ysje},mlje = #{clearingMoney.mlje},deyh = #{clearingMoney.deyh},yshj = #{clearingMoney.shje},czje=#{rechargeData}
+        where id = #{id}
+    </update>
+
+    <update id="modifyKydPrintAjax" parameterType="integer">
+        UPDATE dg_open_water set kyd_print_num = (select A.kyd_print_num +1 from (select kyd_print_num from dg_open_water where id = #{id,jdbcType=INTEGER}) A) where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyYjdPrintAjax" parameterType="integer">
+        UPDATE dg_open_water set yjd_print_num = (select A.yjd_print_num +1 from (select yjd_print_num from dg_open_water where id = #{id,jdbcType=INTEGER}) A) where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyJzdPrintAjax" parameterType="integer">
+        UPDATE dg_reception_clearing_water set print_cont = (select A.print_cont +1 from (select print_cont from dg_reception_clearing_water where id = #{id,jdbcType=INTEGER}) A) where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="modifyContinuedSeatState" parameterType="integer">
+        UPDATE dg_consumer_seat set seat_state = 2,last_open_time = now() where id = #{seatId} and  seat_state in (1,3,9)
+    </update>
+
+    <update id="modifyContinuedCheck" parameterType="integer">
+        update dg_open_water set ow_state = 1,closed_time = NULL,clearing_water_id = NULL where clearing_water_id = #{id}
+    </update>
+
+    <update id="modifyContinuedClearingState" parameterType="integer">
+        update dg_reception_clearing_water set clearing_state = 4 where id = #{id}
+    </update>
+
+    <update id="updateOpenWaterTransfer">
+        update dg_open_water set ow_state = 4, team_members = #{targetTeamMembers},transfer_target = #{targetOwNum},team_main_seat = #{targetTeamMembersMainSeat},join_team_notes = #{joinTeamNotes},join_team_time=now(),seat_id = #{seatId}
+        where ow_num =#{transferOwNum}
+    </update>
+
+    <update id="updateSeatIdle">
+        update dg_consumer_seat set seat_state = 1,last_open_time = NULL where id = #{seatId}
+    </update>
+
+    <update id="updateOpenWatetSeatAmount">
+        update dg_open_water set seat_amount = #{newSeatAmount} where ow_num = #{targetOwNum}
+    </update>
+
+    <update id="updateOpenWatetTeamState">
+        update dg_open_water set is_team = 1 where ow_num = #{targetOwNum}
+    </update>
+
+    <update id="updateTeamMainSeatByTeamMembers">
+        update dg_open_water set team_main_seat = #{seatId} where team_members = #{teamMember}
+    </update>
+
+    <update id="updateOpenWaterTransferTeamMember">
+        update dg_open_water set is_team = 1,team_members = #{targetTeamMembers},team_main_seat = #{targetTeamMembersMainSeat} where ow_num = #{transferOwNum}
+    </update>
+
+    <update id="updateOpenWaterSeat">
+        update dg_open_water set seat_id = #{seatId},team_members = #{targetTeamMembers},team_main_seat = #{targetTeamMembersMainSeat},transfer_target = #{targetOwNum} where ow_num = #{openWater}
+    </update>
+
+    <update id="modifyOpenWaterSeat">
+        update dg_open_water set seat_id = #{seatId},team_main_seat = #{teamMainSeat} where ow_num = #{openWater}
+    </update>
+    
+    
+    <update id="modifyOpenWaterTeamMainSeat">
+        update dg_open_water set team_main_seat = #{teamMainSeat} where ow_num = #{openWater}
+    </update>
+
+    <update id="updateDetailInfo">
+        update dg_ow_consumer_details set item_file_number = #{itemFileNumber},subtotal = #{subtotal} where item_file_id = #{itemFileId} and ow_id = #{owId}
+    </update>
+
+    <update id="updateOpenWaterMainSeat">
+        update dg_open_water set team_main_seat= #{mainSeatId} where ow_num in
+        <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item.owNum}
+        </foreach>
+    </update>
+
+    <select id="selectOpenWaterLock" parameterType="map" resultType="DgOwLockinfo">
+        select dol.*,DG_FU_getPosName(dol.lock_pos) as lockPosName,DG_FU_getUserName(dol.lock_operator) as lockOpeartorName from dg_ow_lockinfo dol
+        where owNum = #{owNum} order by lock_time desc limit 0,1
+    </select>
+
+    <select id="selectAllCanDiscountItemData" resultType="DgItemFile">
+        select * from dg_item_file where yxdz = 1 and delFlag = '0'
+    </select>
+
+    <select id="selectAllDepositByOwNums" parameterType="list" resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgCashPledge">
+        select * from dg_cash_pledge where ow_num in
+        <foreach collection="dgOpenWaters" close=")" item="openWater" open="(" separator=",">
+            #{openWater.owNum,jdbcType=VARCHAR}
+        </foreach>
+    </select>
+
+    <select id="selectUserLoginInfo" resultType="java.util.Map" parameterType="map">
+        select docw.* ,dp.name as posName 
+        from dg_open_class_water docw 
+        left join dg_pos dp on docw.login_pos = dp.id 
+        where login_user = #{userCode,jdbcType=VARCHAR} 
+        and login_pos = #{loginPos,jdbcType=VARCHAR}
+        order by login_time desc limit 0,1 
+    </select>
+    
+    <select id="selectLastUserLoginInfo" resultType="java.util.Map" parameterType="java.lang.String">
+    	SELECT * from dg_open_class_water where login_time &lt; #{loginTime,jdbcType=VARCHAR} order by login_time desc limit 0,1
+    </select>
+
+    <select id="selectUserName" resultType="java.lang.String" parameterType="string">
+        select DG_FU_getUserName(#{userCode,jdbcType=VARCHAR})
+    </select>
+
+    <select id="selectMembersCredit" parameterType="map"
+            resultType="map">
+        select doc.*,drcw.cw_num,drcw.clearing_member as clearingMember from dg_ow_clearingway doc
+        left join dg_reception_clearing_water drcw on doc.cw_id = drcw.id
+         where cw_code = 'HYGZ' and cw_id in (
+          select id from dg_reception_clearing_water where clearing_pos = #{loginPos} and clearing_time BETWEEN #{startTime} and #{endTime}
+        )
+    </select>
+
+    <select id="selectFrequency" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+
+        select dsw.name as seName,
+        sum(case when doc.cw_code='RMB' then cast(doc.conversion_amount as decimal(18,2)) - cast(drcw.change_amount as decimal(18,2))
+		when doc.cw_code &lt;&gt; 'RMB' then cast(doc.conversion_amount as decimal(18,2)) end) as settlementAmount 
+		from 
+		
+		 
+		(select cw_code,conversion_amount,cw_id from dg_ow_clearingway
+		<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select cw_code,conversion_amount,cw_id from dg_ow_clearingway_${tableDate}
+		    </foreach>
+		</if>
+		 )
+		
+		doc
+   		left join 
+   		
+   		 
+   		(select change_amount,id,clearing_state from dg_reception_clearing_water
+   		<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select change_amount,id,clearing_state from dg_reception_clearing_water_${tableDate}
+		    </foreach>
+   		</if>
+		 )
+   		
+   		drcw on doc.cw_id = drcw.id
+		left join dg_settlement_way dsw on doc.cw_code = dsw.number
+        where cw_id in (
+          select id from 
+          
+          (select id,clearing_pos,clearing_time from dg_reception_clearing_water
+          <if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select id,clearing_pos,clearing_time from dg_reception_clearing_water_${tableDate}
+		    </foreach>
+          </if>
+		 ) drcw2
+          
+          where( drcw2.clearing_pos = #{loginPos} or drcw2.clearing_pos = 'yxe_pos' )and drcw2.clearing_time BETWEEN #{startTime} and #{endTime}
+        ) 
+        and drcw.clearing_state &lt;&gt; 3
+        and doc.cw_code = #{cwCode} group by seName
+        
+    </select>
+
+    <select id="selectItemReport" parameterType="map"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+      select docd.*,dif.name as itemFileName,sum(item_file_number) as itemFileNumber,docd.discount_money * docd.item_file_number as discountMoney,
+      SUM(dow.discount_costs) as totalReceivables,
+      docd.item_pay_money * sum(docd.item_file_number) as netIncome,
+      dif.unit,DG_FU_getItemFileBigTypeName(dif.ppdl_id) as bigTypeName,
+      DG_FU_getItemSmallTypeName(dif.ppxl_id) as smallTypeName 
+      from dg_ow_consumer_details docd
+        left join dg_item_file dif on docd.item_file_id = dif.id
+      	LEFT JOIN dg_ow_service_form dosf ON docd.ow_id = dosf.id
+		LEFT JOIN dg_open_water dow ON dosf.ow_id = dow.id
+		LEFT JOIN dg_reception_clearing_water drcw ON dow.clearing_water_id = drcw.id
+		WHERE drcw.clearing_pos = #{loginPos}
+		AND drcw.clearing_time BETWEEN #{startTime} and #{endTime}
+      group by docd.item_file_id,docd.item_final_price
+    </select>
+
+    <select id="selectBilingData" resultType="java.util.Map" parameterType="map">
+        select count(id) as count,sum(people_count) as peopleCount from 
+        (select id,people_count,open_pos,first_time from dg_open_water
+        	<if test="tableDateList.size() >0">
+	        	<foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+			        select id,people_count,open_pos,first_time from dg_open_water_${tableDate}
+			    </foreach>
+        	</if>
+		 ) dow
+        where open_pos = #{loginPos} and  first_time BETWEEN #{startTime} and #{endTime}
+    </select>
+
+    <select id="selectOpenData" resultType="java.util.Map" parameterType="map">
+        <!--select count(id) as count,sum(cast(subtotal as DECIMAL(18,2))) as subtotal from dg_open_water where (open_pos = #{loginPos} or open_pos = 1) and  first_time BETWEEN #{startTime} and #{endTime} and ow_state not in (2,6,7)-->
+        select count(id) as count,sum(cast(subtotal as DECIMAL(18,2))) as subtotal from 
+        (select id,subtotal,first_time,ow_state from dg_open_water
+        	<if test="tableDateList.size() >0">
+			    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+			        select id,subtotal,first_time,ow_state from dg_open_water_${tableDate}
+			    </foreach>
+        	</if>
+		 ) dow 
+        where  first_time BETWEEN #{startTime} and #{endTime} and ow_state not in (2,6,7,-1)
+    </select>
+
+    <select id="selectWTDepositData" resultType="java.util.Map" parameterType="map">
+    SELECT (ifnull(A.yajin0,0) - ifnull(B.yajin1,0))  as wtDepositData
+	FROM (select sum(cast(cp_money as DECIMAL(18,2))) as yajin0 from  dg_cash_pledge where ow_num in (
+          select ow_num from 
+          (select ow_num,open_pos,first_time from dg_open_water
+          	<if test="tableDateList.size() >0">
+			    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+			        select ow_num,open_pos,first_time from dg_open_water_${tableDate}
+			    </foreach>
+          	</if>
+		 ) dow 
+            where open_pos = #{loginPos} and  first_time BETWEEN #{startTime} and #{endTime}
+        ) and cp_type = 0
+	) A, 
+	(select sum(cast(cp_money as DECIMAL(18,2))) as yajin1 from  dg_cash_pledge where ow_num in (
+          select ow_num from 
+          (select ow_num,open_pos,first_time from dg_open_water
+             <if test="tableDateList.size() >0">
+			    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+			        select ow_num,open_pos,first_time from dg_open_water_${tableDate}
+			    </foreach>
+             </if>
+		 ) dow 
+         	where open_pos = #{loginPos} and  first_time BETWEEN #{startTime} and #{endTime}
+        ) and cp_type = 1
+		) B
+    </select>
+
+    <select id="selectCloseData" resultType="java.util.Map" parameterType="map">
+    	SELECT
+			count(a.id) AS count,
+			ifnull(sum(a.people_count),0) AS subtotal
+		FROM
+		(select id,people_count,clearing_water_id,ow_state from dg_open_water
+		<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select id,people_count,clearing_water_id,ow_state from dg_open_water_${tableDate}
+		    </foreach>
+		</if>
+	 	) a
+		left join  
+		(select id,clearing_pos,clearing_time from dg_reception_clearing_water
+		<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select id,clearing_pos,clearing_time from dg_reception_clearing_water_${tableDate}
+		    </foreach>
+		</if>
+	 	) b 
+	 	on a.clearing_water_id = b.id
+		WHERE
+			(b.clearing_pos = #{loginPos} or b.clearing_pos = 'yxe_pos') <!-- 加上易小二 -->
+		and  b.clearing_time BETWEEN #{startTime} and #{endTime} and a.ow_state in (2,6)
+    
+        <!-- select count(id) as count,sum(people_count) as subtotal from dg_open_water where open_pos = #{loginPos} and  first_time BETWEEN #{startTime} and #{endTime} and ow_state in (2,6) -->
+    </select>
+
+    <select id="selectFreeData" resultType="java.util.Map"
+    parameterType="map">
+        <!-- select sum(cast(zs_item_final_price as DECIMAL(18,2) )) as subtotal from dg_ow_consumer_details where ow_id in(
+       select id from dg_ow_service_form where ow_id in (
+          select id from dg_open_water where open_pos = #{loginPos} and  first_time BETWEEN #{startTime} and #{endTime}
+        ) and service_type = 3
+      ) -->
+      SELECT SUM(CAST(a.zs_item_final_price AS DECIMAL(18, 2))) AS subtotal
+		FROM 
+		(select zs_item_final_price,ow_id from dg_ow_consumer_details
+		<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select zs_item_final_price,ow_id from dg_ow_consumer_details_${tableDate}
+		    </foreach>
+		</if> ) a
+		WHERE ow_id IN (SELECT id
+			FROM 
+			(select id,service_type,service_time from dg_ow_service_form
+			<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select id,service_type,service_time from dg_ow_service_form_${tableDate}
+		    </foreach> 
+			</if>) b
+			WHERE b.service_type = 3
+		    AND b.service_time BETWEEN #{startTime} AND #{endTime}
+		    )
+    </select>
+
+    <select id="selectBackData" resultType="java.util.Map" parameterType="map">
+      <!-- select sum(cast(subtotal as DECIMAL(18,2) )) as subtotal from dg_ow_consumer_details where ow_id in(
+       select id from dg_ow_service_form where ow_id in (
+          select id from dg_open_water where open_pos = #{loginPos} and  first_time BETWEEN #{startTime} and #{endTime}
+        ) and service_type = 4
+      ) -->
+      SELECT SUM(CAST(a.subtotal AS DECIMAL(18, 2))) AS subtotal
+		FROM 
+		(select subtotal,ow_id from dg_ow_consumer_details
+		<if test="tableDateList.size() >0">
+	    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+	        select subtotal,ow_id from dg_ow_consumer_details_${tableDate}
+	    </foreach> 
+		</if>) a
+		WHERE ow_id IN (SELECT id
+			FROM 
+			(select id,service_type,service_time from dg_ow_service_form
+			<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select id,service_type,service_time from dg_ow_service_form_${tableDate}
+		    </foreach>
+			</if> ) b
+			WHERE b.service_type = 4
+		    AND b.service_time BETWEEN #{startTime} AND #{endTime}
+		    )
+    </select>
+    
+    <select id="selectSbillData" resultType="java.util.Map" parameterType="map">
+      	select sum(cast(dow.subtotal as DECIMAL(18,2))) as sbillSubtotal from 
+      	(select subtotal,seat_id,handingsbill_time,first_time,open_pos from dg_open_water
+      	<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select subtotal,seat_id,handingsbill_time,first_time,open_pos from dg_open_water_${tableDate}
+		    </foreach>
+      	</if>
+	 	) dow
+        left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+        left join dg_consumption_area dca on dcs.cons_area =dca.id
+        where handingsbill_time is not NULL
+        and dow.first_time >= #{startTime}
+        and dow.first_time <![CDATA[<=]]> #{endTime}
+        <if test="loginPos != null">
+            and dow.open_pos = #{loginPos}
+        </if>
+    </select>
+
+    <select id="selectSmallTypeReport" resultType="java.util.Map" parameterType="map">
+        select A.smallTypeName,sum(A.itemNumber) as smallItemNumber,sum(A.discountMoney) as smallDiscountMoney,sum(A.netIncome) as smallNetIncome,sum(A.totalReceivables) as smallTotalReceivables from (
+          select docd.*,dif.name as itemFileName,sum(item_file_number) as itemNumber,docd.discount_money * docd.item_file_number as discountMoney,
+                        SUM(docd.subtotal) as totalReceivables,
+                        docd.item_pay_money * sum(docd.item_file_number) as netIncome,dif.unit,
+                        DG_FU_getItemSmallTypeName(dif.ppxl_id) as smallTypeName from dg_ow_consumer_details docd
+            left join dg_item_file dif on docd.item_file_id = dif.id
+					LEFT JOIN dg_ow_service_form dosf ON docd.ow_id = dosf.id
+					LEFT JOIN dg_open_water dow ON dosf.ow_id = dow.id
+					LEFT JOIN dg_reception_clearing_water drcw ON dow.clearing_water_id = drcw.id
+					WHERE drcw.clearing_pos = #{loginPos}
+					AND drcw.clearing_time BETWEEN #{startTime} and #{endTime}
+          group BY docd.item_file_id, docd.item_final_price
+        ) A group by A.smallTypeName
+    </select>
+
+    <select id="selectBigTypeReport" resultType="java.util.Map" parameterType="map">
+        SELECT 
+			A.bigTypeName, 
+			SUM(A.itemNumber) AS bigItemNumber, 
+			SUM(A.discountMoney) AS bigDiscountMoney, 
+			SUM(A.netIncome) AS bigNetIncome, 
+			SUM(A.totalReceivables) AS bigTotalReceivables
+			FROM (SELECT  
+			dif.name AS itemFileName, 
+			SUM(item_file_number) AS itemNumber, 
+			docd.discount_money * docd.item_file_number AS discountMoney, 
+			SUM(docd.subtotal) AS totalReceivables, 
+			docd.item_pay_money * SUM(docd.item_file_number) AS netIncome, 
+			dif.unit, DG_FU_getItemFileBigTypeName(dif.ppdl_id) AS bigTypeName
+				FROM dg_ow_consumer_details docd
+					LEFT JOIN dg_item_file dif ON docd.item_file_id = dif.id
+					LEFT JOIN dg_ow_service_form dosf ON docd.ow_id = dosf.id
+					LEFT JOIN dg_open_water dow ON dosf.ow_id = dow.id
+					LEFT JOIN dg_reception_clearing_water drcw ON dow.clearing_water_id = drcw.id
+					WHERE drcw.clearing_pos = #{loginPos}
+					AND drcw.clearing_time BETWEEN #{startTime} and #{endTime}
+				GROUP BY docd.item_file_id, docd.item_final_price
+			
+				) A
+			GROUP BY A.bigTypeName
+        
+    </select>
+
+    <select id="selectClearingWaterMoney" resultType="java.util.Map" parameterType="map">
+      <!-- select sum(cast(consumption_amount as DECIMAL(18,2))) as xfje,sum(cast(zero_amount as DECIMAL(18,2))) as mlje,
+      sum(cast(fixed_discount as DECIMAL(18,2))) as deyh,sum(cast(amounts_receivable as DECIMAL(18,2))) as ysje,
+      sum(cast(amounts_receivable as DECIMAL(18,2))) as shje,sum(cast(change_amount as DECIMAL(18,2))) as zlje
+      from dg_reception_clearing_water where clearing_pos = #{loginPos}
+                and clearing_time BETWEEN #{startTime} and #{endTime} -->
+      select 
+		sum(case when a.cw_code='RMB' then cast(a.settlement_amount - b.change_amount as DECIMAL(18,2)) when a.cw_code &lt;&gt; 'RMB' then cast(a.settlement_amount as DECIMAL(18,2)) end) as xfje,
+		sum(cast(b.zero_amount as DECIMAL(18,2))) as mlje,
+		sum(cast(b.fixed_discount as DECIMAL(18,2))) as deyh,
+		sum(case when a.cw_code='RMB' then cast(a.settlement_amount - b.change_amount as DECIMAL(18,2)) when a.cw_code &lt;&gt; 'RMB' then cast(a.settlement_amount as DECIMAL(18,2)) end) as ysje,
+		sum(case when a.cw_code='RMB' then cast(a.settlement_amount - b.change_amount as DECIMAL(18,2)) when a.cw_code &lt;&gt; 'RMB' then 0 end)  as shje,
+		sum(cast(change_amount as DECIMAL(18,2))) as zlje
+		from 
+		(select cw_code,settlement_amount,cw_id from dg_ow_clearingway
+		<if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select cw_code,settlement_amount,cw_id from dg_ow_clearingway_${tableDate}
+		    </foreach>
+		</if>
+	 	) a  
+		left join 
+		(select change_amount,zero_amount,fixed_discount,id,clearing_state,clearing_pos,clearing_time from dg_reception_clearing_water
+				<if test="tableDateList.size() >0">
+				    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+				        select change_amount,zero_amount,fixed_discount,id,clearing_state,clearing_pos,clearing_time from dg_reception_clearing_water_${tableDate}
+				    </foreach>
+				</if>) b on a.cw_id = b.id          
+      	where b.clearing_state &lt;&gt; 3
+      	and b.clearing_pos = #{loginPos}
+		and b.clearing_time BETWEEN #{startTime} 
+		and #{endTime}
+    </select>
+
+    <select id="selectOpenWaterMoney" resultType="java.util.Map" parameterType="map">
+        select a.* from 
+        (select 
+	        free_servce_charge,
+	        modify_service_charge,
+	        service_charge,
+	        free_private_room,
+	        modify_private_room,
+	        private_room_cost,
+	        free_min_spend,
+	        minimum_charge_complete,
+	        discount_costs,
+	        clearing_water_id
+        from dg_open_water
+        <if test="tableDateList.size() >0">
+	    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+	        select 
+		        free_servce_charge,
+		        modify_service_charge,
+		        service_charge,
+		        free_private_room,
+		        modify_private_room,
+		        private_room_cost,
+		        free_min_spend,
+		        minimum_charge_complete,
+		        discount_costs,
+		        clearing_water_id
+			from dg_open_water_${tableDate}
+	    </foreach>
+        </if> ) a
+        where clearing_water_id in (
+            select id from 
+            (select id,clearing_pos,clearing_time from dg_reception_clearing_water
+            <if test="tableDateList.size() >0">
+		    <foreach collection="tableDateList" item="tableDate" separator=" union all" open="union all">
+		        select id,clearing_pos,clearing_time from dg_reception_clearing_water_${tableDate}
+		    </foreach>
+            </if> ) b
+            where b.clearing_pos = #{loginPos}
+            and b.clearing_time BETWEEN #{startTime} and #{endTime}
+        )
+    </select>
+
+    <select id="selectDepostByOwNum" parameterType="string" resultType="java.util.Map">
+        select * from dg_cash_pledge where ow_num = #{owNum,jdbcType=VARCHAR} order by reg_time desc limit 0,1
+    </select>
+
+    <select id="selectOpenWaterByowNum" parameterType="string"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_num = #{openWaterNumber,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAllOpenWaterIsClosed" parameterType="list"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_num in
+        <foreach collection="dgOpenWaters" item="dgOpenWater" open="(" close=")" separator=",">
+            #{dgOpenWater.owNum}
+        </foreach>
+        and ow_state in (2,6)
+    </select>
+
+    <select id="selectClearingWaterByNum" parameterType="string"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        select * from dg_reception_clearing_water where cw_num = #{clearingWater}
+    </select>
+
+    <select id="selectopenWatersByClearingWaterId" parameterType="integer"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where clearing_water_id = #{id}
+    </select>
+
+    <select id="selectAllDepositByStringOwNums" parameterType="list"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_num IN
+        <foreach collection="list" item="str" open="(" separator="," close=")">
+            #{str}
+        </foreach>
+    </select>
+    <select id="checkSeatState" resultType="com.yqsh.diningsys.web.model.archive.DgConsumerSeat">
+        select dcs.* from dg_consumer_seat dcs left join dg_open_water dow on dcs.id = dow.seat_id where dow.ow_num = #{transferOwNum}
+    </select>
+
+    <select id="selectAllDepositByOwNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgCashPledge">
+        select * from dg_cash_pledge where ow_num = #{owNum}
+    </select>
+
+    <select id="selectTargetOpenWater"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_num = #{targetOwNum}
+    </select>
+
+    <select id="selectTransferOtherOwNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where seat_id = #{seatId} and ow_state in (1,3,8,9) limit 0,1
+    </select>
+
+    <select id="selectOtherFirstTeamOwNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater"
+            parameterType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water dow where
+        dow.ow_num != #{owNum} and dow.seat_id != #{seatId} and
+        dow.team_members = (select team_members from dg_open_water where ow_num = #{owNum}) limit 0,1
+    </select>
+
+    <select id="selectClearingWaterById"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        select drcw.*,dp.name as posName from dg_reception_clearing_water drcw
+        left join dg_pos dp on drcw.clearing_pos = dp.id
+        where drcw.id = #{clearingWaterId}
+    </select>
+
+    <select id="selectOpenWaterByCwId"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select dow.*,dcs.name as seatName,su.emp_name as waiterName from dg_open_water dow
+        left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+        left join sys_user su on dow.waiter = su.id
+         where clearing_water_id = #{clearingWaterId}
+    </select>
+
+    <select id="selectClearingWayByCwId"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+        select doc.*,dsw.name as cwName from dg_ow_clearingway doc left join dg_settlement_way dsw
+        on doc.cw_code = dsw.number
+        where cw_id = #{clearingWaterId}
+    </select>
+
+    <select id="selectOpenWaterObjByOwNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where ow_num=#{owNum}
+    </select>
+
+    <select id="selectOpenWaterObjBySeatIdAndTeamNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where seat_id = #{id} and ow_state in (1,3,4,5,8,9) and team_members != #{teamNum}
+    </select>
+
+    <select id="selectBackBillDetailInfoByAddBillInfo"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select * from dg_ow_consumer_details where notes in (4,5) and back_ow_id in
+        <foreach collection="list" item="item" separator="," close=")" open="(">
+            #{item.owId}
+        </foreach>
+    </select>
+
+    <select id="selectOpenwaterByTeamNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where team_members = #{teamMembers} and ow_state not in (-1,7) order by first_time
+    </select>
+
+    <select id="selectClearingWaterByTime"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        <if test="flag == true">
+            select drcw.*,dp.name as clearingPosName,dow.id as openId,CONCAT(concat(dcs.number,'-'),dcs.name) as seatName,DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d %T') as clearingTime,dow.ow_num as owNum
+            from dg_reception_clearing_water drcw
+            left join dg_open_water dow on drcw.id = dow.clearing_water_id
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            <where>
+                clearing_state = 2
+                <if test="queryTime != null and queryTime != ''">
+                    and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d')= #{queryTime,jdbcType=VARCHAR}
+                </if>
+            </where>
+            order by drcw.clearing_time desc
+        </if>
+        <if test="flag == false">
+            select drcw.*,dp.name as clearingPosName,dow.id as openId,CONCAT(concat(dcs.number,'-'),dcs.name) as seatName,DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d %T') as clearingTime,dow.ow_num as owNum
+            from dg_reception_clearing_water_${suffix} drcw
+            left join dg_open_water_${suffix} dow on drcw.id = dow.clearing_water_id
+            left join dg_consumer_seat dcs on dcs.id = dow.seat_id
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            <where>
+                clearing_state = 2
+                <if test="queryTime != null and queryTime != ''">
+                    and DATE_FORMAT(drcw.clearing_time, '%Y-%m-%d')= #{queryTime,jdbcType=VARCHAR}
+                </if>
+            </where>
+            order by drcw.clearing_time desc
+        </if>
+    </select>
+
+    <select id="selectWaterBySeatId" resultType="integer">
+        select count(id) from dg_open_water where seat_id = #{seatId} and transfer_target is null and is_team = 0 and ow_state not in(2,6,7,-1)
+    </select>
+
+    <select id="selectINGOpenWaters"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select dow.*,DG_FU_getSeatName(dow.seat_id) as seatName from dg_open_water dow where ow_state not in (2,6,7,-1) order by dow.seat_id
+    </select>
+
+    <select id="selectYhxx"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwDiscount">
+        select * from dg_ow_discount where cw_id = #{clearingWaterId}
+    </select>
+
+    <select id="selectopenwaterBySeat">
+        select * from dg_open_water where seat_id = #{seatId} and ow_state in (1,3,4,5,8,9)
+    </select>
+
+    <select id="selectOpenWaterBySeatIdAndTeamNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where seat_id = #{seatId} and team_members = #{teamNum} and ow_state in (1,3,4,5,8,9)
+    </select>
+
+
+    <select id="selectOpenWaterByTeamNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where  team_members = #{teamNum} and ow_state in (1,3,4,5,8,9)
+    </select>
+    
+    
+    <select id="selectTransferOpenWaterByOwNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where transfer_target = #{owNum} and ow_state  not in (2,6,7,-1)
+    </select>
+
+    <select id="selectClosedWater" resultType="java.util.Map">
+        select drcw.cw_num as cwNum,cast(drcw.paid_amount as DECIMAL(18,2)) as paidMoney,dow.ow_num as owNum,DATE_FORMAT(drcw.clearing_time,'%Y-%m-%d %H:%i:%s') as clearingTime,DG_FU_getSeatName(dow.seat_id) as seatName
+        from (select * from dg_reception_clearing_water
+        <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+            select * from dg_reception_clearing_water_${suffix}
+        </foreach>
+        )drcw left join (select * from dg_open_water
+            <foreach collection="tableSuffixList" open=" union all" separator=" union all" item="suffix">
+                select * from dg_open_water_${suffix}
+            </foreach>
+        ) dow on drcw.id = dow.clearing_water_id
+        where drcw.clearing_state = 2
+        <if test="beginTime != null">
+            and drcw.clearing_time <![CDATA[>=]]> #{beginTime}
+        </if>
+        <if test="endTime != null">
+            and drcw.clearing_time <![CDATA[<]]> #{endTime}
+        </if>
+        order by
+        <if test="sortType == 1">
+            cw_num
+        </if>
+        <if test="sortType == 2">
+            paidMoney
+        </if>
+        <if test="sortType == 3">
+            ow_num
+        </if>
+        <if test="sortType == 4">
+            clearingTime
+        </if>
+        <if test="sortType == 5">
+            seatName
+        </if>
+    </select>
+
+    <select id="selectOpenWaterClearing"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,dif.standard_price as standardPrice,dift.name as pxdlName,DATE_FORMAT(dosf.service_time,'%Y-%m-%d %H:%i:%s') as firstTime from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6,3,4,5)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+    </select>
+
+    <select id="lockPayingWaters"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        select * from dg_open_water where id in
+        (
+          select id from dg_open_water where ow_num in
+            <foreach collection="list" item="item" separator="," close=")" open="(">
+                #{item.owNum}
+            </foreach>
+        ) and ow_state in (1,3,4,5,8,9) for update
+    </select>
+
+    <select id="selectClearingAllItemFileInfos"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+        dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6,3,4,5)
+        ) and settlement_status = 1  and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+        where dif.delFlag = '0'
+    </select>
+
+    <select id="selectAllItemDataByOwNum"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+      select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+      dif.standard_price as standardPrice from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6,8,4,5)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+      where dif.delFlag = '0'
+
+
+      <!--select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+          SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (4,5)
+        ) and (settlement_status != 1 or settlement_status is null) and (is_tc != -1 or is_tc is null)) docd
+        left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id-->
+    </select>
+
+    <select id="selectClearingWaterById_new"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgReceptionClearingWater">
+        <if test="flag == true">
+            select drcw.*,dp.name as posName from dg_reception_clearing_water drcw
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            where drcw.id = #{clearingWaterId}
+        </if>
+        <if test="flag == false">
+            select drcw.*,dp.name as posName from dg_reception_clearing_water_${suffix} drcw
+            left join dg_pos dp on drcw.clearing_pos = dp.id
+            where drcw.id = #{clearingWaterId}
+        </if>
+    </select>
+
+    <select id="selectClearingWayByCwId_new"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwClearingway">
+        <if test="flag == true">
+            select doc.*,dsw.name as cwName from dg_ow_clearingway doc left join dg_settlement_way dsw
+            on doc.cw_code = dsw.number
+            where cw_id = #{clearingWaterId}
+        </if>
+        <if test="flag == false">
+            select doc.*,dsw.name as cwName from dg_ow_clearingway_${suffix} doc left join dg_settlement_way dsw
+            on doc.cw_code = dsw.number
+            where cw_id = #{clearingWaterId}
+        </if>
+    </select>
+
+    <select id="selectOpenWaterByCwId_new"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOpenWater">
+        <if test="flag == true">
+            select dow.*,dcs.name as seatName,su.emp_name as waiterName from dg_open_water dow
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join sys_user su on dow.waiter = su.id
+            where clearing_water_id = #{clearingWaterId}
+        </if>
+        <if test="flag == false">
+            select dow.*,dcs.name as seatName,su.emp_name as waiterName from dg_open_water_${suffix} dow
+            left join dg_consumer_seat dcs on dow.seat_id = dcs.id
+            left join sys_user su on dow.waiter = su.id
+            where clearing_water_id = #{clearingWaterId}
+        </if>
+    </select>
+
+    <select id="selectClearingAllItemFileInfos_new"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerDetails">
+        <if test="flag == true">
+            select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+            dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details where ow_id in (select id from dg_ow_service_form where ow_id = (
+            SELECT id from dg_open_water where ow_num = #{owNum}) and service_type in (1,2,6,3,4,5)
+            ) and settlement_status = 1  and (is_tc != -1 or is_tc is null)) docd
+            left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form dosf  on docd.ow_id = dosf.id
+            where dif.delFlag = '0'
+        </if>
+        <if test="flag == false">
+            select docd.*,dif.cyzdxf as cyzdxf,dif.name as itemFileName,dif.num as itemFileNum,dif.ppdl_id as pxdlId,dift.coupon_code as couponItemType,
+            dif.standard_price as standardPrice,dift.name as pxdlName from (select * from dg_ow_consumer_details_${suffix} where ow_id in (select id from dg_ow_service_form_${suffix} where ow_id = (
+            SELECT id from dg_open_water_${suffix} where ow_num = #{owNum}) and service_type in (1,2,6,3,4,5)
+            ) and settlement_status = 1  and (is_tc != -1 or is_tc is null)) docd
+            left join dg_item_file dif on docd.item_file_id = dif.id left join dg_item_file_type dift on dif.ppdl_id = dift.id left join dg_ow_service_form_${suffix} dosf  on docd.ow_id = dosf.id
+            where dif.delFlag = '0'
+        </if>
+    </select>
+
+    <select id="selectSettleWayInfoById" resultType="com.yqsh.diningsys.web.model.archive.DgSettlementWay">
+        select * from dg_settlement_way dsw where id = #{wayId}
+    </select>
+
+    <select id="selectOpenClassWaterWithId" resultType="java.util.Map">
+        select * from dg_open_class_water where id = #{id}
+    </select>
+
+    <select id="selectOpenClassWaterHistory" resultType="java.util.Map">
+        select * from dg_open_class_water
+        <where>
+            <if test="posId != null and posId != ''">
+                login_pos = #{posId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and login_user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="time != null and time != ''">
+                and date(end_time) = date(#{time})
+            </if>
+        </where>
+        limit #{startPage},#{pageSize}
+    </select>
+
+    <select id="selectOpenClassWaterHistoryCount" resultType="java.lang.Integer">
+        select count(id) from dg_open_class_water
+        <where>
+            <if test="posId != null and posId != ''">
+                login_pos = #{posId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and login_user_name like concat('%',#{userName},'%')
+            </if>
+            <if test="time != null and time != ''">
+                and date(end_time) = date(#{time})
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPackageBxInfo"
+            resultType="com.yqsh.diningsys.web.model.deskBusiness.currentOpenWater.DgOwConsumerPackageDetails">
+        select docpd.item_file_number,DG_FU_getItemFileName(docpd.item_file_id) as itemFileName from dg_ow_consumer_package_details docpd
+        where docpd.packageId=#{id}
+    </select>
+
+    
+    <update id="reductionPriceForAdd">
+        update dg_ow_consumer_details docd left join
+        dg_item_file dif on docd.item_file_id=dif.id left join
+        dg_ow_service_form dosf on docd.ow_id=dosf.id left join
+        dg_open_water dow on dosf.ow_id=dow.id
+        set docd.item_final_price=dif.standard_price,docd.subtotal=docd.item_final_price*docd.item_file_number
+        where dow.id =#{id} and docd.notes in (1,2,4,5,6,7) and  (docd.is_tc != -1 or docd.is_tc is null)
+    </update>
+
+
+    <update id="reductionPriceForGift">
+        update dg_ow_consumer_details docd left join
+        dg_item_file dif on docd.item_file_id=dif.id left join
+        dg_ow_service_form dosf on docd.ow_id=dosf.id left join
+        dg_open_water dow on dosf.ow_id=dow.id
+        set docd.zs_item_final_price=dif.standard_price,docd.zs_subtotal=docd.item_final_price*docd.item_file_number
+        where dow.id=#{id} and docd.notes=3 and  (docd.is_tc != -1 or docd.is_tc is null)
+    </update>
+
+
+    <update id="updateWaterSubtotal">
+        update dg_open_water set subtotal=#{subtotal},item_costs_sum=#{subtotal} where id=#{id}
+    </update>
+</mapper>

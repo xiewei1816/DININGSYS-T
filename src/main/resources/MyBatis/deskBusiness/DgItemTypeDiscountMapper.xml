@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemTypeDiscountMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dg_num" property="dgNum" jdbcType="VARCHAR" />
+    <result column="dg_id" property="dgId" jdbcType="INTEGER" />
+    <result column="discount" property="discount" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <resultMap id="BaseResultMapQuery" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscountQuery" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dg_num" property="dgNum" jdbcType="VARCHAR" />
+    <result column="dg_id" property="dgId" jdbcType="INTEGER" />
+    <result column="discount" property="discount" jdbcType="INTEGER" />
+    <result column="name" property="dgName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dg_num, dg_id, discount
+  </sql>
+  
+  <sql id="Next_Column_List" >
+    o.id as id, 
+    o.dg_num as dg_num, 
+    o.dg_id as dg_id, 
+    o.discount as discount,
+    t.name as name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_type_discount
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_type_discount
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount" >
+    insert into dg_item_type_discount (id, dg_num, dg_id, 
+      discount)
+    values (#{id,jdbcType=INTEGER}, #{dgNum,jdbcType=VARCHAR}, #{dgId,jdbcType=INTEGER}, 
+      #{discount,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount" >
+    insert into dg_item_type_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="dgNum != null" >
+        dg_num,
+      </if>
+      <if test="dgId != null" >
+        dg_id,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="dgNum != null" >
+        #{dgNum,jdbcType=VARCHAR},
+      </if>
+      <if test="dgId != null" >
+        #{dgId,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount" >
+    update dg_item_type_discount
+    <set >
+      <if test="dgNum != null" >
+        dg_num = #{dgNum,jdbcType=VARCHAR},
+      </if>
+      <if test="dgId != null" >
+        dg_id = #{dgId,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemTypeDiscount" >
+    update dg_item_type_discount
+    set dg_num = #{dgNum,jdbcType=VARCHAR},
+      dg_id = #{dgId,jdbcType=INTEGER},
+      discount = #{discount,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  <select id="getAll" resultMap="BaseResultMapQuery" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_item_type_discount o left join dg_item_file_type t on o.dg_id = t.id
+  </select>
+  
+   <select id="getCountByItemType" resultType="java.lang.Integer">
+    select count(*) from dg_item_type_discount
+    where dg_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="getDiscountByDgId" resultType="java.lang.Integer">
+    select discount from dg_item_type_discount
+    where dg_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+   <!-- 批量修改-->
+   <update id="updateBySrcList" parameterType="java.util.List">
+		<foreach close="" collection="list" index="index" item="item" open="" separator=";">
+			update dg_item_type_discount
+		    <set>
+		      <if test="item.discount != null" >
+		        discount = #{item.discount,jdbcType=INTEGER},
+		      </if>
+		    </set>
+		    where id = #{item.id,jdbcType=INTEGER}
+	    </foreach>
+  </update>
+  
+    <delete id="deleteByGateItemId"  parameterType="java.lang.Integer">
+    delete from dg_item_type_discount
+    where dg_id = #{id,jdbcType=INTEGER}
+  </delete>
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_type_discount 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_type_discount
+	    (
+		    id,dg_num,dg_id,discount
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.dg_num">#{im.dg_num},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.dg_id">#{im.dg_id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.discount">#{im.discount}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

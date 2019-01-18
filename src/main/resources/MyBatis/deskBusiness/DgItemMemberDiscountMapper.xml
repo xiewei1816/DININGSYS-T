@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgItemMemberDiscountMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="explains" property="explains" jdbcType="VARCHAR" />
+    <result column="start_date" property="startDate" jdbcType="DATE" />
+    <result column="end_date" property="endDate" jdbcType="DATE" />
+    <result column="day_start_time" property="dayStartTime" jdbcType="VARCHAR" />
+    <result column="day_end_time" property="dayEndTime" jdbcType="VARCHAR" />
+    <result column="week" property="week" jdbcType="VARCHAR" />
+    <result column="use_all_shop" property="useAllShop" jdbcType="INTEGER" />
+    <result column="affiliation" property="affiliation" jdbcType="VARCHAR" />
+    <result column="publish" property="publish" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="recycle_bin" property="recycleBin" jdbcType="INTEGER" />
+    <result column="level_id" property="levelId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, enable, explains, start_date, end_date, day_start_time, day_end_time, week, 
+    use_all_shop, affiliation, publish, update_time, recycle_bin,level_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_member_discount
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_item_member_discount
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" >
+    insert into dg_item_member_discount (id, name, enable, 
+      explains, start_date, end_date, 
+      day_start_time, day_end_time, week, 
+      use_all_shop, affiliation, publish, 
+      update_time, recycle_bin,level_id)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
+      #{explains,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, 
+      #{dayStartTime,jdbcType=VARCHAR}, #{dayEndTime,jdbcType=VARCHAR}, #{week,jdbcType=VARCHAR}, 
+      #{useAllShop,jdbcType=INTEGER}, #{affiliation,jdbcType=VARCHAR}, #{publish,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{recycleBin,jdbcType=INTEGER}, #{levelId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" >
+    insert into dg_item_member_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="explains != null" >
+        explains,
+      </if>
+      <if test="startDate != null" >
+        start_date,
+      </if>
+      <if test="endDate != null" >
+        end_date,
+      </if>
+      <if test="dayStartTime != null" >
+        day_start_time,
+      </if>
+      <if test="dayEndTime != null" >
+        day_end_time,
+      </if>
+      <if test="week != null" >
+        week,
+      </if>
+      <if test="useAllShop != null" >
+        use_all_shop,
+      </if>
+      <if test="affiliation != null" >
+        affiliation,
+      </if>
+      <if test="publish != null" >
+        publish,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="recycleBin != null" >
+        recycle_bin,
+      </if>
+      <if test="levelId != null" >
+        level_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="explains != null" >
+        #{explains,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        #{endDate,jdbcType=DATE},
+      </if>
+      <if test="dayStartTime != null" >
+        #{dayStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="dayEndTime != null" >
+        #{dayEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="week != null" >
+        #{week,jdbcType=VARCHAR},
+      </if>
+      <if test="useAllShop != null" >
+        #{useAllShop,jdbcType=INTEGER},
+      </if>
+      <if test="affiliation != null" >
+        #{affiliation,jdbcType=VARCHAR},
+      </if>
+      <if test="publish != null" >
+        #{publish,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recycleBin != null" >
+        #{recycleBin,jdbcType=INTEGER},
+      </if>
+      <if test="levelId != null" >
+        #{levelId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" >
+    update dg_item_member_discount
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="explains != null" >
+        explains = #{explains,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null" >
+        start_date = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null" >
+        end_date = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="dayStartTime != null" >
+        day_start_time = #{dayStartTime,jdbcType=VARCHAR},
+      </if>
+      <if test="dayEndTime != null" >
+        day_end_time = #{dayEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="week != null" >
+        week = #{week,jdbcType=VARCHAR},
+      </if>
+      <if test="useAllShop != null" >
+        use_all_shop = #{useAllShop,jdbcType=INTEGER},
+      </if>
+      <if test="affiliation != null" >
+        affiliation = #{affiliation,jdbcType=VARCHAR},
+      </if>
+      <if test="publish != null" >
+        publish = #{publish,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recycleBin != null" >
+        recycle_bin = #{recycleBin,jdbcType=INTEGER},
+      </if>
+       <if test="levelId != null" >
+        level_id = #{levelId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" >
+    update dg_item_member_discount
+    set name = #{name,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=INTEGER},
+      explains = #{explains,jdbcType=VARCHAR},
+      start_date = #{startDate,jdbcType=DATE},
+      end_date = #{endDate,jdbcType=DATE},
+      day_start_time = #{dayStartTime,jdbcType=VARCHAR},
+      day_end_time = #{dayEndTime,jdbcType=VARCHAR},
+      week = #{week,jdbcType=VARCHAR},
+      use_all_shop = #{useAllShop,jdbcType=INTEGER},
+      affiliation = #{affiliation,jdbcType=VARCHAR},
+      publish = #{publish,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      level_id = #{levelId,jdbcType=VARCHAR},
+      recycle_bin = #{recycleBin,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 分页 -->
+  <select id="countAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" resultType="java.lang.Integer">
+    select count(id) from dg_item_member_discount
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+          AND recycle_bin = #{recycleBin,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="getAllData" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_member_discount
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+          AND recycle_bin = #{recycleBin,jdbcType=INTEGER}
+     </where>
+    limit #{startRow},#{endRow}
+  </select>
+  
+  
+  <select id="seleAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_member_discount
+  </select>
+  
+  
+    <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" >
+    insert into dg_item_member_discount (id, name, enable, 
+      explains, start_date, end_date, 
+      day_start_time, day_end_time, week, 
+      use_all_shop, affiliation, publish, 
+      update_time, recycle_bin,level_id)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{enable,jdbcType=INTEGER}, 
+      #{explains,jdbcType=VARCHAR}, #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, 
+      #{dayStartTime,jdbcType=VARCHAR}, #{dayEndTime,jdbcType=VARCHAR}, #{week,jdbcType=VARCHAR}, 
+      #{useAllShop,jdbcType=INTEGER}, #{affiliation,jdbcType=VARCHAR}, #{publish,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{recycleBin,jdbcType=INTEGER}, #{levelId,jdbcType=VARCHAR})
+   </insert>
+  
+  
+  
+      <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_item_member_discount where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+  
+  
+  <update id="update" parameterType="java.lang.Integer" >
+    update dg_item_member_discount
+    set
+      publish = 1 where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateLevelUnPulish" parameterType="java.lang.String" >
+    update dg_item_member_discount
+    set
+      publish = 0 where level_id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="trash" parameterType="list" >
+    update dg_item_member_discount
+    set  recycle_bin = 1
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="restore" parameterType="list" >
+    update dg_item_member_discount
+    set  recycle_bin = 0
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  
+  <select id="reminder" resultType="Map">
+  	select a.id,a.name,TIMESTAMPDIFF(DAY,curdate(),a.end_date) as timeDiff
+  	from dg_item_member_discount a where recycle_bin = 0
+  </select>
+  
+  <select id="selectByItem" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_item_member_discount
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+         <if test="levelId != null and levelId != ''">
+        		AND level_id  = #{levelId,jdbcType=VARCHAR}
+        </if>
+        <if test="publish != null and publish != ''">
+        		AND publish  = #{publish,jdbcType=INTEGER}
+        </if>
+        <if test="enable != null and enable != ''">
+        		AND enable  = #{enable,jdbcType=INTEGER}
+        </if>
+        <if test="searchDate != null and searchDate != ''">
+        		AND  <![CDATA[start_date <= #{searchDate,jdbcType=VARCHAR} and  #{searchDate,jdbcType=VARCHAR} <= end_date]]>
+        </if>
+        <if test="searchTime != null and searchTime != ''">
+        		AND  <![CDATA[day_start_time <= #{searchTime,jdbcType=VARCHAR} and #{searchTime,jdbcType=VARCHAR} <=day_end_time]]>
+        </if>
+          AND recycle_bin = #{recycleBin,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="seleNameCode" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgItemMemberDiscount" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from dg_item_member_discount
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name = #{name}
+        </if>
+        <if test="id != null">
+        		AND id != #{id}
+        </if>
+     </where>
+  </select>
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_item_member_discount 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+        insert into dg_item_member_discount
+        (
+		    id,name,enable,explains,start_date,end_date,day_start_time,
+		    day_end_time,week,use_all_shop,affiliation,publish,update_time,
+		    recycle_bin,level_id
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.name">#{im.name},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.enable">#{im.enable},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.explains">#{im.explains},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.startDate">#{im.startDate},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.endDate">#{im.endDate},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.dayStartTime">#{im.dayStartTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.dayEndTime">#{im.dayEndTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.week">#{im.week},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.useAllShop">#{im.useAllShop},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.affiliation">#{im.affiliation},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.publish">#{im.publish},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.updateTime">#{im.updateTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.recycleBin">#{im.recycleBin},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.levelId">#{im.levelId}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

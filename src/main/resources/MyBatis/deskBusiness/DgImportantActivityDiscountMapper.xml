@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgImportantActivityDiscountMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="organ_id" property="organId" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="DATE" />
+    <result column="end_time" property="endTime" jdbcType="DATE" />
+    <result column="dustbin" property="dustbin" jdbcType="INTEGER" />
+    <result column="enable" property="enable" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="org_name" property="organName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, organ_id, name, start_time, end_time, dustbin, enable, discount
+  </sql>
+  
+  
+  <sql id="Next_Column_List" >
+    i.id as id, 
+    i.organ_id as organ_id, 
+    i.name as name, 
+    i.start_time as start_time, 
+    i.end_time as end_time, 
+    i.dustbin as dustbin, 
+    i.enable as enable, 
+    i.discount as discount,
+    t.org_name as org_name
+  </sql>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_important_activity_discount
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_important_activity_discount
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" >
+    insert into dg_important_activity_discount (id, organ_id, name, 
+      start_time, end_time, dustbin, 
+      enable, discount)
+    values (#{id,jdbcType=INTEGER}, #{organId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=DATE}, #{endTime,jdbcType=DATE}, #{dustbin,jdbcType=INTEGER}, 
+      #{enable,jdbcType=INTEGER}, #{discount,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" >
+    insert into dg_important_activity_discount
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="organId != null" >
+        organ_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="dustbin != null" >
+        dustbin,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="organId != null" >
+        #{organId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=DATE},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=DATE},
+      </if>
+      <if test="dustbin != null" >
+        #{dustbin,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" >
+    update dg_important_activity_discount
+    <set >
+      <if test="organId != null" >
+        organ_id = #{organId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=DATE},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=DATE},
+      </if>
+      <if test="dustbin != null" >
+        dustbin = #{dustbin,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=INTEGER},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" >
+    update dg_important_activity_discount
+    set organ_id = #{organId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=DATE},
+      end_time = #{endTime,jdbcType=DATE},
+      dustbin = #{dustbin,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
+      discount = #{discount,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  
+  <!-- 分页 -->
+  <select id="countAllData" parameterType="DgImportantActivityDiscount" resultType="java.lang.Integer">
+    select count(id) from dg_important_activity_discount
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="organId != null and organId != ''">
+               	AND organ_id = #{organId,jdbcType=INTEGER}
+        </if>
+        AND dustbin = #{dustbin,jdbcType=INTEGER}
+     </where>
+  </select>
+  
+  <select id="getAllData" parameterType="DgImportantActivityDiscount" resultMap="BaseResultMap">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_important_activity_discount i LEFT JOIN t_b_org t on i.organ_id = t.id
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND i.name like CONCAT('%',#{name,jdbcType=VARCHAR},'%' )
+        </if>
+        <if test="organId != null and organId != ''">
+        		AND i.organ_id = #{organId,jdbcType=INTEGER}
+        </if>
+        AND i.dustbin = #{dustbin,jdbcType=INTEGER}
+     </where>
+    limit #{startRow},#{endRow}
+  </select>
+  
+  
+    <select id="seleAll"  resultMap="BaseResultMap">
+    select 
+    <include refid="Next_Column_List" />
+    from dg_important_activity_discount i LEFT JOIN t_b_org t on i.organ_id = t.id
+  </select>
+  
+  
+    <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" >
+    insert into dg_important_activity_discount (id, organ_id, name, 
+      start_time, end_time, dustbin, 
+      enable, discount)
+    values (#{id,jdbcType=INTEGER}, #{organId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=DATE}, #{endTime,jdbcType=DATE}, #{dustbin,jdbcType=INTEGER}, 
+      #{enable,jdbcType=INTEGER}, #{discount,jdbcType=INTEGER})
+  </insert>
+  
+  
+  
+      <!-- 批量删除 -->
+   <delete id="deleteIds" parameterType="list">
+    delete from dg_important_activity_discount where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </delete> 
+
+
+  <update id="trash" parameterType="list" >
+    update dg_important_activity_discount
+    set  dustbin = 1
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="restore" parameterType="list" >
+    update dg_important_activity_discount
+    set  dustbin = 0
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=INTEGER}
+    </foreach>
+  </update>
+  
+  <update id="updateDisable" parameterType="java.lang.Integer" >
+    update dg_important_activity_discount
+    set  enable = 0
+    where id !=  #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="reminder" resultType="Map">
+  	select a.id,a.name,TIMESTAMPDIFF(DAY,curdate(),a.end_time) as timeDiff
+  	from dg_important_activity_discount a where dustbin = 0
+  </select>
+  
+  <select id="seleNameCode" parameterType="com.yqsh.diningsys.web.model.deskBusiness.DgImportantActivityDiscount" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from dg_important_activity_discount
+    <where>
+  	    <if test="name != null and name != ''">
+        		AND name = #{name}
+        </if>
+        <if test="id != null">
+        		AND id != #{id}
+        </if>
+     </where>
+  </select>
+  
+  <!-- 物理删除所有数据 -->
+	<delete id="delPhy">
+		DELETE FROM dg_important_activity_discount 
+	</delete>
+	<!-- 批量插入 -->
+	<insert id="insertBatch" parameterType="java.util.List" >
+	
+        insert into dg_important_activity_discount
+	    (
+		    id,organ_id,name,start_time,end_time,dustbin,enable,discount
+	    )values
+    	<foreach collection="listObj" item="im" index="index" separator=",">
+    		(
+    			<choose>
+    				<when test="im.id!=null">#{im.id},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.organId">#{im.organId},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.name">#{im.name},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.startTime">#{im.startTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.endTime">#{im.endTime},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.dustbin">#{im.dustbin},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.enable">#{im.enable},</when>
+    				<otherwise>NULL,</otherwise>
+    			</choose>
+    			<choose>
+    				<when test="null!=im.discount">#{im.discount}</when>
+    				<otherwise>NULL</otherwise>
+    			</choose>
+    		)
+    	</foreach>
+  </insert>
+</mapper>

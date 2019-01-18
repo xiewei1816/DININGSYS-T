@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysOrganMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysOrgan" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="organ_name" property="organName" jdbcType="VARCHAR" />
+    <result column="organ_code" property="organCode" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="orderno" property="orderno" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, organ_name, organ_code, parent_id, description, orderno
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select s.*,o.organ_name as parentName from (
+      select
+      <include refid="Base_Column_List"/>
+      from sys_organ
+      where id = #{id,jdbcType=INTEGER}
+      ) s left join sys_organ o on s.parent_id = o.id
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from sys_organ
+    where id = #{id,jdbcType=INTEGER}
+    <if test="ids != null">
+      or id in
+      <foreach collection="ids" item="idd" separator="," open="(" close=")">
+        #{idd,jdbcType=INTEGER}
+      </foreach>
+    </if>
+  </delete>
+
+  <select id="selectDeleteIdByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select c.id from (
+       select * from sys_organ where FIND_IN_SET(id, queryChildrenMenu(#{id,jdbcType=INTEGER}))
+    ) c
+  </select>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysOrgan" >
+    insert into sys_organ (id, organ_name, organ_code, 
+      parent_id, description,orderno)
+    values (#{id,jdbcType=INTEGER}, #{organName,jdbcType=VARCHAR}, #{organCode,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, #{orderno,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.SysOrgan" >
+    insert into sys_organ
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="organName != null" >
+        organ_name,
+      </if>
+      <if test="organCode != null" >
+        organ_code,
+      </if>
+      <if test="parentId != null" >
+        parent_id,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="orderno != null" >
+        orderno
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="organName != null" >
+        #{organName,jdbcType=VARCHAR},
+      </if>
+      <if test="organCode != null" >
+        #{organCode,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="orderno != null" >
+        #{orderno,jdbcType=INTEGER}
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysOrgan" >
+    update sys_organ
+    <set >
+      <if test="organName != null" >
+        organ_name = #{organName,jdbcType=VARCHAR},
+      </if>
+      <if test="organCode != null" >
+        organ_code = #{organCode,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="orderno != null" >
+        orderno = #{orderno,jdbcType=INTEGER}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysOrgan" >
+    update sys_organ
+    set organ_name = #{organName,jdbcType=VARCHAR},
+      organ_code = #{organCode,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      orderno = #{orderno,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllSysOrgan" resultType="com.yqsh.diningsys.web.model.SysOrgan">
+    select  * from (
+      select *,id px,cast(id as nvarchar(4000)) px2 from sys_organ where parent_id=0
+      union all
+      select a.*,b.px,b.px2+ltrim(a.id) from sys_organ a join organ b on a.parent_id=b.id
+    ) organ order by px,px2
+  </select>
+
+  <select id="getNextMaxOrderNo" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select max(orderno) as orderno from sys_organ where parent_id = #{id,jdbcType=INTEGER}
+  </select>
+</mapper>

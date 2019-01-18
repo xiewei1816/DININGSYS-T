@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yqsh.diningsys.web.dao.inve.DgDepaMaterialMapper">
+<resultMap type="com.yqsh.diningsys.web.model.inve.DgDepaMaterial"
+		   id="DgDepaMaterial">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="mateType" column="mateType" jdbcType="VARCHAR"/>
+        <result property="inveId" column="inveId" jdbcType="VARCHAR"/>
+        <result property="wareID" column="wareID" jdbcType="VARCHAR"/>
+        <result property="serialNumber" column="serialNumber" jdbcType="VARCHAR"/>
+        <result property="depaId" column="depaId" jdbcType="VARCHAR"/>
+        <result property="sinceNumber" column="sinceNumber" jdbcType="VARCHAR"/>
+        <result property="dateTime" column="dateTime" jdbcType="VARCHAR"/>
+        <result property="itemId" column="itemId" jdbcType="VARCHAR"/>
+        <result property="itemName" column="itemName" jdbcType="VARCHAR"/>
+        <result property="unit" column="unit" jdbcType="VARCHAR"/>
+        <result property="origPrice" column="origPrice" jdbcType="DECIMAL"/>
+        <result property="presPrice" column="presPrice" jdbcType="DECIMAL"/>
+        <result property="number" column="number" jdbcType="DECIMAL"/>
+        <result property="sumAmount" column="sumAmount" jdbcType="DECIMAL"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="operUser" column="operUser" jdbcType="VARCHAR"/>
+        <result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_InveItems_Column" >
+    	id, mateType, inveId, wareID, serialNumber, depaId, sinceNumber, dateTime, itemId, 
+    	itemName, unit, origPrice,presPrice,number,sumAmount,remark,operUser,createDate 
+  </sql>
+  <sql id="Base_InveItems_Column_Alias" >
+    	A.id, A.mateType, A.inveId, A.wareID, A.serialNumber, A.depaId, A.sinceNumber, A.dateTime, A.itemId, 
+    	A.itemName, A.unit, A.origPrice,A.presPrice,A.number,A.sumAmount,A.remark,A.operUser,A.createDate, 
+    	B.wareName,C.itemName AS joinItemName,D.dep_name 
+  </sql>
+	 <insert id="insert" parameterType="DgDepaMaterial">
+	    insert into dg_inve_depaMaterial
+	    (
+	    id,mateType,inveId,wareID,
+	    serialNumber,depaId,sinceNumber,dateTime,
+	    itemId,itemName,unit,origPrice,
+	    presPrice,number,sumAmount,remark,
+	    operUser,createDate
+	    )
+	    values(
+	    #{id},#{mateType},#{inveId},#{wareID},
+	    #{serialNumber},#{depaId},#{sinceNumber},#{dateTime},
+	    #{itemId},#{itemName},#{unit},#{origPrice},
+	    #{presPrice},#{number},#{sumAmount},#{remark},
+	    #{operUser},#{createDate}
+	    )
+	</insert>
+	<!-- 带参分页查询 -->
+	<select id="getPageList" resultType="map" parameterType="DgDepaMaterial">
+		SELECT <include refid="Base_InveItems_Column_Alias"/> 
+		FROM 
+		(
+			SELECT <include refid="Base_InveItems_Column"/> FROM dg_inve_depaMaterial
+			WHERE 1=1 
+			<if test="itemName!=null and itemName!=''">
+				AND itemName like  concat('%',#{itemName},'%')
+			</if>
+			<if test="wareID!=null and wareID!=''">
+			    AND wareID=#{wareID}
+			</if>
+			<if test="mateType!=null and mateType!=''">
+			    AND mateType=#{mateType}
+			</if>
+			<if test="depaId!=null and depaId!=''">
+			    AND depaId=#{depaId}
+			</if>
+			<if test="crStartTime != null and crStartTime != '' and crEndTime != null and crEndTime != '' ">
+        	   	    AND dateTime BETWEEN #{crStartTime} AND #{crEndTime}
+        	</if>
+		)A
+		left join (SELECT id,wareName FROM dg_inve_warehouse) B ON A.wareID=B.id 
+		left join (SELECT id,itemName FROM dg_inve_items) C ON A.itemId=C.id
+		left join (SELECT id,dep_name FROM t_b_dep) D ON A.depaId=D.id
+		ORDER BY createDate DESC limit #{startRow},#{endRow}
+	</select>
+	<!-- 查询分页相关东西 -->
+	<select id="countListByPage" resultType="java.lang.Integer" parameterType="DgDepaMaterial">
+	  	 SELECT
+	  	 	 count(0)
+	  	 from (
+	  	 	SELECT id,wareID,itemId,depaId FROM dg_inve_depaMaterial
+	  	 	<where>
+	        <if test="itemName!=null and itemName!=''">
+			    AND itemName like concat('%',#{itemName},'%')
+			</if>
+			<if test="wareID!=null and wareID!=''">
+			    AND wareID=#{wareID}
+			</if>
+			<if test="mateType!=null and mateType!=''">
+			    AND mateType=#{mateType}
+			</if>
+			<if test="depaId!=null and depaId!=''">
+			    AND depaId=#{depaId}
+			</if>
+			<if test="crStartTime != null and crStartTime != '' and crEndTime != null and crEndTime != '' ">
+        	   	    AND dateTime BETWEEN #{crStartTime} AND #{crEndTime}
+        	</if>
+	      </where>
+	  	 )A
+	      left join (SELECT id,wareName FROM dg_inve_warehouse) B ON A.wareID=B.id 
+		  left join (SELECT id,itemName FROM dg_inve_items) C ON A.itemId=C.id
+		  left join (SELECT id,dep_name FROM t_b_dep) D ON A.depaId=D.id
+    </select>
+	<select id="get" parameterType="string" resultType="DgDepaMaterial">
+	    SELECT * from dg_inve_depaMaterial where id = #{id}
+	</select>
+	<!-- 根据条件排序查询一条数据 -->
+    <select id="findLastOne" resultType="DgDepaMaterial" parameterType="DgDepaMaterial">
+    	SELECT <include refid="Base_InveItems_Column"/>
+    	FROM dg_inve_depaMaterial
+    	<where>
+    		<if test="mateType!=null and mateType!=''">
+				AND mateType=#{mateType}
+			</if>
+			<if test="dateTime!=null and dateTime!=''">
+				AND dateTime=#{dateTime}
+			</if>
+    	</where>
+    	ORDER BY createDate DESC limit 1
+    </select>
+</mapper>

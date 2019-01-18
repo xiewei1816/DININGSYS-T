@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbRfctMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbRfct" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="rfct_code" property="rfctCode" jdbcType="VARCHAR" />
+    <result column="rfct_name" property="rfctName" jdbcType="VARCHAR" />
+    <result column="rfct_organization" property="rfctOrganization" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+    <result column="is_default_flag" property="isDefaultFlag" jdbcType="VARCHAR" />
+     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,rfct_code,rfct_name,rfct_organization,is_del,is_default_flag,create_time,update_time
+  </sql> 
+  <sql id="selectCols">
+		o.id AS "id",
+		o.rfct_code AS "rfctCode",
+		o.rfct_name AS "rfctName",
+		b.org_name AS "rfctOrganization",
+		o.is_del AS "isDel",
+		o.is_default_flag AS "isDefaultFlag",
+		o.create_time AS "createTime",
+		o.update_time AS "updateTime"
+	</sql>
+	<!-- 分页查询退菜原因类型信息 -->
+  <select id="getListByPage" resultType="TbRfct" parameterType="TbRfct">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from t_b_rfct o
+  	 left join t_b_org b on b.id = o.rfct_organization
+  	 <where>
+        <if test="rfctCode != null and rfctCode != ''">
+          and o.rfct_code like '%${rfctCode}%'
+        </if>
+        <if test="rfctName != null and rfctName != ''">
+         and o.rfct_name like '%${rfctName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = '${isDel}'
+        </if>
+      </where>
+      <choose>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+		limit #{startRow},#{endRow}	
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="TbRfct">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_rfct o
+  	 left join t_b_org b on b.id = o.rfct_organization
+  	 <where>
+        <if test="rfctCode != null and rfctCode != ''">
+          and o.rfct_code like '%${rfctCode}%'
+        </if>
+        <if test="rfctName != null and rfctName != ''">
+         and o.rfct_name like '%${rfctName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = '${isDel}'
+        </if>
+      </where>
+  </select>
+  <!-- 通过退菜原因类型ID查询退菜原因类型信息 -->
+  <select id="getRfctById" parameterType="TbRfct" resultType="TbRfct">
+		SELECT 
+	  		<include refid="Base_Column_List"></include>
+		from t_b_rfct where id = #{id}
+	</select>
+	<select id="getLastRfctCode" parameterType="TbRfct" resultType="TbRfct">
+		select * from t_b_rfct order by rfct_code desc limit 0,1
+	</select>
+	<!-- 添加退菜原因类型信息 -->
+	<insert id="newInsert" parameterType="TbRfct">
+  	insert into t_b_rfct(
+		rfct_code,
+		rfct_name,
+		rfct_organization,
+		is_default_flag,
+		create_time,
+		update_time
+  	) values (
+  		#{rfctCode},
+  		#{rfctName},
+		#{rfctOrganization},
+		#{isDefaultFlag},
+		#{createTime},
+		#{updateTime}
+  	)
+  </insert>
+  <!-- 根据退菜原因类型ID修改退菜原因类型信息 -->
+  <update id="update" parameterType="TbRfct">
+  	update t_b_rfct set 
+  		rfct_code = #{rfctCode},
+		rfct_name = #{rfctName},
+		rfct_organization = #{rfctOrganization},
+		is_default_flag = #{isDefaultFlag},
+		update_time = #{updateTime}
+	where id = #{id}
+  </update>
+  <!-- 退菜原因类型信息回收站 -->
+  <update id="deleteTrash" parameterType="TbRfct">
+	update t_b_rfct set is_del = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 还原回收站退菜原因类型信息 -->
+  <update id="replyRfct" parameterType="TbRfct">
+	update t_b_rfct set is_del = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 删除退菜原因类型信息 -->
+  <delete id="delete" parameterType="TbRfct">
+	delete from t_b_rfct where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	<!-- 获取所有退菜原因类型信息 -->
+	<select id="getAllList" parameterType="TbRfct" resultType="TbRfct">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from t_b_rfct o
+  		 left join t_b_org b on b.id = o.rfct_organization
+	  	 <where>
+	        <if test="rfctCode != null and rfctCode != ''">
+	          and o.rfct_code like '%${rfctCode}%'
+	        </if>
+	        <if test="rfctName != null and rfctName != ''">
+	         and o.rfct_name like '%${rfctName}%'
+	        </if>
+	        <if test="isDel != null and isDel != ''">
+	         and o.is_del = '${isDel}'
+	        </if>
+	      </where>
+	      <choose>
+	      	<otherwise>
+	      		order by o.create_time desc
+	      	</otherwise>
+	     </choose>
+	</select>
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.TbFydjMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.TbFydj" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fydj_name" property="fydjName" jdbcType="VARCHAR" />
+    <result column="fydj_type" property="fydjType" jdbcType="VARCHAR" />
+    <result column="fydj_expend" property="fydjExpend" jdbcType="DOUBLE" />
+    <result column="fydj_earning" property="fydjEarning" jdbcType="DOUBLE" />
+    <result column="fydj_time" property="fydjTime" jdbcType="TIMESTAMP" />
+    <result column="fydj_organization" property="fydjOrganization" jdbcType="VARCHAR" />
+    <result column="fydj_abstract" property="fydjAbstract" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="startTime" property="startTime" jdbcType="VARCHAR" />
+    <result column="endTime" property="endTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,fydj_name,fydj_type,fydj_expend,fydj_earning,fydj_time,fydj_organization,fydj_abstract,create_time
+  </sql> 
+  <sql id="selectCols">
+		o.id AS "id",
+		c.fyxm_name AS "fydjName",
+		o.fydj_type AS "fydjType",
+		o.fydj_expend AS "fydjExpend",
+		o.fydj_earning AS "fydjEarning",
+		o.fydj_time AS "fydjTime",
+		b.org_name AS "fydjOrganization",
+		o.fydj_abstract AS "fydjAbstract",
+		o.create_time AS "createTime"
+	</sql>
+	<!-- 分页查询费用登记信息 -->
+  <select id="getListByPage" resultType="TbFydj" parameterType="map">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from t_b_fydj o
+  	 left join t_b_org b on b.id = o.fydj_organization
+  	 left join t_b_fyxm c on c.id = o.fydj_name
+  	 <where>
+        <if test="startTime != null and startTime != ''">
+          and o.fydj_time &gt; #{startTime,jdbcType=VARCHAR}
+        </if>
+        <if test="endTime != null and endTime != ''">
+          and o.fydj_time &lt; #{endTime,jdbcType=VARCHAR}
+        </if>
+      </where>
+      <choose>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+		limit #{startRow},#{endRow}	
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="Integer" parameterType="TbFydj">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_fydj o
+  	 left join t_b_org b on b.id = o.fydj_organization
+  	 left join t_b_fyxm c on c.id = o.fydj_name
+  	 <where>
+        <if test="startTime != null and startTime != ''">
+          and o.fydj_time &gt; '${startTime}'
+        </if>
+        <if test="endTime != null and endTime != ''">
+          and o.fydj_time &lt; '${endTime}'
+        </if>
+      </where>
+  </select>
+  <!-- 通过费用登记ID查询费用登记信息 -->
+  <select id="getFydjById" parameterType="TbFydj" resultType="TbFydj">
+		SELECT 
+	  	<include refid="Base_Column_List"></include>
+		from t_b_fydj o where o.id = #{id}
+	</select>
+	<!-- 添加费用登记信息 -->
+  <insert id="newInsert" parameterType="TbFydj">
+  	insert into t_b_fydj(
+		fydj_name,
+		fydj_type,
+		fydj_expend,
+		fydj_earning,
+		fydj_time,
+		fydj_organization,
+		fydj_abstract,
+		create_time
+  	) values (
+  		#{fydjName},
+  		#{fydjType},
+  		#{fydjExpend},
+  		#{fydjEarning},
+  		#{fydjTime},
+		#{fydjOrganization},
+  		#{fydjAbstract},
+  		#{createTime}
+  	)
+  </insert>
+  <!-- 根据费用登记ID修改费用登记信息 -->
+  <update id="update" parameterType="TbFydj">
+  	update t_b_fydj set 
+		fydj_name = #{fydjName},
+		fydj_type = #{fydjType},
+  		fydj_expend = #{fydjExpend},
+  		fydj_earning = #{fydjEarning},
+  		fydj_time = #{fydjTime},
+		fydj_organization = #{fydjOrganization},
+		fydj_abstract = #{fydjAbstract}
+	where id = #{id}
+  </update>
+	<!-- 获取所有费用登记信息 -->
+	<select id="getAllList" parameterType="TbFydj" resultType="TbFydj">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from t_b_fydj o
+  		 left join t_b_org b on b.id = o.fydj_organization
+  		 left join t_b_fyxm c on c.id = o.fydj_name
+	      <choose>
+	      	<otherwise>
+	      		order by o.create_time desc
+	      	</otherwise>
+	     </choose>
+	</select>
+</mapper>

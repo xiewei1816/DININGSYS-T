@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.deskBusiness.DgNonMemberCreditMapper" >
+	<sql id="selectCols">
+		o.id AS "id",
+		o.memberId AS "memberId",
+		o.documentNo AS "documentNo",
+		o.documentType AS "documentType",
+		o.aymentAmount AS "aymentAmount",
+		o.creditAmount AS "creditAmount",
+		o.paidAmount AS "paidAmount",
+		o.discountAmount AS "discountAmount",
+		o.paymentTime AS "paymentTime",
+		o.operatorId AS "operatorId",
+		o.settlementFlowNum AS "settlementFlowNum",
+		o.explains AS "explains",
+		o.createTime AS "createTime",
+		o.createUserid AS "createUserid",
+		o.delFlag AS "delFlag",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName",
+		nm.id AS "nonMember.id",
+		nm.name AS "nonMember.name",
+		be.id AS "operator.id",
+		be.emp_name AS "operator.empName"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.createUserid
+		left join dg_non_member nm on nm.id = o.memberId
+		left join sys_user be on be.id = o.operatorId
+	</sql>
+	
+	<sql id="queryCriteria">
+		and o.delFlag = 0
+        <if test="memberId != null and memberId != 0">
+          and o.memberId = #{memberId}
+        </if>
+        <if test="payStartTime != null and payStartTime != '' and payEndTime != null and payEndTime != '' ">
+         and o.paymentTime between #{payStartTime} and #{payEndTime}
+        </if>
+        <if test="crStartTime != null and crStartTime != '' and crEndTime != null and crEndTime != '' ">
+         and o.createTime between #{crStartTime} and #{crEndTime}
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="DgNonMemberCredit" parameterType="DgNonMemberCredit">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_non_member_credit o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.createTime desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgNonMemberCredit">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_non_member_credit o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getDgNonMemberCreditByID" parameterType="DgNonMemberCredit" resultType="DgNonMemberCredit">
+		select 
+			<include refid="selectCols"></include>
+		from dg_non_member_credit o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="DgNonMemberCredit" resultType="DgNonMemberCredit">
+		select 
+			<include refid="selectCols"></include>
+		from dg_non_member_credit o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.createTime desc
+	</select>
+  
+  <insert id="newInsert" parameterType="DgNonMemberCredit">
+  	insert into dg_non_member_credit(
+		memberId,
+		documentNo,
+		documentType,
+		aymentAmount,
+		creditAmount,
+		paidAmount,
+		discountAmount,
+		paymentTime,
+		operatorId,
+		settlementFlowNum,
+		explains,
+		createTime,
+		createUserid,
+		delFlag
+  	) values (
+  		#{memberId},
+		#{documentNo},
+		#{documentType},
+		#{aymentAmount},
+		#{creditAmount},
+		#{paidAmount},
+		#{discountAmount},
+		#{paymentTime},
+		#{operatorId},
+		#{settlementFlowNum},
+		#{explains},
+		#{createTime},
+		#{createUserid},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="DgNonMemberCredit">
+  	update dg_non_member_credit set 
+		memberId = #{memberId},
+		documentNo = #{documentNo},
+		documentType = #{documentType},
+		aymentAmount = #{aymentAmount},
+		creditAmount = #{creditAmount},
+		paidAmount = #{paidAmount},
+		discountAmount = #{discountAmount},
+		paymentTime = #{paymentTime},
+		operatorId = #{operatorId},
+		settlementFlowNum = #{settlementFlowNum},
+		explains = #{explains}
+	where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="DgNonMemberCredit">
+	update dg_non_member_credit set delFlag = 1 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+</mapper>

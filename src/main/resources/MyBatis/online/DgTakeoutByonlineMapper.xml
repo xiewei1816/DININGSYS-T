@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.online.DgTakeoutByonlineMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="createTime" property="createtime" jdbcType="VARCHAR" />
+    <result column="finishTime" property="finishtime" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="contactUser" property="contactuser" jdbcType="VARCHAR" />
+    <result column="contactTel" property="contacttel" jdbcType="VARCHAR" />
+    <result column="contactAddress" property="contactaddress" jdbcType="VARCHAR" />
+    <result column="orderDetails" property="orderdetails" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" extends="BaseResultMap" >
+    <result column="orderDetails" property="orderdetails" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, note, status, createTime, finishTime, amount, 
+    contactUser, contactTel, contactAddress,orderDetails
+  </sql>
+  <sql id="Blob_Column_List" >
+    orderDetails
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dg_takeout_byonline
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from dg_takeout_byonline
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" >
+    insert into dg_takeout_byonline (id, note, 
+      status, createTime, 
+      finishTime, amount, contactUser, contactTel, 
+      contactAddress, orderDetails
+      )
+    values (#{id,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{createtime,jdbcType=VARCHAR}, 
+      #{finishtime,jdbcType=VARCHAR},#{amount,jdbcType=DECIMAL}, 
+      #{contactuser,jdbcType=VARCHAR}, #{contacttel,jdbcType=VARCHAR}, 
+      #{contactaddress,jdbcType=VARCHAR}, #{orderdetails,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" >
+    insert into dg_takeout_byonline
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+      <if test="finishtime != null" >
+        finishTime,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="contactuser != null" >
+        contactUser,
+      </if>
+      <if test="contacttel != null" >
+        contactTel,
+      </if>
+      <if test="contactaddress != null" >
+        contactAddress,
+      </if>
+      <if test="orderdetails != null" >
+        orderDetails,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=VARCHAR},
+      </if>
+      <if test="finishtime != null" >
+        #{finishtime,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="contactuser != null" >
+        #{contactuser,jdbcType=VARCHAR},
+      </if>
+      <if test="contacttel != null" >
+        #{contacttel,jdbcType=VARCHAR},
+      </if>
+      <if test="contactaddress != null" >
+        #{contactaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="orderdetails != null" >
+        #{orderdetails,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" >
+    update dg_takeout_byonline
+    <set >
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=VARCHAR},
+      </if>
+      <if test="finishtime != null" >
+        finishTime = #{finishtime,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="contactuser != null" >
+        contactUser = #{contactuser,jdbcType=VARCHAR},
+      </if>
+      <if test="contacttel != null" >
+        contactTel = #{contacttel,jdbcType=VARCHAR},
+      </if>
+      <if test="contactaddress != null" >
+        contactAddress = #{contactaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="orderdetails != null" >
+        orderDetails = #{orderdetails,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" >
+    update dg_takeout_byonline
+    set 
+      note = #{note,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=VARCHAR},
+      finishTime = #{finishtime,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      contactUser = #{contactuser,jdbcType=VARCHAR},
+      contactTel = #{contacttel,jdbcType=VARCHAR},
+      contactAddress = #{contactaddress,jdbcType=VARCHAR},
+      orderDetails = #{orderdetails,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.online.DgTakeoutByonline" >
+    update dg_takeout_byonline
+    set
+      note = #{note,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=VARCHAR},
+      finishTime = #{finishtime,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      contactUser = #{contactuser,jdbcType=VARCHAR},
+      contactTel = #{contacttel,jdbcType=VARCHAR},
+      contactAddress = #{contactaddress,jdbcType=VARCHAR},
+      orderDetails = #{orderdetails,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertOrEdit_takeout_online" parameterType="list">
+        INSERT INTO dg_takeout_byonline
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+           #{item.id}, #{item.note}, 
+	      #{item.status}, #{item.createTime}, 
+	      #{item.finishTime}, #{item.amount}, 
+	      #{item.contactUser}, #{item.contactTel}, #{item.contactAddress}, #{item.orderDetails}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),note=values(note),
+        contactUser=VALUES(contactUser),contactTel=values(contactTel),
+        contactAddress=values(contactAddress),orderDetails=values(orderDetails)
+  </insert>
+  
+  <select id="selectTop20" resultType="com.yqsh.diningsys.web.model.online.DgTakeoutByonline">
+    select 
+    <include refid="Base_Column_List" />
+    from dg_takeout_byonline 
+    where status = 30 limit 20 
+  </select>
+  
+  <update id="updateIds" parameterType="list" >
+    update  dg_takeout_byonline 
+    set status = 50 
+    where id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+</mapper>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.TbBisMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.archive.TbBis" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="bis_name" property="bisName" jdbcType="VARCHAR" />
+    <result column="bis_time" property="bisTime" jdbcType="VARCHAR" />
+    <result column="bis_organization" property="bisOrganization" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, bis_name, bis_time, bis_organization, is_del, create_time
+  </sql> 
+    <sql id="selectCols">
+		o.id AS "id",
+		o.bis_name AS "bisName",
+		o.bis_time AS "bisTime",
+		b.org_name AS "bisOrganization",
+		o.is_del AS "isDel",
+		o.create_time AS "createTime"
+	</sql>
+	<!-- 分页查询营业市别信息 -->
+  <select id="getListByPage" resultType="TbBis" parameterType="TbBis">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from t_b_bis o
+  	 left join t_b_org b on b.id = o.bis_organization
+  	 <where>
+        <if test="bisName != null and bisName != ''">
+         and o.bis_name like '%${bisName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+         and o.is_del = #{isDel}
+        </if>
+      </where>
+      <choose>
+      	<otherwise>
+      		order by o.create_time desc
+      	</otherwise>
+      </choose>
+		limit #{startRow},#{endRow}	
+  </select>
+  <!-- 提供查询页码 -->
+  <select id="countListByPage" resultType="integer" parameterType="TbBis">
+  	 SELECT
+  	 	 count(0)
+  	 from t_b_bis o
+  	 <where>
+        <if test="bisName != null and bisName != ''">
+         and o.bis_name like '%${bisName}%'
+        </if>
+        <if test="isDel != null and isDel != ''">
+          and o.is_del = #{isDel}
+        </if>
+      </where>
+  </select>
+  <!-- 通过营业市别ID查询营业市别信息 -->
+  <select id="getBisByID" parameterType="TbBis" resultType="TbBis">
+		select 
+			<include refid="Base_Column_List"></include>
+		from t_b_bis  
+		where id = #{id}
+	</select>
+	<!-- 添加营业市别信息 -->
+	<insert id="newInsert" parameterType="TbBis">
+  	insert into t_b_bis(
+		bis_name, 
+		bis_time,
+		bis_organization,
+		create_time
+  	) values (
+		#{bisName},
+		#{bisTime},
+		#{bisOrganization},
+		#{createTime}
+  	)
+  </insert>
+  <!-- 根据营业市别ID修改营业市别信息 -->
+  <update id="update" parameterType="TbBis">
+  	update t_b_bis set 
+		bis_name = #{bisName},
+		bis_time = #{bisTime},
+		bis_organization = #{bisOrganization}
+	where id = #{id}
+  </update>
+  <!-- 营业市别信息回收站 -->
+  <update id="deleteTrash" parameterType="TbBis">
+	update t_b_bis set is_del = '1' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 还原回收站营业市别信息 -->
+  <update id="replyBis" parameterType="TbBis">
+	update t_b_bis set is_del = '0' where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</update>
+  <!-- 删除营业市别信息 -->
+  <delete id="delete" parameterType="TbBis">
+	delete from t_b_bis where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+	<!-- 获取所有营业市别信息 -->
+	<select id="getAllList" parameterType="TbBis" resultType="TbBis">
+		SELECT 
+  		<include refid="selectCols"></include>
+  		 from t_b_bis o
+  		 left join t_b_org b on b.id = o.bis_organization
+	  	 <where>
+			 is_del = '0'
+	        <if test="id != null and id != ''">
+	         and o.id = #{id}
+	        </if>
+	        <if test="bisName != null and bisName != ''">
+	         and o.bis_name like '%${bisName}%'
+	        </if>
+	      </where>
+		order by o.create_time desc
+	</select>
+
+	<select id="selectAllBis" resultType="TbBis">
+		select * from t_b_bis where is_del = '0' order by bis_time
+	</select>
+
+	<select id="calculateSJD" resultType="integer" parameterType="map">
+		select count(*)  from t_b_bis where  #{nowTime } between #{startTime}  and  #{endTime}
+	</select>
+
+    <select id="selectHasSameTimeAndOrg" resultType="com.yqsh.diningsys.web.model.archive.TbBis" parameterType="TbBis">
+		select * from t_b_bis where bis_time = #{bisTime} and bis_organization = #{bisOrganization} and id not in (#{id})
+	</select>
+
+	<select id="selectHasSameNameAndOrg" resultType="com.yqsh.diningsys.web.model.archive.TbBis" parameterType="TbBis">
+		select * from t_b_bis where bis_name = #{bisName} and bis_organization = #{bisOrganization} and id not in (#{id})
+	</select>
+	<!-- 根据当前营业时间获取下一个营业节点时间 -->
+	<select id="getNextBisTime" parameterType="String" resultType="String">
+		select min(bis_time) from t_b_bis where bis_time > #{bisTime} and is_del = '0'
+	</select>
+	<!-- 获取最小营业时间 -->
+	<select id="getMinBisTime" resultType="String">
+		select min(bis_time) from t_b_bis where is_del = '0'
+	</select>
+	
+</mapper>

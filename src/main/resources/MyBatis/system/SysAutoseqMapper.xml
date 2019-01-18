@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.SysAutoseqMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.SysAutoseq" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="rownum" property="rownum" jdbcType="INTEGER" />
+    <result column="currentnum" property="currentnum" jdbcType="INTEGER" />
+    <result column="hasparent" property="hasparent" jdbcType="INTEGER" />
+    <result column="parent" property="parent" jdbcType="VARCHAR" />
+    <result column="head" property="head" jdbcType="VARCHAR" />
+    <result column="hashead" property="hashead" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, rownum, currentnum, hasparent, parent, head, hashead,type
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_autoseq
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getSeqByType" resultMap="BaseResultMap" parameterType="String" >
+    select *
+    from sys_autoseq
+    where type = #{type}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_autoseq
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteSeqByType" parameterType="String" >
+    delete from sys_autoseq
+    where type = #{type}
+  </delete>
+  
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.SysAutoseq" >
+    insert into sys_autoseq (ID, rownum, currentnum, 
+      hasparent, parent, head, 
+      hashead,type)
+    values (#{id,jdbcType=INTEGER}, #{rownum,jdbcType=INTEGER}, #{currentnum,jdbcType=INTEGER}, 
+      #{hasparent,jdbcType=INTEGER}, #{parent,jdbcType=VARCHAR}, #{head,jdbcType=VARCHAR}, 
+      #{hashead,jdbcType=INTEGER},#{type,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.SysAutoseq" >
+    insert into sys_autoseq
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="rownum != null" >
+        rownum,
+      </if>
+      <if test="currentnum != null" >
+        currentnum,
+      </if>
+      <if test="hasparent != null" >
+        hasparent,
+      </if>
+      <if test="parent != null" >
+        parent,
+      </if>
+      <if test="head != null" >
+        head,
+      </if>
+      <if test="hashead != null" >
+        hashead,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="rownum != null" >
+        #{rownum,jdbcType=INTEGER},
+      </if>
+      <if test="currentnum != null" >
+        #{currentnum,jdbcType=INTEGER},
+      </if>
+      <if test="hasparent != null" >
+        #{hasparent,jdbcType=INTEGER},
+      </if>
+      <if test="parent != null" >
+        #{parent,jdbcType=VARCHAR},
+      </if>
+      <if test="head != null" >
+        #{head,jdbcType=VARCHAR},
+      </if>
+      <if test="hashead != null" >
+        #{hashead,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.SysAutoseq" >
+    update sys_autoseq
+    <set >
+      <if test="rownum != null" >
+        rownum = #{rownum,jdbcType=INTEGER},
+      </if>
+      <if test="currentnum != null" >
+        currentnum = #{currentnum,jdbcType=INTEGER},
+      </if>
+      <if test="hasparent != null" >
+        hasparent = #{hasparent,jdbcType=INTEGER},
+      </if>
+      <if test="parent != null" >
+        parent = #{parent,jdbcType=VARCHAR},
+      </if>
+      <if test="head != null" >
+        head = #{head,jdbcType=VARCHAR},
+      </if>
+      <if test="hashead != null" >
+        hashead = #{hashead,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.SysAutoseq" >
+    update sys_autoseq
+    set rownum = #{rownum,jdbcType=INTEGER},
+      currentnum = #{currentnum,jdbcType=INTEGER},
+      hasparent = #{hasparent,jdbcType=INTEGER},
+      parent = #{parent,jdbcType=VARCHAR},
+      head = #{head,jdbcType=VARCHAR},
+      hashead = #{hashead,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

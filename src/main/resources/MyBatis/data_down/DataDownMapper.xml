@@ -1,0 +1,1374 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.data_down.DataDownMapper">
+
+    <insert id="insertOrUpdareSCZT" parameterType="list">
+        INSERT INTO dg_serving
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.scode}, #{item.sname}, #{item.mnemonic},1,#{item.createTime},#{item.delFlag},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),scode = values(scode),sname=values(sname),
+        mnemonic=VALUES(mnemonic),create_time=values(create_time),
+        delFlag=values(delFlag),uuid_key=VALUES(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_YGGL" parameterType="list">
+        INSERT INTO sys_user
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.password}, #{item.state}, #{item.empCode},#{item.empName},
+            1,#{item.empDepartment},#{item.empDuties},
+            #{item.empDob},#{item.empCardno},#{item.empSex},
+            #{item.isMarry},#{item.empCardid},#{item.sqhNo1},
+            #{item.sqhNo2},#{item.isOrguserFlag},#{item.isManagerFlag},
+            #{item.isStartFlag},#{item.natives},#{item.place},
+            #{item.phone},#{item.email},#{item.height},
+            #{item.nation},#{item.mobile},#{item.address},
+            #{item.photo},#{item.isDel},#{item.createTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),state=values(state),
+        emp_code=VALUES(emp_code),emp_name=values(emp_name),emp_organization=1,
+        emp_department=values(emp_department),emp_duties=VALUES(emp_duties),emp_dob=values(emp_dob),
+        emp_cardno=values(emp_cardno),emp_sex=VALUES(emp_sex),is_marry=values(is_marry),
+        emp_cardid=values(emp_cardid),sqh_no1=VALUES(sqh_no1),sqh_no2=values(sqh_no2),
+        is_orguser_flag=values(is_orguser_flag),is_manager_flag=VALUES(is_manager_flag),is_start_flag=values(is_start_flag),
+        natives=values(natives),place=VALUES(place),phone=values(phone),
+        email=values(email),height=VALUES(height),nation=values(nation),
+        mobile=values(mobile),address=VALUES(address),photo=values(photo),
+        is_del=values(is_del),create_time=VALUES(create_time),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_ZDYY" parameterType="list">
+        delete from dg_gift_form where uuid_key not in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.uuidKey}
+        </foreach>;
+        INSERT INTO dg_gift_form
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.gfcode}, #{item.gfname}, #{item.gfreason},#{item.createTime},#{item.gfdescription},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),gfcode = values(gfcode),gfname=values(gfname),
+        gfreason=VALUES(gfreason),create_time=values(create_time),gfdescription=values(gfdescription),
+        uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_ZDYYLX" parameterType="list">
+        delete from dg_gift_form_reason where uuid_key not in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.uuidKey}
+        </foreach>;
+        INSERT INTO dg_gift_form_reason
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.gfcode}, #{item.gfrtype}, #{item.createTime},#{item.updateTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),gfcode = values(gfcode),gfrtype=values(gfrtype),
+        create_time=VALUES(create_time),update_time=values(update_time),
+        uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_BMGL" parameterType="list">
+        INSERT INTO t_b_dep
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.depCode}, #{item.depName}, #{item.depSjm},#{item.depDepartment},#{item.useType},#{item.depOrganization},#{item.isDel},#{item.createTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),dep_code = values(dep_code),dep_name=values(dep_name),
+        dep_sjm=VALUES(dep_sjm),dep_department=values(dep_department),
+        use_type=VALUES(use_type),dep_organization=values(dep_organization),
+        is_del=VALUES(is_del),create_time=values(create_time),
+        uuid_key=VALUES(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_YYSB" parameterType="list">
+        INSERT INTO t_b_bis
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.bisName}, #{item.bisTime}, #{item.bisOrganization},#{item.isDel},#{item.createTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE id = values(id),bis_name = values(bis_name),bis_time=values(bis_time),
+        bis_organization=VALUES(bis_organization),is_del=values(is_del),
+        create_time=VALUES(create_time),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_TCYY" parameterType="list">
+        delete from t_b_rfc where uuid_key not in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.uuidKey}
+        </foreach>;
+        INSERT INTO t_b_rfc
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.rfcCode}, #{item.rfcName}, #{item.rfcType}, #{item.rfcZjf},
+            #{item.rfcExplain},#{item.isMaterialLoss},#{item.isTdsgqpx},
+            #{item.isDel},#{item.createTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),rfc_code = values(rfc_code),rfc_name=values(rfc_name),
+        rfc_type=VALUES(rfc_type),rfc_zjf=values(rfc_zjf),
+        rfc_explain=VALUES(rfc_explain),is_material_loss=values(is_material_loss),
+        is_tdsgqpx=VALUES(is_tdsgqpx),is_del=values(is_del),
+        create_time=VALUES(create_time),uuid_key=values(uuid_key)
+    </insert>
+    
+    <insert id="insertOrEdit_TCYYT" parameterType="list">
+        delete from t_b_rfct where uuid_key not in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.uuidKey}
+        </foreach>;
+        INSERT INTO t_b_rfct
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.rfctCode}, #{item.rfctName}, 1, #{item.isDel},
+            #{item.isDefaultFlag},#{item.createTime},#{item.updateTime},
+            #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),rfct_code = values(rfct_code),rfct_name=values(rfct_name),
+        rfct_organization=VALUES(rfct_organization),is_del=values(is_del),
+        is_default_flag=VALUES(is_default_flag),create_time=values(create_time),
+        update_time=VALUES(update_time),uuid_key=values(uuid_key)
+    </insert>
+
+
+    <insert id="insertOrEdit_ZDBB" parameterType="list">
+        INSERT INTO t_b_zdbz
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.zdbzNum}, #{item.orderRemark}, #{item.zdbzOrganization},
+            #{item.isDel},#{item.createTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),zdbz_num = values(zdbz_num),order_remark=values(order_remark),
+        zdbz_organization=VALUES(zdbz_organization),is_del=values(is_del),
+        create_time=VALUES(create_time),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_FYXM" parameterType="list">
+        INSERT INTO t_b_fyxm
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.fyxmNum}, #{item.fyxmName}, #{item.fyxmType},
+            #{item.fyxmOrganization},#{item.isDel},#{item.createTime},#{item.updateTime},
+            #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),fyxm_num = values(fyxm_num),fyxm_name=values(fyxm_name),
+        fyxm_type=VALUES(fyxm_type),fyxm_organization=values(fyxm_organization),
+        is_del=VALUES(is_del),create_time=VALUES(create_time),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_FYXMLX" parameterType="list">
+        INSERT INTO t_b_fylx
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.fylxNum}, #{item.fylxName}, #{item.fylxOrganization},
+            #{item.isDel},#{item.createTime},#{item.updateTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),fylx_num = values(fylx_num),fylx_name=values(fylx_name),
+        fylx_organization=VALUES(fylx_organization),is_del=values(is_del),
+        create_time=VALUES(create_time),update_time=values(update_time),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_POSDA" parameterType="list">
+        INSERT INTO dg_pos
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.number}, #{item.name}, #{item.ipArea},
+            #{item.consumerAreas},#{item.mnemonic},1,#{item.createTime},
+            #{item.createUser.id},#{item.delFlag},#{item.uuidKey},#{item.canJb}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),number = values(number),name=values(name),
+        ip_area=VALUES(ip_area),consumer_areas=values(consumer_areas),
+        mnemonic=VALUES(mnemonic),organization=values(organization),create_time=values(create_time),
+        create_user=VALUES(create_user),del_flag=values(del_flag),uuid_key=values(uuid_key),canJb=values(canJb)
+    </insert>
+
+    <insert id="insertOrEdit_JSFS" parameterType="list">
+        INSERT INTO dg_settlement_way(id, number, name, type, exchangeRate, shortcutKey, rollFaceValue, createTime, explains, actualIncomeRatio, notActualIncomeRatio, isDisabled, isCommon, isKeepSystem, isMustInformation, isAloneUse, isCurrency, isAllowChange, delFlag, createUserid, uuid_key, dklx, qyxdksz)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.number}, #{item.name}, #{item.type},
+            #{item.exchangeRate},#{item.shortcutKey},#{item.rollFaceValue},#{item.createTime},
+            #{item.explains},#{item.actualIncomeRatio},#{item.notActualIncomeRatio},
+            #{item.isDisabled},#{item.isCommon},#{item.isKeepSystem},
+            #{item.isMustInformation},#{item.isAloneUse},#{item.isCurrency},
+            #{item.isAllowChange},#{item.delFlag},#{item.createUserid},
+            #{item.uuidKey},#{item.dklx},#{item.qyxdksz}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),number = values(number),name=values(name),
+        type=VALUES(type),exchangeRate=values(exchangeRate),
+        shortcutKey=VALUES(shortcutKey),rollFaceValue=values(rollFaceValue),createTime=values(createTime),
+        explains=VALUES(explains),actualIncomeRatio=values(actualIncomeRatio),notActualIncomeRatio=values(notActualIncomeRatio),
+        isDisabled=VALUES(isDisabled),isCommon=values(isCommon),isKeepSystem=values(isKeepSystem),
+        isMustInformation=VALUES(isMustInformation),isAloneUse=values(isAloneUse),isCurrency=values(isCurrency),
+        isAllowChange=VALUES(isAllowChange),delFlag=values(delFlag),createUserid=values(createUserid),
+        uuid_key=VALUES(uuid_key),dklx=values(dklx),qyxdksz=values(qyxdksz)
+    </insert>
+
+    <insert id="insertOrEdit_ZZFF" parameterType="list">
+    	delete from dg_pro_methods;
+        INSERT INTO dg_pro_methods
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.pmcode}, #{item.pmname}, #{item.pmmnemonic},
+            #{item.pmtid},#{item.orderno},#{item.dept},#{item.collectProMoney},
+            #{item.proMoney},#{item.collectProMoneybynum},#{item.canUpdate},
+            #{item.description},#{item.organid},#{item.createTime},
+            #{item.delflag},#{item.isSpecialMethods},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),pmcode = values(pmcode),pmname=values(pmname),
+        pmmnemonic=VALUES(pmmnemonic),pmtid=values(pmtid),
+        orderno=VALUES(orderno),dept=values(dept),collect_pro_money=values(collect_pro_money),
+        pro_money=VALUES(pro_money),collect_pro_moneybynum=values(collect_pro_moneybynum),can_update=values(can_update),
+        description=VALUES(description),organid=values(organid),create_time=values(create_time),
+        delFlag=VALUES(delFlag),is_special_methods=values(is_special_methods),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_ZZFFLX" parameterType="list">
+        INSERT INTO dg_pro_methods_type
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.pmtname}, #{item.pmtorder}, #{item.organid},
+            #{item.createTime},#{item.delFlag},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),pmtname = values(pmtname),pmtorder=values(pmtorder),
+        organid=VALUES(organid),create_time=values(create_time),
+        del_flag=VALUES(del_flag),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_KWYQ">
+    	delete from dg_flavor;
+        INSERT INTO dg_flavor
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.number}, #{item.zjf}, #{item.name},
+            #{item.px},#{item.parentid},#{item.createtime},#{item.isonly},
+            #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),number = values(number),zjf=values(zjf),
+        name=VALUES(name),px=values(px),
+        parentid=VALUES(parentid),createtime=values(createtime),isonly=values(isonly),
+        uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_FYDJ">
+        INSERT INTO t_b_fydj
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.fydjName}, #{item.fydjType}, #{item.fydjExpend},
+            #{item.fydjEarning},#{item.fydjTime},1,#{item.fydjAbstract},
+            #{item.createTime},#{item.startTime},#{item.endTime},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),fydj_name = values(fydj_name),fydj_type=values(fydj_type),
+        fydj_expend=VALUES(fydj_expend),fydj_earning=values(fydj_earning),fydj_time=VALUES(fydj_time),
+        fydj_organization=VALUES(fydj_organization),fydj_abstract=values(fydj_abstract),create_time=values(create_time),
+        start_time=values(start_time),end_time=VALUES(end_time),uuid_key=VALUES(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_SFPXXSSZ">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_show_rank where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_show_rank
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.pxId}, #{item.isShow}, #{item.isRank},
+	            #{item.pxlx},#{item.rank},#{item.createTime},#{item.updateTime},
+	            #{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),px_id = values(px_id),is_show=values(is_show),
+	        is_rank=VALUES(is_rank),pxlx=values(pxlx),rank=VALUES(rank),
+	        create_time=VALUES(create_time),update_time=values(update_time),uuid_key=values(uuid_key);
+    	</if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_show_rank
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_FWYFWKW">
+    	<if test="list.size() > 0">
+	    	delete from dg_service_class where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_service_class
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.eatTimeId}, #{item.seatId}, #{item.waiterId},
+	            #{item.createTime},#{item.createUserid},#{item.delFlag},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),eatTimeId = values(eatTimeId),seatId=values(seatId),
+	        waiterId=VALUES(waiterId),createTime=values(createTime),createUserid=VALUES(createUserid),
+	        delFlag=VALUES(delFlag),uuid_key=values(uuid_key)
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_service_class
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_QTYYSZ">
+    	<if test="list.size() > 0">
+	    	delete from desk_business_setting where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO desk_business_setting
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.seatServ}, #{item.billServ}, #{item.printerSetting},
+	            #{item.serialRul},#{item.loungeSetting},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),seatServ = values(seatServ),billServ=values(billServ),
+	        printerSetting=VALUES(printerSetting),serialRul=values(serialRul),loungeSetting=VALUES(loungeSetting),
+	        uuid_key=VALUES(uuid_key)
+        </if>
+    	<if test="list.size() == 0">
+    		delete from desk_business_setting
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_XFQYYKWGL_AREALIMITITEM">
+    	<if test="list.size() > 0">
+	    	delete from dg_area_limit_item where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_area_limit_item
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.areaId}, #{item.itemId}, #{item.itemCode}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),area_id = values(area_id),item_id=values(item_id),
+	        item_code=VALUES(item_code)
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_area_limit_item
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_XFQYYKWGL_AREAMANAGER">
+        INSERT INTO dg_area_manager
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.sjDiscount}, #{item.cxDiscount}, #{item.bjDiscount},
+            #{item.bffDiscount}, #{item.fwfDiscount}, #{item.zdxfDiscount}, #{item.bffFree},
+            #{item.bffTimeFree}, #{item.bffSurplusRemind}, #{item.areaId}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),sj_discount = values(sj_discount),cx_discount=values(cx_discount),
+        bj_discount = values(bj_discount),bff_discount = values(bff_discount),fwf_discount=values(fwf_discount),
+        zdxf_discount = values(zdxf_discount),bff_free = values(bff_free),bff_time_free=values(bff_time_free),
+        bff_surplus_remind = values(bff_surplus_remind),area_id = values(area_id)
+    </insert>
+
+    <insert id="insertOrEdit_XFQYYKWGL_SEATMANAGER">
+        INSERT INTO dg_seat_manager
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.zdxf}, #{item.zdxfType}, #{item.zdxfMoney},
+            #{item.fwf}, #{item.fwfType}, #{item.fwfGd}, #{item.fwfXfRatio},
+            #{item.fwfConFree}, #{item.fwfSx}, #{item.fwfPeople},
+            #{item.qssc}, #{item.qsscTx}, #{item.bff},
+            #{item.bffGd}, #{item.bffPeople}, #{item.bffGdPro},
+            #{item.bffWeekPro}, #{item.bffItemId}, #{item.bffConFree},
+            #{item.bffTiming}, #{item.seatId}, #{item.bffWeekProD}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),zdxf = values(zdxf),zdxf_type=values(zdxf_type),
+        zdxf_money = values(zdxf_money),fwf = values(fwf),fwf_type=values(fwf_type),
+        fwf_gd = values(fwf_gd),fwf_xf_ratio = values(fwf_xf_ratio),fwf_con_free=values(fwf_con_free),
+        fwf_sx = values(fwf_sx),fwf_people = values(fwf_people),qssc=values(qssc),
+        qssc_tx = values(qssc_tx),bff = values(bff),bff_gd=values(bff_gd),
+        bff_people = values(bff_people),bff_gd_pro = values(bff_gd_pro),bff_week_pro=values(bff_week_pro),
+        bff_item_id = values(bff_item_id),bff_con_free = values(bff_con_free),bff_timing=values(bff_timing),
+        seat_id = values(seat_id),bff_week_pro_d = values(bff_week_pro_d)
+    </insert>
+
+    <insert id="insertOrEdit_XFQYYKWGL_SEATCHARGINSCHEMS">
+        INSERT INTO dg_seat_charging_scheme
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.code}, #{item.name}, #{item.type},
+            #{item.typeMinVal}, #{item.typeHourVal}, #{item.amountUpLim}, #{item.tLongLowLim},
+            #{item.qySsdsf}, #{item.ssdsfMin}, #{item.ssdsfMoney},
+            #{item.trash}, #{item.time},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),code = values(code),name=values(name),
+        type = values(type),type_min_val = values(type_min_val),type_hour_val=values(type_hour_val),
+        amount_up_lim = values(amount_up_lim),t_long_low_lim = values(t_long_low_lim),qy_ssdsf=values(qy_ssdsf),
+        ssdsf_min = values(ssdsf_min),ssdsf_money = values(ssdsf_money),trash=values(trash),
+        time = values(time),uuid_key = values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_XFQYYKWGL_SEATCHARGINSCEMES2">
+        INSERT INTO dg_seat_charging_scheme_s
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.pId}, #{item.tLong}, #{item.money},
+            #{item.sd}, #{item.discount}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),p_id = values(p_id),t_long=values(t_long),
+        money = values(money),sd = values(sd),discount=values(discount)
+    </insert>
+
+    <insert id="insertOrEdit_QXGL_OVERVIEW">
+        INSERT INTO sys_per_overview
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.zwCode}, #{item.qxsfysz}, #{item.state},
+            #{item.freeType}, #{item.chargebackType},#{item.variablePriceType},
+            #{item.freeMaxPrice}, #{item.freeTotalMoney},#{item.freeTemporary},
+            #{item.chargebackTemporary},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),zw_code = values(zw_code),qxsfysz=values(qxsfysz),
+        state = values(state),free_type = values(free_type),chargeback_type=values(chargeback_type),
+        variablePrice_type = values(variablePrice_type),free_max_price = values(free_max_price),free_total_money=values(free_total_money),
+        free_temporary = values(free_temporary),chargeback_temporary = values(chargeback_temporary),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_QXGL_BUSINESS">
+        INSERT INTO sys_per_business
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.yqQx}, #{item.pdPx}, #{item.xykQx},
+            #{item.zpQx}, #{item.qQx},#{item.hygzQx},
+            #{item.fhygzQx}, #{item.zwzQx},#{item.qtOneQx},
+            #{item.qtTwoQx}, #{item.wbjsfs},#{item.hykQx},
+            #{item.scewmzfQx}, #{item.ewmzfhxQx},#{item.ghkwQx},
+            #{item.ggrsQx}, #{item.jsrsQx},#{item.ghkzQx},
+            #{item.xgthtcQx}, #{item.xgslQx},#{item.dpztQx},
+            #{item.qyhydzQx}, #{item.zzQx},#{item.cxzzQx},
+            #{item.czQx}, #{item.jrtdQx},#{item.tctdQx},
+            #{item.cxmdQx}, #{item.fwjsQx},#{item.fkxzQx},
+            #{item.bkfpQx}, #{item.xgyjzdQx},#{item.yxslwfQx},
+            #{item.qxhcQx}, #{item.dfpkssbdsjQx},#{item.jdxglspxQx},
+            #{item.btpdQx}, #{item.jsQx},#{item.ysqQx},
+            #{item.ckdqyyqkQx}, #{item.yjdjQx},#{item.pxxlQx},
+            #{item.qhfpkQx}, #{item.ghcmpposQx},#{item.jdbcdQx},
+            #{item.tdbcdQx},#{item.tcxtQx},
+            #{item.yxjdQx}, #{item.jbQx},#{item.yhcpxdtdQx},
+            #{item.xsqtzkdhhmQx}, #{item.zxydQx},#{item.sdzsyddQx},
+            #{item.lxyztgqQx}, #{item.spQx},#{item.zwCode},#{item.tdQx},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),yq_qx = values(yq_qx),pd_px=values(pd_px),
+        xyk_qx = values(xyk_qx),zp_qx = values(zp_qx),q_qx=values(q_qx),
+        hygz_qx = values(hygz_qx),fhygz_qx = values(fhygz_qx),zwz_qx=values(zwz_qx),
+        qt_one_qx = values(qt_one_qx),qt_two_qx = values(qt_two_qx),wbjsfs=values(wbjsfs),
+        hyk_qx = values(hyk_qx),scewmzf_qx = values(scewmzf_qx),ewmzfhx_qx=values(ewmzfhx_qx),
+        ghkw_qx = values(ghkw_qx),ggrs_qx = values(ggrs_qx),jsrs_qx=values(jsrs_qx),
+        ghkz_qx = values(ghkz_qx),xgthtc_qx = values(xgthtc_qx),xgsl_qx=values(xgsl_qx),
+        dpzt_qx = values(dpzt_qx),qyhydz_qx = values(qyhydz_qx),zz_qx=values(zz_qx),
+        cxzz_qx = values(cxzz_qx),cz_qx = values(cz_qx),jrtd_qx=values(jrtd_qx),
+        tctd_qx = values(tctd_qx),cxmd_qx = values(cxmd_qx),fwjs_qx=values(fwjs_qx),
+        fkxz_qx = values(fkxz_qx),bkfp_qx = values(bkfp_qx),xgyjzd_qx=values(xgyjzd_qx),
+        yxslwf_qx = values(yxslwf_qx),qxhc_qx = values(qxhc_qx),dfpkssbdsj_qx=values(dfpkssbdsj_qx),
+        jdxglspx_qx = values(jdxglspx_qx),btpd_qx = values(btpd_qx),js_qx=values(js_qx),
+        ysq_qx = values(ysq_qx),ckdqyyqk_qx = values(ckdqyyqk_qx),yjdj_qx=values(yjdj_qx),
+        pxxl_qx = values(pxxl_qx),qhfpk_qx = values(qhfpk_qx),ghcmppos_qx=values(ghcmppos_qx),
+        jdbcd_qx = values(jdbcd_qx),tdbcd_qx = values(tdbcd_qx),tcxt_qx=values(tcxt_qx),
+        yxjd_qx = values(yxjd_qx),jb_qx = values(jb_qx),yhcpxdtd_qx=values(yhcpxdtd_qx),
+        xsqtzkdhhm_qx = values(xsqtzkdhhm_qx),zxyd_qx = values(zxyd_qx),sdzsydd_qx=values(sdzsydd_qx),
+        lxyztgq_qx = values(lxyztgq_qx),sp_qx = values(sp_qx),zw_code=values(zw_code),
+        td_qx = values(td_qx),uuid_key = values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_QXGL_DISCOUNTS">
+        INSERT INTO sys_per_discount
+        VALUES
+          <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.cgyhzdbl}, #{item.qdblyhzdbl}, #{item.deyh},
+            #{item.mddeyhOne}, #{item.mddeyhTwo},#{item.pcceqx},
+            #{item.mdpccexzOne}, #{item.mdpccexzTwo},#{item.yqzged},
+            #{item.yqzgednum}, #{item.mfwf},#{item.xglbyh},
+            #{item.mbff}, #{item.gbff},#{item.xgdpyh},
+            #{item.mzdxf}, #{item.gfwf},#{item.zq},
+            #{item.xgzqje}, #{item.zwCode},#{item.deyhType},
+            #{item.pcceType}, #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),cgyhzdbl = values(cgyhzdbl),qdblyhzdbl=values(qdblyhzdbl),
+        deyh = values(deyh),mddeyh_one = values(mddeyh_one),mddeyh_two=values(mddeyh_two),
+        pcceqx = values(pcceqx),mdpccexz_one = values(mdpccexz_one),mdpccexz_two=values(mdpccexz_two),
+        yqzged = values(yqzged),yqzgednum = values(yqzgednum),mfwf=values(mfwf),
+        xglbyh = values(xglbyh),mbff = values(mbff),gbff=values(gbff),
+        xgdpyh = values(xgdpyh),mzdxf = values(mzdxf),gfwf=values(gfwf),
+        zq = values(zq),xgzqje = values(xgzqje),zw_code=values(zw_code),
+        deyh_type = values(deyh_type),pcce_type = values(pcce_type),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_QXGL_ITEMFILES">
+        INSERT INTO sys_per_itemfile
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.itemFileId}, #{item.zwCode}, #{item.type},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        item_file_id = values(item_file_id),zw_code = values(zw_code),type=values(type),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_QXGL_ITEMFILETYPES">
+        INSERT INTO sys_per_itemfiletype
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.pxxlId}, #{item.zwCode}, #{item.type},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        pxxl_id = values(pxxl_id),zw_code = values(zw_code),type=values(type),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_QXGL_ROLEMENU">
+        delete from sys_role_menu where uuid_key not in
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            #{item.uuidKey}
+        </foreach>;
+        INSERT INTO sys_role_menu
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.roleCode}, #{item.menuId},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        role_code = values(role_code),menu_id = values(menu_id),uuid_key=values(uuid_key);
+    </insert>
+
+    <insert id="insertOrEdit_GGDM">
+        INSERT INTO dg_public_code0
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.cCode}, #{item.cName},#{item.cKeyWD},
+            #{item.cParent}, #{item.cOrder}, #{item.iSystem},#{item.iDelFlg},
+            #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),cCode = values(cCode),cName=values(cName),cKeyWD=values(cKeyWD),
+        cParent = values(cParent),cOrder = values(cOrder),iSystem=values(iSystem),iDelFlg=values(iDelFlg),
+        uuid_key = values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_BASE">
+        INSERT INTO dg_item_file
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.num}, #{item.zjf},#{item.name},#{item.unit},#{item.ppdlId},
+            #{item.ppxlId},#{item.xxlxId}, #{item.pxld}, #{item.jbiao},#{item.dyfz},#{item.yybf},
+            #{item.zxddsl},#{item.standardPrice},#{item.costPrice}, #{item.ywmc}, #{item.qtmc},#{item.gg},
+            #{item.sptm},#{item.sm},#{item.bzzzsc},#{item.cs}, #{item.tssjdOne}, #{item.tssjdTwo},
+            #{item.isTc},#{item.tcywhpxxl},#{item.gjjefssl},#{item.jsqtsxgsl},#{item.cyzdxf}, #{item.rfidCard},
+            #{item.lspx},#{item.yxdz},#{item.zyzfids},#{item.ggzyzfids},#{item.pxdt},#{item.pxxt},
+            #{item.yyxgids}, #{item.pxxtsm},#{item.createTime},#{item.updateTime},#{item.pxdtFile},#{item.pxxtFile},
+            #{item.delFlag}, #{item.yxe}, #{item.uuidKey},#{item.pxxtFileOl},#{item.pxdtFileOl},
+            #{item.sfwm},#{item.showCt},#{item.colorGate}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),num = values(num),zjf=values(zjf),name=values(name),unit = values(unit),ppdl_id = values(ppdl_id),
+        ppxl_id=values(ppxl_id),xxlx_id=values(xxlx_id),pxld = values(pxld),jbiao = values(jbiao),dyfz=values(dyfz),yybf=values(yybf),
+        zxddsl = values(zxddsl),standard_price = values(standard_price),cost_price=values(cost_price),ywmc=values(ywmc),qtmc = values(qtmc),gg = values(gg),
+        sptm=values(sptm),sm=values(sm),bzzzsc = values(bzzzsc),cs = values(cs),tssjd_one=values(tssjd_one),tssjd_two=values(tssjd_two),
+        is_tc = values(is_tc),tcywhpxxl = values(tcywhpxxl),gjjefssl=values(gjjefssl),jsqtsxgsl=values(jsqtsxgsl),cyzdxf = values(cyzdxf),rfid_card = values(rfid_card),
+        lspx=values(lspx),yxdz=values(yxdz),zyzfids = values(zyzfids),ggzyzfids = values(ggzyzfids),pxdt=values(pxdt),pxxt=values(pxxt),
+        yyxgids = values(yyxgids),pxxtsm = values(pxxtsm),create_time=values(create_time),update_time=values(update_time),pxdt_file = values(pxdt_file),pxxt_file = values(pxxt_file),
+        delFlag=values(delFlag),yxe=values(yxe),uuid_key = values(uuid_key),pxxt_file_ol = values(pxxt_file_ol),pxdt_file_ol = values(pxdt_file_ol),
+        sfwm = values(sfwm),show_ct = values(show_ct),color_gate = values(color_gate)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_TC">
+        INSERT INTO dg_item_file_package
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.itemFileId}, #{item.packageType},#{item.packageBanquet},
+            #{item.packageSum}, #{item.packageAmountSum}, #{item.packageStandardpriceSum},#{item.packageStandardpriceSumNum},
+            #{item.itemFileAddprice}, #{item.canupdateItemNum}, #{item.minNum},#{item.maxNum}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),item_file_id = values(item_file_id),package_type=values(package_type),package_banquet=values(package_banquet),
+        package_sum = values(package_sum),package_amount_sum = values(package_amount_sum),package_standardPrice_sum=values(package_standardPrice_sum),package_standardPrice_sum_num=values(package_standardPrice_sum_num),
+        item_file_addPrice = values(item_file_addPrice),canupdate_item_num = values(canupdate_item_num),min_num=values(min_num),max_num=values(max_num)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_TC_BX">
+        INSERT INTO dg_item_file_package
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.packageId}, #{item.itemFileId},#{item.itemAmount},
+            #{item.itemPrice}, #{item.itemAmountPrice}, #{item.itemAddprice},#{item.addpriceNum}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),package_id = values(package_id),item_file_id=values(item_file_id),item_amount=values(item_amount),
+        item_price = values(item_price),item_amount_price = values(item_amount_price),item_addPrice=values(item_addPrice),addPrice_num=values(addPrice_num)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_YS">
+        INSERT INTO dg_item_file_color(name,id,del_flag)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.name}, #{item.id},#{item.delFlag}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        name = values(name),id = values(id),del_flag=values(del_flag)
+    </insert>
+    
+    <insert id="insertOrEdit_PXDA_TC_KX">
+        INSERT INTO dg_item_file_package_kx
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.packageId}, #{item.itemFileId},#{item.itemAmount},
+            #{item.itemAddprice}, #{item.addpriceNum}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),package_id = values(package_id),item_file_id=values(item_file_id),item_amount=values(item_amount),
+        item_addPrice = values(item_addPrice),addPrice_num = values(addPrice_num)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_TC_SLXD">
+        INSERT INTO dg_item_file_package_slxd
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.packageId}, #{item.itemFileTypeId},#{item.maxNum}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),package_id = values(package_id),item_file_type_id=values(item_file_type_id),max_num=values(max_num)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_TC_TH">
+        INSERT INTO dg_item_file_package_th
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.packageId}, #{item.bxItemFileId},#{item.itemFileId},#{item.itemAmout},#{item.itemReplaceprice},
+            #{item.addpriceNum}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),package_id = values(package_id),bx_item_file_id=values(bx_item_file_id),item_file_id=values(item_file_id),
+        item_amout = values(item_amout),item_replacePrice = values(item_replacePrice),addPrice_num=values(addPrice_num)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_TYPE">
+        INSERT INTO dg_item_file_type
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.num}, #{item.name},#{item.zjf},#{item.pp},#{item.description},
+            #{item.qyzzfflbxd}, #{item.qyzzfflbids}, #{item.updateTime},#{item.createTime},#{item.pId},#{item.defaultSczt},
+            #{item.operator}, #{item.delFlag}, #{item.couponCode},#{item.yxe},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),num = values(num),name=values(name),zjf=values(zjf),
+        pp = values(pp),description = values(description),qyzzfflbxd=values(qyzzfflbxd),
+        qyzzfflbids = values(qyzzfflbids),update_time = values(update_time),create_time=values(create_time),
+        parent_id = values(parent_id),default_sczt = values(default_sczt),operator=values(operator),
+        del_flag = values(del_flag),coupon_code = values(coupon_code),yxe=values(yxe),uuid_key=values(uuid_key)
+    </insert>
+    <insert id="insertOrEdit_PXDA_ZCCF">
+        INSERT INTO dg_item_file_zccf
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.inveItemId}, #{item.itemId},#{item.counter}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),inve_item_id = values(inve_item_id),item_id=values(item_id),counter=values(counter)
+    </insert>
+
+    <insert id="insertOrEdit_PXDA_YY">
+        INSERT INTO dg_nutrition
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.code}, #{item.name},#{item.bzsrl},
+            #{item.unit}, #{item.zjf}, #{item.createTime},#{item.updateTime},
+            #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),code = values(code),name=values(name),bzsrl=values(bzsrl),
+        unit = values(unit),zjf = values(zjf),create_time=values(create_time),update_time=values(update_time),
+        uuid_key = values(uuid_key)
+    </insert>
+
+	<!-- ********************************** by xiewei ************************************************** -->
+    <insert id="insertOrEdit_PXGQ">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_outof_stock where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_outof_stock
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemCode},#{item.itemId},#{item.mType},#{item.mBis},#{item.date},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_code = values(item_code),item_id = values(item_id),
+	        m_type = values(m_type),m_bis = values(m_bis),date = values(date),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_outof_stock
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXXLZB">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_sale_limit where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_sale_limit
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.today},#{item.type},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),today = values(today),type = values(type),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_sale_limit
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXXLFB">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_sale_limit_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_sale_limit_s
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},#{item.saleCount},#{item.reservationCount},
+	            #{item.frontSaleCount},#{item.limitId}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code = values(item_code),
+	        sale_count = values(sale_count),reservation_count = values(reservation_count),front_sale_count = values(front_sale_count),
+	        limit_id = values(limit_id);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_sale_limit_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXTY">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_disable where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_disable
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},#{item.type},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code = values(item_code),type = values(type),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_disable
+    	</if>
+    </insert>
+
+	<insert id="insertOrEdit_TJCP">
+		<if test="list.size() > 0">
+	    	delete from dg_recommend_item where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_recommend_item
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_recommend_item
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_ZXCP">
+    	<if test="list.size() > 0">
+	    	delete from dg_newest_item where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_newest_item
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.item_id},#{item.uuid_key}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_newest_item
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXCPBMZB">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_pro_dep where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_pro_dep
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code = values(item_code),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_pro_dep
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXCPBMFB">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_pro_dep_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_pro_dep_s
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.placeId},#{item.proDepId},#{item.itemId},#{item.depId}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),place_id = values(place_id),pro_dep_id = values(pro_dep_id),
+	        item_id = values(item_id),dep_id = values(dep_id);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_pro_dep_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_TSPX">
+    	<if test="list.size() > 0">
+	    	delete from dg_special_item where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_special_item
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},#{item.type},#{item.minConsumeType},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code = values(item_code),type = values(type),
+	        min_consume_type = values(min_consume_type),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_special_item
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXCPCS">
+        INSERT INTO dg_item_from_cook
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id},#{item.itemId},#{item.itemCode},#{item.cookId},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),item_id = values(item_id),item_code = values(item_code),
+        cook_id = values(cook_id),uuid_key = values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_ZDYJEPXXL">
+    	<if test="list.size() > 0">
+	    	delete from dg_gate_item_allow_custom where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_gate_item_allow_custom
+	        VALUES
+        	<foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.smallGateId},#{item.allowCustom},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),small_gate_id = values(small_gate_id),
+	        allow_custom = values(allow_custom),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_gate_item_allow_custom
+    	</if>
+    </insert>
+
+	<insert id="insertOrEdit_ZDYJEPX">
+		<if test="list.size() > 0">
+	    	delete from dg_item_custom_money where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_custom_money
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemCode},#{item.customMoneyId},#{item.itemId},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_code = values(item_code),custom_money_id = values(custom_money_id),
+	        item_id = values(item_id),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_custom_money
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_ZDYJEMC">
+    	<if test="list.size() > 0">
+	    	delete from bg_item_custom_money_name where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO bg_item_custom_money_name
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.customMoneyName},#{item.itemCode},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),custom_money_name = values(custom_money_name),item_code = values(item_code),uuid_key = values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from bg_item_custom_money_name
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXCXFAZB">
+        INSERT INTO dg_item_gift_plan
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id},#{item.recycle},#{item.itemId},
+            #{item.itemCode},#{item.startDate},#{item.endDate},
+            #{item.startTime},#{item.enable},#{item.endTime},
+            #{item.week1},#{item.week2},#{item.week3},#{item.week4},#{item.week5},#{item.week6},#{item.week7},
+            #{item.explains},#{item.giftAmount},#{item.giftFrequencyLimit},
+            #{item.name},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),recycle = values(recycle),item_id = values(item_id),
+        item_code = values(item_code),start_date = values(start_date),end_date = values(end_date),
+        start_time = values(start_time),enable = values(enable),end_time = values(end_time),
+        week1 = values(week1),week2 = values(week2),week3 = values(week3),
+        week4 = values(week4),week5 = values(week5),week6 = values(week6),week7 = values(week7),
+        explains = values(explains),gift_amount = values(gift_amount),gift_frequency_limit = values(gift_frequency_limit),
+        name = values(name),uuid_key = values(uuid_key)
+    </insert>
+
+	<insert id="insertOrEdit_PXCXFAFB">
+		<if test="list.size() > 0">
+	    	delete from dg_item_gift_plan_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_gift_plan_s
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},
+	            #{item.giftAcount},#{item.enable},#{item.parentId}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code = values(item_code),
+	        gift_acount = values(gift_acount),enable = values(enable),parent_id = values(parent_id);
+	        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_gift_plan_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZXLMR">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_type_discount where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_type_discount(id,dg_num,dg_id,discount)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.dgNum},#{item.dgId},#{item.discount}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),dg_num = values(dg_num),dg_id = values(dg_id),discount=values(discount);
+    	</if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_type_discount
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZFAZB">
+        INSERT INTO dg_item_discount_programme(id,recyclebin,code,name,type,allow_f_dis,disable,date_limit,start_time,end_time,discount,
+        use_store_type,use_store,time,uuid_key)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.recyclebin},#{item.code},#{item.name},#{item.type}
+            ,#{item.allowFDis},#{item.disable},#{item.dateLimit},#{item.startTime}
+            ,#{item.endTime},#{item.discount},#{item.useStoreType}
+            ,#{item.useStore},#{item.time},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),recyclebin = values(recyclebin),code=values(code),name=values(name)
+        ,type=values(type),allow_f_dis=values(allow_f_dis),disable=values(disable),date_limit=values(date_limit)
+        ,start_time=values(start_time),end_time=values(end_time),discount=values(discount),use_store_type=values(use_store_type)
+        ,use_store=values(use_store),time=values(time),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZFAFB">
+        <if test="list.size() > 0">
+	    	 delete from dg_item_discount_programme_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_discount_programme_s(id,p_id,item_id,discount,disable)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.pId},#{item.itemId},#{item.discount},#{item.disable}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),p_id = values(p_id),item_id=values(item_id),discount=values(discount),disable=values(disable);
+    	</if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_discount_programme_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZFAXQB">
+    	<if test="list.size() > 0">
+	    	delete from dg_week_discount where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_week_discount(id,name,p_id,uuid_key)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.name},#{item.pId},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),name = values(name),p_id=values(p_id),uuid_key=values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_week_discount
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZHYFAZB">
+        INSERT INTO dg_item_member_discount(id,name,enable,explains,start_date,end_date,day_start_time,day_end_time,week,
+        use_all_shop,affiliation,publish,update_time,recycle_bin,level_id,uuid_key)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.name},#{item.enable},#{item.explains},#{item.startDate}
+            ,#{item.endDate},#{item.dayStartTime},#{item.dayEndTime},#{item.week},#{item.useAllShop}
+            ,#{item.affiliation},#{item.publish},#{item.updateTime},#{item.recycleBin},#{item.levelId}
+            ,#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),name = values(name),enable=values(enable),explains=values(explains),start_date=values(start_date)
+        ,end_date=values(end_date),day_start_time=values(day_start_time),day_end_time=values(day_end_time),week=values(week)
+        ,use_all_shop=values(use_all_shop),affiliation=values(affiliation),publish=values(publish),update_time=values(update_time)
+        ,recycle_bin=values(recycle_bin),level_id=values(level_id),uuid_key=values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZHYFAFB">
+        <if test="list.size() > 0">
+	    	delete from dg_item_member_discount_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_member_discount_s(id,item_id,enable,price,consistent,p_id)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.enable},#{item.price},#{item.consistent},#{item.pId}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),enable=values(enable),price=values(price),consistent=values(consistent),p_id=values(p_id);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_member_discount_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZYCDJASBZB">
+    	<if test="list.size() > 0">
+	    	delete from dg_for_meal_time_price;
+	        INSERT INTO dg_for_meal_time_price(id,item_id,item_code,uuid_key)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.itemCode},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code=values(item_code),uuid_key=values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_for_meal_time_price
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZYCDJASBFB">
+    	<if test="list.size() > 0">
+	    	delete from dg_for_meal_time_price_s;
+	        INSERT INTO dg_for_meal_time_price_s(id,item_id,meal_time_id,meal_time_price_id,price)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.mealTimeId},#{item.mealTimePriceId},#{item.price}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),meal_time_id=values(meal_time_id),meal_time_price_id=values(meal_time_price_id),price=values(price);
+         </if>
+    	<if test="list.size() == 0">
+    		delete from dg_for_meal_time_price_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZYCDJAXFQYZB">
+    	<if test="list.size() > 0">
+	    	delete from dg_place_price where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_place_price(id,item_id,item_code,uuid_key)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.itemCode},#{item.uuidKey}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code=values(item_code),uuid_key=values(uuid_key);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_place_price
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZYCDJAXFQYFB">
+    	<if test="list.size() > 0">
+	    	delete from dg_place_price_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_place_price_s(id,place_id,place_price_id,item_id,price)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.placeId},#{item.placePriceId},#{item.itemId},#{item.price}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),place_id = values(place_id),place_price_id=values(place_price_id),item_id=values(item_id),price=values(price);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_place_price_s
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZYCDJAXQ">
+    	<if test="list.size() > 0">
+    		delete from dg_item_for_week where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_for_week(id,item_id,item_code,uuid_key,x1,x2,x3,x4,x5,x6,x7)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.itemCode},#{item.uuidKey},#{item.x1},#{item.x2}
+	            ,#{item.x3},#{item.x4},#{item.x5},#{item.x6},#{item.x7}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code=values(item_code),uuid_key=values(uuid_key)
+	        ,x1=values(x1),x2=values(x2),x3=values(x3),x4=values(x4)
+	        ,x5=values(x5),x6=values(x6),x7=values(x7);
+          </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_for_week
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZCXPX">
+    	<if test="list.size() > 0">
+	    	delete from dg_promotion_item where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_promotion_item(id,item_id,item_code,uuid_key,max_count,pro_price)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.itemCode},#{item.uuidKey},#{item.maxCount},#{item.proPrice}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code=values(item_code),uuid_key=values(uuid_key),max_count=values(max_count),pro_price=values(pro_price);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_promotion_item
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZSJPX">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_current_price where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_current_price(id,item_id,item_code,uuid_key,current_price)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.itemId},#{item.itemCode},#{item.uuidKey},#{item.currentPrice}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id=values(id),item_id=values(item_id),item_code=values(item_code),uuid_key=values(uuid_key),current_price=values(current_price);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_current_price
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZJTJG">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_price_ladder where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_price_ladder(id,item_id,item_code,uuid_key,ladder_1,ladder_2)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},#{item.uuidKey},#{item.ladder1},#{item.ladder2}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id=values(id),item_id=values(item_id),item_code=values(item_code),uuid_key=values(uuid_key),ladder_1=values(ladder_1),ladder_2=values(ladder_2);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_price_ladder
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZJGYXJ">
+    	<if test="list.size() > 0">
+	    	delete from dg_item_price_priority where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_item_price_priority(id,code,name,uuid_key,n_index,m_index,enable)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.code},#{item.name},#{item.uuidKey},#{item.nIndex,jdbcType=INTEGER},#{item.mIndex,jdbcType=INTEGER},#{item.enable}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),code = values(code),name=values(name),uuid_key=values(uuid_key),n_index=values(n_index),m_index=values(m_index),enable=values(enable);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_item_price_priority
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZZYHDZB">
+        INSERT INTO dg_important_activity_discount(id,organ_id,name,start_time,end_time,dustbin,enable,discount,uuid_key)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.organId},#{item.name},#{item.startTime},#{item.endTime},
+            #{item.dustbin},#{item.enable},#{item.discount},#{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),organ_id = values(organ_id),name=values(name),start_time=values(start_time),end_time=values(end_time),dustbin=values(dustbin),enable=values(enable),
+        discount = values(discount),uuid_key = values(uuid_key)
+    </insert>
+
+    <insert id="insertOrEdit_PXGL_PXDZZYHDFB">
+    	<if test="list.size() > 0">
+	    	delete from dg_important_acitivity_discount_s where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      	#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_important_acitivity_discount_s(id,gate_id,discount,p_id)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id}, #{item.gateId},#{item.discount},#{item.pId}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),gate_id = values(gate_id),discount=values(discount),p_id=values(p_id);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_important_acitivity_discount_s
+    	</if>
+    </insert>
+    
+    <insert id="insertOrEdit_XFQY">
+        INSERT INTO dg_consumption_area(id,number,name,mnemonic,create_time,explains,create_user,del_flag,uuid_key)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.number}, #{item.name}, #{item.mnemonic}, #{item.createTime}, #{item.explains}, #{item.createUserid}
+            , #{item.delFlag}, #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),number = values(number),name=values(name),
+        mnemonic=VALUES(mnemonic),create_time=VALUES(create_time),explains=VALUES(explains),create_user=VALUES(create_user)
+        ,del_flag=VALUES(del_flag),uuid_key=VALUES(uuid_key)
+    </insert>
+    
+    <insert id="insertOrEdit_KW">
+        INSERT INTO dg_consumer_seat(id,allow_number_id,number,name,all_name,seat_type,allow_number,default_state,cons_area,mnemonic,
+        create_time,explains,disabled_seat,inset_retention_room,immediate_settlement,not_statistics_overtaiwan,empty_guest,customer_retention,
+        create_user,del_flag,seat_state,vip_identify,seat_label,last_open_time,uuid_key)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.allowNumberId}, #{item.number}, #{item.name}, #{item.allName}, #{item.seatType}, #{item.allowNumber}
+            , #{item.defaultState}, #{item.consArea}, #{item.mnemonic}, #{item.createTime}, #{item.explains}, #{item.disabledSeat}
+            , #{item.insetRetentionRoom}, #{item.immediateSettlement}, #{item.notStatisticsOvertaiwan}, #{item.emptyGuest}, #{item.customerRetention}
+            , #{item.createUserid}, #{item.delFlag}, #{item.seatState}, #{item.vipIdentify}, #{item.seatLabel}, #{item.lastOpenTime}, #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),allow_number_id = values(allow_number_id),number=values(number),name=values(name),all_name=values(all_name),
+        seat_type=VALUES(seat_type),allow_number=VALUES(allow_number),default_state=VALUES(default_state),cons_area=VALUES(cons_area)
+        ,mnemonic=VALUES(mnemonic),create_time=VALUES(create_time),explains=VALUES(explains),disabled_seat=VALUES(disabled_seat),
+        inset_retention_room=VALUES(inset_retention_room),immediate_settlement=VALUES(immediate_settlement),not_statistics_overtaiwan=VALUES(not_statistics_overtaiwan)
+        ,empty_guest=VALUES(empty_guest),customer_retention=VALUES(customer_retention),create_user=VALUES(create_user),del_flag=VALUES(del_flag)
+        ,vip_identify=VALUES(vip_identify),seat_label=VALUES(seat_label),last_open_time=VALUES(last_open_time),uuid_key=VALUES(uuid_key)
+    </insert>
+    
+    
+    <insert id="insertOrEdit_KWLX">
+        INSERT INTO dg_allow_number(id,name,min_allow_number,max_allow_number,uuid_key)
+        VALUES
+        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+            #{item.id}, #{item.name}, #{item.minAllowNumber}, #{item.maxAllowNumber}, #{item.uuidKey}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        id = values(id),name = values(name),min_allow_number=values(min_allow_number),
+        max_allow_number=VALUES(max_allow_number),uuid_key=VALUES(uuid_key)
+    </insert>
+    
+    
+    <insert id="insertOrEdit_KWZZPX">
+    	<if test="list.size() > 0">
+	    	delete from dg_seat_item where id not in
+	    	<foreach collection="list" item="item" open="(" close=")" separator=",">
+	      		#{item.id,jdbcType=INTEGER}
+	   		</foreach>;
+	        INSERT INTO dg_seat_item(id,item_id,item_code,count,use_open_counter,seat_id)
+	        VALUES
+	        <foreach collection="list" item="item" separator="),(" open="(" close=")">
+	            #{item.id},#{item.itemId},#{item.itemCode},#{item.count},#{item.useOpenCounter},#{item.seatId}
+	        </foreach>
+	        ON DUPLICATE KEY UPDATE
+	        id = values(id),item_id = values(item_id),item_code = values(item_code),count = values(count),use_open_counter = values(use_open_counter),seat_id = values(seat_id);
+        </if>
+    	<if test="list.size() == 0">
+    		delete from dg_seat_item
+    	</if>
+    </insert>
+
+    <insert id="insertOrEdit_ZZJG" parameterType="ShopOnline">
+      insert into t_b_org(
+      id,org_code, org_name,is_own_flag,is_start_flag,diyFields1,address,org_phone)
+       values(1,#{shopcode},#{name},1,1,#{shopDescribe},#{address},#{mchMobile})
+    </insert>
+    <delete id="deleteOrgData">
+        delete from t_b_org
+    </delete>
+</mapper>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.archive.DgSettlementWayTypeMapper" >
+	<sql id="selectCols">
+		o.id AS "id",
+		o.name AS "name",
+		o.hasRollFace AS "hasRollFace",
+		o.hasActualIncomeRatio AS "hasActualIncomeRatio",
+		o.hasNotActualIncomeRatio AS "hasNotActualIncomeRatio",
+		o.hasCurrency AS "hasCurrency",
+		o.hasAllowChange AS "hasAllowChange",
+		o.explains AS "explains",
+		o.delFlag AS "delFlag",
+		o.createUserid AS "createUserid",
+		o.createTime AS "createTime",
+		su.id AS "createUser.id",
+		su.emp_name AS "createUser.empName"
+	</sql>
+	
+	<sql id="selectTables">
+		left join sys_user su on su.id = o.createUserid
+	</sql>
+	
+	<sql id="queryCriteria">
+		and o.delFlag = 0
+        <if test="name != null and name != ''">
+         and o.name like '%${name}%'
+        </if>
+        <if test="checkName != null and checkName != ''">
+         and o.name = #{checkName}
+        </if>
+        <if test="crStartTime != null and crStartTime != '' and crEndTime != null and crEndTime != '' ">
+         and o.createTime between #{crStartTime} and #{crEndTime}
+        </if>
+	</sql>
+	
+  <select id="getListByPage" resultType="DgSettlementWayType" parameterType="DgSettlementWayType">
+  	SELECT 
+  		<include refid="selectCols"></include>
+  	 from dg_settlement_way_type o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+      <choose>
+      	<when test="sidx != null and sidx != ''">
+      		order by o.${sidx}  ${sord}
+      	</when>
+      	<otherwise>
+      		order by o.createTime desc
+      	</otherwise>
+      </choose>
+      limit #{startRow},#{endRow}
+  </select>
+  
+  <select id="countListByPage" resultType="java.lang.Integer" parameterType="DgSettlementWayType">
+  	 SELECT
+  	 	 count(0)
+  	 from dg_settlement_way_type o
+  	 	<include refid="selectTables"></include>
+  	 <where>
+  	 	<include refid="queryCriteria"></include>
+      </where>
+  </select>
+  
+  <select id="getSettlementWayTypeByID" parameterType="DgSettlementWayType" resultType="DgSettlementWayType">
+		select 
+			<include refid="selectCols"></include>
+		from dg_settlement_way_type o
+			<include refid="selectTables"></include>
+		where o.id = #{id}
+	</select>
+	
+   <select id="getAllList" parameterType="DgSettlementWayType" resultType="DgSettlementWayType">
+		select 
+			<include refid="selectCols"></include>
+		from dg_settlement_way_type o
+			<include refid="selectTables"></include>
+		<where>
+	  	 	<include refid="queryCriteria"></include>
+	      </where>
+		order by o.createTime desc
+	</select>
+  
+  <insert id="newInsert" parameterType="DgSettlementWayType">
+  	insert into dg_settlement_way_type(
+		name,
+		hasRollFace,
+		hasActualIncomeRatio,
+		hasNotActualIncomeRatio,
+		hasCurrency,
+		hasAllowChange,
+		explains,
+		createUserid,
+		createTime,
+		delFlag
+  	) values (
+		#{name},
+		#{hasRollFace},
+		#{hasActualIncomeRatio},
+		#{hasNotActualIncomeRatio},
+		#{hasCurrency},
+		#{hasAllowChange},
+		#{explains},
+		#{createUserid},
+		#{createTime},
+		0
+  	)
+  </insert>
+  
+  <update id="update" parameterType="DgSettlementWayType">
+  	update dg_settlement_way_type set 
+		name = #{name},
+		hasRollFace = #{hasRollFace},
+		hasActualIncomeRatio = #{hasActualIncomeRatio},
+		hasNotActualIncomeRatio = #{hasNotActualIncomeRatio},
+		hasCurrency = #{hasCurrency},
+		hasAllowChange = #{hasAllowChange},
+		explains = #{explains}
+	where id = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="DgSettlementWayType">
+	update dg_settlement_way_type set delFlag = 1 where id in 
+	<foreach item="ids" index="index" collection="ids" open="(" separator="," close=")">  
+	  #{ids}  
+	 </foreach> 
+	</delete>
+</mapper>

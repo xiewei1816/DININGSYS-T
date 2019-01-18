@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqsh.diningsys.web.dao.businessMan.DgAreaManagerMapper" >
+  <resultMap id="BaseResultMap" type="com.yqsh.diningsys.web.model.businessMan.DgAreaManager" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sj_discount" property="sjDiscount" jdbcType="INTEGER" />
+    <result column="cx_discount" property="cxDiscount" jdbcType="INTEGER" />
+    <result column="bj_discount" property="bjDiscount" jdbcType="INTEGER" />
+    <result column="bff_discount" property="bffDiscount" jdbcType="INTEGER" />
+    <result column="fwf_discount" property="fwfDiscount" jdbcType="INTEGER" />
+    <result column="zdxf_discount" property="zdxfDiscount" jdbcType="INTEGER" />
+    <result column="bff_free" property="bffFree" jdbcType="INTEGER" />
+    <result column="bff_time_free" property="bffTimeFree" jdbcType="INTEGER" />
+    <result column="bff_surplus_remind" property="bffSurplusRemind" jdbcType="INTEGER" />
+    <result column="area_id" property="areaId" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="limCount" property="limCount" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sj_discount, cx_discount, bj_discount, bff_discount, fwf_discount, zdxf_discount, 
+    bff_free, bff_time_free, bff_surplus_remind, area_id
+  </sql>
+  <sql id="Next_Column_List" >
+    a.id as id, 
+    a.sj_discount as sj_discount, 
+    a.cx_discount as cx_discount, 
+    a.bj_discount as bj_discount,
+    a.bff_discount as bff_discount,
+    a.fwf_discount as fwf_discount, 
+    a.zdxf_discount as zdxf_discount, 
+    a.bff_free as bff_free, 
+    a.bff_time_free as bff_time_free , 
+    a.bff_surplus_remind as bff_surplus_remind, 
+    a.area_id as area_id,
+    b.number as code,
+    b.name as name,
+    c.ecount as limCount
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dg_area_manager
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dg_area_manager
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaManager" >
+    insert into dg_area_manager (id, sj_discount, cx_discount, 
+      bj_discount, bff_discount, fwf_discount, 
+      zdxf_discount, bff_free, bff_time_free, 
+      bff_surplus_remind, area_id)
+    values (#{id,jdbcType=INTEGER}, #{sjDiscount,jdbcType=INTEGER}, #{cxDiscount,jdbcType=INTEGER}, 
+      #{bjDiscount,jdbcType=INTEGER}, #{bffDiscount,jdbcType=INTEGER}, #{fwfDiscount,jdbcType=INTEGER}, 
+      #{zdxfDiscount,jdbcType=INTEGER}, #{bffFree,jdbcType=INTEGER}, #{bffTimeFree,jdbcType=INTEGER}, 
+      #{bffSurplusRemind,jdbcType=INTEGER}, #{areaId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaManager" >
+    insert into dg_area_manager
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sjDiscount != null" >
+        sj_discount,
+      </if>
+      <if test="cxDiscount != null" >
+        cx_discount,
+      </if>
+      <if test="bjDiscount != null" >
+        bj_discount,
+      </if>
+      <if test="bffDiscount != null" >
+        bff_discount,
+      </if>
+      <if test="fwfDiscount != null" >
+        fwf_discount,
+      </if>
+      <if test="zdxfDiscount != null" >
+        zdxf_discount,
+      </if>
+      <if test="bffFree != null" >
+        bff_free,
+      </if>
+      <if test="bffTimeFree != null" >
+        bff_time_free,
+      </if>
+      <if test="bffSurplusRemind != null" >
+        bff_surplus_remind,
+      </if>
+      <if test="areaId != null" >
+        area_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sjDiscount != null" >
+        #{sjDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="cxDiscount != null" >
+        #{cxDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="bjDiscount != null" >
+        #{bjDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="bffDiscount != null" >
+        #{bffDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="fwfDiscount != null" >
+        #{fwfDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="zdxfDiscount != null" >
+        #{zdxfDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="bffFree != null" >
+        #{bffFree,jdbcType=INTEGER},
+      </if>
+      <if test="bffTimeFree != null" >
+        #{bffTimeFree,jdbcType=INTEGER},
+      </if>
+      <if test="bffSurplusRemind != null" >
+        #{bffSurplusRemind,jdbcType=INTEGER},
+      </if>
+      <if test="areaId != null" >
+        #{areaId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaManager" >
+    update dg_area_manager
+    <set >
+      <if test="sjDiscount != null" >
+        sj_discount = #{sjDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="cxDiscount != null" >
+        cx_discount = #{cxDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="bjDiscount != null" >
+        bj_discount = #{bjDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="bffDiscount != null" >
+        bff_discount = #{bffDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="fwfDiscount != null" >
+        fwf_discount = #{fwfDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="zdxfDiscount != null" >
+        zdxf_discount = #{zdxfDiscount,jdbcType=INTEGER},
+      </if>
+      <if test="bffFree != null" >
+        bff_free = #{bffFree,jdbcType=INTEGER},
+      </if>
+      <if test="bffTimeFree != null" >
+        bff_time_free = #{bffTimeFree,jdbcType=INTEGER},
+      </if>
+      <if test="bffSurplusRemind != null" >
+        bff_surplus_remind = #{bffSurplusRemind,jdbcType=INTEGER},
+      </if>
+      <if test="areaId != null" >
+        area_id = #{areaId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaManager" >
+    update dg_area_manager
+    set sj_discount = #{sjDiscount,jdbcType=INTEGER},
+      cx_discount = #{cxDiscount,jdbcType=INTEGER},
+      bj_discount = #{bjDiscount,jdbcType=INTEGER},
+      bff_discount = #{bffDiscount,jdbcType=INTEGER},
+      fwf_discount = #{fwfDiscount,jdbcType=INTEGER},
+      zdxf_discount = #{zdxfDiscount,jdbcType=INTEGER},
+      bff_free = #{bffFree,jdbcType=INTEGER},
+      bff_time_free = #{bffTimeFree,jdbcType=INTEGER},
+      bff_surplus_remind = #{bffSurplusRemind,jdbcType=INTEGER},
+      area_id = #{areaId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="selectCountByAreaId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select 
+    	count(*) 
+    from dg_area_manager
+    where area_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByAreaId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Next_Column_List" />
+    from dg_area_manager a inner join dg_consumption_area b on a.area_id = b.id
+    left join (select area_id,count(*) as ecount from dg_area_limit_item group by area_id) c on a.area_id = c.area_id
+    where a.area_id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Next_Column_List" />
+    from  dg_consumption_area b inner join dg_area_manager a  on a.area_id = b.id
+    left join (select area_id,count(*) as ecount from dg_area_limit_item group by area_id) c on a.area_id = c.area_id
+    where b.del_flag in(0)
+  </select>
+  
+  <insert id="insertBackId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yqsh.diningsys.web.model.businessMan.DgAreaManager" >
+ 	insert into dg_area_manager (id, sj_discount, cx_discount, 
+      bj_discount, bff_discount, fwf_discount, 
+      zdxf_discount, bff_free, bff_time_free, 
+      bff_surplus_remind, area_id)
+    values (#{id,jdbcType=INTEGER}, #{sjDiscount,jdbcType=INTEGER}, #{cxDiscount,jdbcType=INTEGER}, 
+      #{bjDiscount,jdbcType=INTEGER}, #{bffDiscount,jdbcType=INTEGER}, #{fwfDiscount,jdbcType=INTEGER}, 
+      #{zdxfDiscount,jdbcType=INTEGER}, #{bffFree,jdbcType=INTEGER}, #{bffTimeFree,jdbcType=INTEGER}, 
+      #{bffSurplusRemind,jdbcType=INTEGER}, #{areaId,jdbcType=INTEGER})
+   </insert>
+   
+  <select id="getAllCount" resultType="java.lang.Integer" >
+    select count(*) from dg_consumption_area b left join dg_area_manager a on a.area_id = b.id
+    where b.del_flag in(0)
+  </select>
+  
+  <delete id="deleteByAreaId" parameterType="java.lang.Integer">
+	delete from dg_area_manager where area_id = #{id}
+  </delete>
+</mapper>

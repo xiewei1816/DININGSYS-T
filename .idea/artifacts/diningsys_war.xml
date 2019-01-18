@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="diningsys:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="diningsys.war">
+      <element id="artifact" artifact-name="DININGSYS-T:war exploded" />
+    </root>
+  </artifact>
+</component>
